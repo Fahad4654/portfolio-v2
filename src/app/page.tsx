@@ -239,7 +239,7 @@ const Page = () => {
                 </SheetContent>
             </Sheet>
         </div>
-        <div className="overflow-y-auto flex-1" ref={contentAreaRef} key={activeSection}>
+        <div key={activeSection} ref={contentAreaRef} className="overflow-y-auto flex-1">
           <div className="container mx-auto px-4 py-12 md:py-20">
             
             {activeSection === 'profile' && (
@@ -408,5 +408,3 @@ const Page = () => {
   );
 };
 export default Page;
-
-    
