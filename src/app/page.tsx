@@ -1,11 +1,16 @@
 import Image from "next/image";
 import {
   Github,
-  Twitter,
   Linkedin,
   Mail,
   ArrowRight,
-  Quote,
+  Briefcase,
+  GraduationCap,
+  MapPin,
+  Phone,
+  Settings,
+  User,
+  Star,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,59 +24,82 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import { ContactForm } from "@/components/contact-form";
 
 const projects = [
   {
-    title: "Project Alpha",
-    description: "A web application for managing tasks and projects, built with React and Node.js. Features a clean interface and real-time collaboration.",
+    title: "E-commerce App (Business Facility App)",
+    description: "Developed a chatting and notification system using Remix, React, and Firebase.",
     image: "https://placehold.co/600x400.png",
-    hint: "technology abstract",
+    hint: "ecommerce app",
     link: "#",
-    tags: ["React", "Node.js", "Web App"],
+    tags: ["Remix", "React", "Firebase", "Chat"],
   },
   {
-    title: "Project Beta",
-    description: "An e-commerce platform designed for scalability and performance. Integrated with Stripe for payments and built on a serverless architecture.",
+    title: "Ace Exam (E-learning Web App)",
+    description: "Built front-end components using React and TypeScript for an e-learning platform.",
     image: "https://placehold.co/600x400.png",
-    hint: "shopping retail",
+    hint: "education technology",
     link: "#",
-    tags: ["E-commerce", "Stripe", "Serverless"],
+    tags: ["React", "TypeScript", "E-learning"],
   },
   {
-    title: "Project Gamma",
-    description: "A mobile app for fitness tracking and workout logging. It provides personalized plans and progress monitoring. Developed for iOS and Android.",
+    title: "Pre-registration App (Student Course Enrollment)",
+    description: "Created a full-stack system for student course enrollment using PHP, JavaScript, and HTML.",
     image: "https://placehold.co/600x400.png",
-    hint: "fitness health",
+    hint: "university portal",
     link: "#",
-    tags: ["Mobile App", "Fitness", "iOS/Android"],
+    tags: ["PHP", "JavaScript", "HTML", "Full-stack"],
   },
 ];
 
-const testimonials = [
-  {
-    quote: "Working with them was a breeze. They delivered a high-quality product on time and exceeded our expectations. Highly recommended!",
-    author: "Jane Doe",
-    title: "CEO, Tech Solutions Inc.",
-  },
-  {
-    quote: "Their attention to detail and creative problem-solving are unmatched. They transformed our initial idea into a polished, user-friendly application.",
-    author: "John Smith",
-    title: "Product Manager, Innovate Co.",
-  },
-  {
-    quote: "A true professional and a pleasure to collaborate with. Their expertise was invaluable to our project's success.",
-    author: "Emily White",
-    title: "Lead Designer, Creative Agency",
-  },
+const technicalSkills = [
+  "C++", "Java", "Python", "JavaScript", "TypeScript", "PostgreSQL", "MySQL",
+  "React", "Node.js", "Firebase", "Docker", "Ansible", "Linux", "Bash scripting",
+  "Jenkins", "SonarQube", "CI/CD", "System Monitoring"
 ];
+
+const softSkills = ["Teamwork & Collaboration", "Attention to Detail", "Analytical Thinking", "Adaptability"];
+
+const experiences = [
+    {
+        title: "DevOps Engineer",
+        company: "mPower Social Enterprises Ltd.",
+        period: "Sept 2023 – Present",
+        description: [
+            "Implement and maintain CI/CD pipelines.",
+            "Optimize cloud infrastructure and automate deployments.",
+            "Collaborate with development teams to enhance system performance.",
+        ]
+    },
+    {
+        title: "Software Engineer Intern",
+        company: "mPower Social Enterprises Ltd.",
+        period: "Feb 2023 – May 2023",
+        description: [
+            "Developed front-end features for web applications using React and TypeScript.",
+            "Assisted in system design and troubleshooting.",
+        ]
+    }
+];
+
+const education = [
+    {
+        degree: "B.Sc. in Computer Science and Engineering",
+        institution: "Independent University, Bangladesh",
+        period: "2023 | CGPA: 3.23"
+    },
+    {
+        degree: "H.S.C. (Science)",
+        institution: "Nawab Siraj-Ud-Dowla Government College, Natore",
+        period: "2017 | GPA: 5.00"
+    },
+    {
+        degree: "S.S.C. (Science)",
+        institution: "Natore Govt. Boys' High School, Natore",
+        period: "2015 | GPA: 5.00"
+    }
+]
 
 export default function Home() {
   return (
@@ -82,44 +110,87 @@ export default function Home() {
           <section id="profile" className="text-center mb-20 md:mb-28">
             <Avatar className="w-32 h-32 mx-auto mb-4 border-4 border-primary/20 shadow-lg">
               <AvatarImage src="https://placehold.co/128x128.png" alt="Profile Picture" data-ai-hint="person portrait" />
-              <AvatarFallback>JD</AvatarFallback>
+              <AvatarFallback>FK</AvatarFallback>
             </Avatar>
             <h1 className="text-4xl md:text-5xl font-bold font-headline mb-2 text-foreground">
-              John Doe
+              FAHAD KABIR
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
-              Full-stack developer with a passion for creating beautiful,
-              functional, and user-centered digital experiences. Welcome to my
-              personal space.
+            <p className="text-xl font-semibold text-primary mb-4">DevOps Engineer</p>
+            <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-muted-foreground mb-6">
+                <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    <span>Bashundhara R/A, Dhaka</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4" />
+                    <span>+880 1772-967944</span>
+                </div>
+                 <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4" />
+                    <span>kabirkaife@gmail.com</span>
+                </div>
+            </div>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-6">
+              DevOps Engineer with expertise in cloud infrastructure, CI/CD pipelines, and system automation. Skilled in Node.js, React, Docker, and Ansible, with a strong background in problem-solving and optimizing system performance. Passionate about collaborating with teams to drive efficiency and innovation.
             </p>
             <div className="flex justify-center gap-2">
-              <Button variant="ghost" size="icon" asChild>
-                <a href="#" aria-label="GitHub" className="text-muted-foreground hover:text-primary transition-colors">
-                  <Github className="h-6 w-6" />
+              <Button variant="outline" asChild>
+                <a href="https://github.com" target="_blank" aria-label="GitHub">
+                  <Github /> GitHub
                 </a>
               </Button>
-              <Button variant="ghost" size="icon" asChild>
-                <a href="#" aria-label="LinkedIn" className="text-muted-foreground hover:text-primary transition-colors">
-                  <Linkedin className="h-6 w-6" />
-                </a>
-              </Button>
-              <Button variant="ghost" size="icon" asChild>
-                <a href="#" aria-label="Twitter" className="text-muted-foreground hover:text-primary transition-colors">
-                  <Twitter className="h-6 w-6" />
-                </a>
-              </Button>
-              <Button variant="ghost" size="icon" asChild>
-                <a href="mailto:example@example.com" aria-label="Email" className="text-muted-foreground hover:text-primary transition-colors">
-                  <Mail className="h-6 w-6" />
+              <Button variant="outline" asChild>
+                <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
+                  <Linkedin /> LinkedIn
                 </a>
               </Button>
             </div>
           </section>
+          
+           {/* Skills Section */}
+          <section id="skills" className="mb-20 md:mb-28">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 font-headline">
+              Technical Skills
+            </h2>
+            <Card>
+                <CardContent className="p-6">
+                    <div className="flex flex-wrap justify-center gap-3">
+                        {technicalSkills.map((skill) => (
+                            <Badge key={skill} variant="secondary" className="text-base px-4 py-2 rounded-lg">{skill}</Badge>
+                        ))}
+                    </div>
+                </CardContent>
+            </Card>
+          </section>
+
+          {/* Experience Section */}
+            <section id="experience" className="mb-20 md:mb-28">
+                <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 font-headline">
+                    Work Experience
+                </h2>
+                <div className="relative pl-6 after:absolute after:inset-y-0 after:left-0 after:w-px after:bg-border">
+                    {experiences.map((exp, index) => (
+                        <div key={index} className="relative pl-8 mb-10 group">
+                            <div className="absolute -left-[29px] top-1 flex h-14 w-14 items-center justify-center rounded-full bg-background border-2 border-primary/50">
+                                <Briefcase className="h-6 w-6 text-primary" />
+                            </div>
+                            <p className="text-sm text-muted-foreground">{exp.period}</p>
+                            <h3 className="text-xl font-bold text-foreground mt-1">{exp.title}</h3>
+                            <p className="text-lg text-primary mb-3">{exp.company}</p>
+                            <ul className="list-disc list-inside text-muted-foreground space-y-1">
+                                {exp.description.map((item, i) => (
+                                    <li key={i}>{item}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
+                </div>
+            </section>
 
           {/* Project Portfolio Section */}
           <section id="portfolio" className="mb-20 md:mb-28">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 font-headline">
-              My Portfolio
+              My Projects
             </h2>
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {projects.map((project, index) => (
@@ -159,45 +230,23 @@ export default function Home() {
               ))}
             </div>
           </section>
-
-          {/* Testimonials Section */}
-          <section id="testimonials" className="mb-20 md:mb-28">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 font-headline">
-              What Others Say
-            </h2>
-            <Carousel
-              opts={{
-                align: "start",
-                loop: true,
-              }}
-              className="w-full max-w-4xl mx-auto"
-            >
-              <CarouselContent>
-                {testimonials.map((testimonial, index) => (
-                  <CarouselItem key={index} className="md:basis-1/2">
-                    <div className="p-1 h-full">
-                      <Card className="h-full flex flex-col">
-                        <CardContent className="flex flex-col items-center text-center justify-center p-6 gap-4 flex-1">
-                          <Quote className="w-8 h-8 text-primary/80" />
-                          <blockquote className="italic text-muted-foreground">
-                            "{testimonial.quote}"
-                          </blockquote>
-                          <div className="mt-2">
-                            <p className="font-semibold text-foreground">{testimonial.author}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {testimonial.title}
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
-            </Carousel>
-          </section>
+          
+           {/* Education Section */}
+            <section id="education" className="mb-20 md:mb-28">
+                <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 font-headline">
+                    Education
+                </h2>
+                <div className="grid md:grid-cols-3 gap-8">
+                    {education.map((edu, index) => (
+                         <Card key={index} className="flex flex-col items-center text-center p-6">
+                            <GraduationCap className="h-10 w-10 mb-4 text-primary"/>
+                            <CardTitle className="text-xl mb-1">{edu.degree}</CardTitle>
+                            <CardDescription className="mb-2">{edu.institution}</CardDescription>
+                            <p className="text-sm text-muted-foreground">{edu.period}</p>
+                        </Card>
+                    ))}
+                </div>
+            </section>
 
           {/* Contact Section */}
           <section id="contact" className="max-w-2xl mx-auto">
@@ -215,7 +264,7 @@ export default function Home() {
 
       <footer className="py-6 border-t mt-20 md:mt-28">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} John Doe. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Fahad Kabir. All rights reserved.</p>
         </div>
       </footer>
     </div>
