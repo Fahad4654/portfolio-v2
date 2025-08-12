@@ -35,7 +35,6 @@ import {
 import {
   Sheet,
   SheetContent,
-  SheetHeader,
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
@@ -117,7 +116,54 @@ const education = [
     }
 ]
 
-const SidebarContent = () => (
+const NavLinks = ({ isMobile }: { isMobile?: boolean }) => {
+    const Wrapper = isMobile ? SheetClose : React.Fragment;
+    const wrapperProps = isMobile ? { asChild: true } : {};
+
+    return (
+        <nav className="flex flex-col gap-3">
+            <Wrapper {...wrapperProps}>
+                <a href="#profile" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                    <User className="h-5 w-5" />
+                    <span>Personal Info</span>
+                </a>
+            </Wrapper>
+            <Wrapper {...wrapperProps}>
+                <a href="#skills" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                    <Shapes className="h-5 w-5" />
+                    <span>Technical Skills</span>
+                </a>
+            </Wrapper>
+            <Wrapper {...wrapperProps}>
+                <a href="#experience" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                    <BriefcaseBusiness className="h-5 w-5" />
+                    <span>Work Experience</span>
+                </a>
+            </Wrapper>
+            <Wrapper {...wrapperProps}>
+                <a href="#portfolio" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                    <FileText className="h-5 w-5" />
+                    <span>Projects</span>
+                </a>
+            </Wrapper>
+            <Wrapper {...wrapperProps}>
+                <a href="#education" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                    <GraduationCap className="h-5 w-5" />
+                    <span>Education</span>
+                </a>
+            </Wrapper>
+            <Wrapper {...wrapperProps}>
+                <a href="#contact" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                    <MessageSquare className="h-5 w-5" />
+                    <span>Contact</span>
+                </a>
+            </Wrapper>
+        </nav>
+    );
+};
+
+
+const SidebarContent = ({ isMobile = false }) => (
   <>
     <div className="text-center mb-10">
       <Avatar className="w-24 h-24 mx-auto mb-4 border-4 border-primary/20 shadow-lg">
@@ -130,45 +176,8 @@ const SidebarContent = () => (
       <p className="text-md text-primary">DevOps Engineer</p>
     </div>
 
-    <nav className="flex flex-col gap-3">
-        <SheetClose asChild>
-            <a href="#profile" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                <User className="h-5 w-5" />
-                <span>Personal Info</span>
-            </a>
-        </SheetClose>
-        <SheetClose asChild>
-            <a href="#skills" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                <Shapes className="h-5 w-5" />
-                <span>Technical Skills</span>
-            </a>
-        </SheetClose>
-        <SheetClose asChild>
-            <a href="#experience" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                <BriefcaseBusiness className="h-5 w-5" />
-                <span>Work Experience</span>
-            </a>
-        </SheetClose>
-        <SheetClose asChild>
-            <a href="#portfolio" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                <FileText className="h-5 w-5" />
-                <span>Projects</span>
-            </a>
-        </SheetClose>
-        <SheetClose asChild>
-            <a href="#education" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                <GraduationCap className="h-5 w-5" />
-                <span>Education</span>
-            </a>
-        </SheetClose>
-        <SheetClose asChild>
-            <a href="#contact" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                <MessageSquare className="h-5 w-5" />
-                <span>Contact</span>
-            </a>
-        </SheetClose>
-    </nav>
-
+    <NavLinks isMobile={isMobile} />
+    
     <div className="mt-auto text-center">
        <div className="flex justify-center gap-4">
         <a href="https://github.com" target="_blank" aria-label="GitHub" className="text-muted-foreground hover:text-primary">
@@ -219,7 +228,7 @@ export default function Page() {
                     </Button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-64 flex flex-col p-8">
-                   <SidebarContent />
+                   <SidebarContent isMobile={true}/>
                 </SheetContent>
             </Sheet>
         </header>
@@ -382,5 +391,3 @@ export default function Page() {
     </div>
   );
 }
-
-    
