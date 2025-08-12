@@ -147,15 +147,6 @@ export default function Page() {
               </a>
           </nav>
 
-          <div className="mt-8 text-center">
-            <Button asChild>
-                <a href="https://drive.google.com/uc?export=download&id=1oWiQ9cEj0yBZ_8aVMaNYFJOxhTYalIcd" target="_blank" download="Fahad_Kabir_CV.pdf">
-                    <Download className="mr-2 h-4 w-4" />
-                    Download CV
-                </a>
-            </Button>
-          </div>
-
           <div className="mt-auto text-center">
              <div className="flex justify-center gap-4">
               <a href="https://github.com" target="_blank" aria-label="GitHub" className="text-muted-foreground hover:text-primary">
@@ -180,7 +171,7 @@ export default function Page() {
                      <p className="text-muted-foreground max-w-3xl mb-6">
                       DevOps Engineer with expertise in cloud infrastructure, CI/CD pipelines, and system automation. Skilled in Node.js, React, Docker, and Ansible, with a strong background in problem-solving and optimizing system performance. Passionate about collaborating with teams to drive efficiency and innovation.
                     </p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-muted-foreground">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-muted-foreground mb-6">
                         <div className="flex items-center gap-3">
                             <MapPin className="h-5 w-5 text-primary" />
                             <span>Bashundhara R/A, Dhaka</span>
@@ -194,6 +185,12 @@ export default function Page() {
                             <span>kabirkaife@gmail.com</span>
                         </div>
                     </div>
+                     <Button asChild>
+                        <a href="https://docs.google.com/document/d/1oWiQ9cEj0yBZ_8aVMaNYFJOxhTYalIcd/export?format=pdf" target="_blank" download="Fahad_Kabir_CV.pdf">
+                            <Download className="mr-2 h-4 w-4" />
+                            Download CV
+                        </a>
+                    </Button>
                 </CardContent>
             </Card>
           </section>
