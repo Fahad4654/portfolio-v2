@@ -31,8 +31,8 @@ const projects = [
     title: "E-commerce App (Business Facility App)",
     description: "Developed a chatting and notification system using Remix, React, and Firebase.",
     image: "https://placehold.co/600x400.png",
-    hint: "ecommerce app",
-    link: "#",
+    hint: "business directory",
+    link: "https://allinonebusiness.co.uk/",
     tags: ["Remix", "React", "Firebase", "Chat"],
   },
   {
@@ -221,7 +221,7 @@ export default function Home() {
                       ))}
                     </div>
                     <Button variant="link" className="p-0 h-auto text-primary" asChild>
-                      <a href={project.link}>
+                      <a href={project.link} target="_blank">
                         View Project <ArrowRight className="ml-2 h-4 w-4" />
                       </a>
                     </Button>
