@@ -11,7 +11,6 @@ import {
   User,
   BriefcaseBusiness,
   Shapes,
-  BookUser,
   MessageSquare,
   FileText,
   Download,
@@ -186,7 +185,7 @@ export default function Page() {
                         </div>
                     </div>
                      <Button asChild>
-                        <a href="https://docs.google.com/document/d/1oWiQ9cEj0yBZ_8aVMaNYFJOxhTYalIcd/export?format=pdf" target="_blank" download="Fahad_Kabir_CV.pdf">
+                        <a href="https://drive.google.com/uc?export=download&id=1oWiQ9cEj0yBZ_8aVMaNYFJOxhTYalIcd" target="_blank" download="Fahad_Kabir_CV.pdf">
                             <Download className="mr-2 h-4 w-4" />
                             Download CV
                         </a>
