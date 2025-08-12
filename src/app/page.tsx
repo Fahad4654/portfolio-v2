@@ -226,10 +226,10 @@ export default function Page() {
                 </SheetContent>
             </Sheet>
         </div>
-        <div className="container mx-auto px-4 py-12 md:py-20">
+        <div className="container mx-auto px-4 py-12 md:py-20" key={activeSection}>
           
           {activeSection === 'profile' && (
-            <section id="profile" className="mb-20 md:mb-28">
+            <section id="profile" className="animate-slide-in">
               <h2 className="text-3xl md:text-4xl font-bold mb-10 font-headline">
                 Personal Info
               </h2>
@@ -264,7 +264,7 @@ export default function Page() {
           )}
           
           {activeSection === 'skills' && (
-            <section id="skills" className="mb-20 md:mb-28">
+            <section id="skills" className="animate-slide-in">
               <h2 className="text-3xl md:text-4xl font-bold mb-10 font-headline">
                 Technical Skills
               </h2>
@@ -281,7 +281,7 @@ export default function Page() {
           )}
 
           {activeSection === 'experience' && (
-            <section id="experience" className="mb-20 md:mb-28">
+            <section id="experience" className="animate-slide-in">
                 <h2 className="text-3xl md:text-4xl font-bold mb-12 font-headline">
                     Work Experience
                 </h2>
@@ -306,7 +306,7 @@ export default function Page() {
           )}
 
           {activeSection === 'portfolio' && (
-            <section id="portfolio" className="mb-20 md:mb-28">
+            <section id="portfolio" className="animate-slide-in">
               <h2 className="text-3xl md:text-4xl font-bold mb-10 font-headline">
                 My Projects
               </h2>
@@ -351,7 +351,7 @@ export default function Page() {
           )}
           
           {activeSection === 'education' && (
-            <section id="education" className="mb-20 md:mb-28">
+            <section id="education" className="animate-slide-in">
                 <h2 className="text-3xl md:text-4xl font-bold mb-12 font-headline">
                     Education
                 </h2>
@@ -369,7 +369,7 @@ export default function Page() {
           )}
 
           {activeSection === 'contact' && (
-            <section id="contact" className="max-w-2xl mx-auto">
+            <section id="contact" className="max-w-2xl mx-auto animate-slide-in">
               <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 font-headline">
                 Get In Touch
               </h2>

@@ -75,8 +75,22 @@ body {
   white-space: nowrap;
   letter-spacing: .15em;
   animation: 
-    typing 3.5s steps(35, end),
+    typing 3.5s steps(35, end) forwards,
     blink-caret .75s step-end infinite;
 }
 
+@keyframes slide-in-from-left {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in-from-left 0.5s ease-out forwards;
+}
     
