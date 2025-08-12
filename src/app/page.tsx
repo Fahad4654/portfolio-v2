@@ -119,36 +119,35 @@ const education = [
     }
 ]
 
-const NavLinks = ({ isMobile }: { isMobile?: boolean }) => {
-    const commonClasses = "flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors";
-    const links = [
-        { href: "#profile", icon: User, text: "Personal Info" },
-        { href: "#skills", icon: Shapes, text: "Technical Skills" },
-        { href: "#experience", icon: BriefcaseBusiness, text: "Work Experience" },
-        { href: "#portfolio", icon: FileText, text: "Projects" },
-        { href: "#education", icon: GraduationCap, text: "Education" },
-        { href: "#contact", icon: MessageSquare, text: "Contact" },
-    ];
+const links = [
+    { href: "#profile", icon: User, text: "Personal Info" },
+    { href: "#skills", icon: Shapes, text: "Technical Skills" },
+    { href: "#experience", icon: BriefcaseBusiness, text: "Work Experience" },
+    { href: "#portfolio", icon: FileText, text: "Projects" },
+    { href: "#education", icon: GraduationCap, text: "Education" },
+    { href: "#contact", icon: MessageSquare, text: "Contact" },
+];
 
-    if (isMobile) {
-        return (
-            <nav className="flex flex-col gap-3">
-                {links.map(link => (
-                    <SheetClose asChild key={link.href}>
-                        <a href={link.href} className={commonClasses}>
-                            <link.icon className="h-5 w-5" />
-                            <span>{link.text}</span>
-                        </a>
-                    </SheetClose>
-                ))}
-            </nav>
-        );
-    }
+
+const NavLinks = ({ onLinkClick }: { onLinkClick?: (href: string) => void }) => {
+    const commonClasses = "flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors";
+    
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+        if (onLinkClick) {
+            e.preventDefault();
+            onLinkClick(href);
+        }
+    };
 
     return (
         <nav className="flex flex-col gap-3">
             {links.map(link => (
-                <a key={link.href} href={link.href} className={commonClasses}>
+                <a 
+                    key={link.href} 
+                    href={link.href} 
+                    className={commonClasses}
+                    onClick={(e) => handleClick(e, link.href)}
+                >
                     <link.icon className="h-5 w-5" />
                     <span>{link.text}</span>
                 </a>
@@ -158,7 +157,7 @@ const NavLinks = ({ isMobile }: { isMobile?: boolean }) => {
 };
 
 
-const SidebarContent = ({ isMobile = false }) => (
+const SidebarContent = ({ onLinkClick }: { onLinkClick?: (href: string) => void }) => (
   <>
     <div className="text-center mb-10">
       <Avatar className="w-24 h-24 mx-auto mb-4 border-4 border-primary/20 shadow-lg">
@@ -173,7 +172,7 @@ const SidebarContent = ({ isMobile = false }) => (
     
     <ScrollArea className="flex-1 -mx-2">
         <div className="px-2">
-            <NavLinks isMobile={isMobile} />
+            <NavLinks onLinkClick={onLinkClick} />
         </div>
     </ScrollArea>
     
@@ -192,14 +191,23 @@ const SidebarContent = ({ isMobile = false }) => (
 
 export default function Page() {
   const [loading, setLoading] = useState(true);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 5000); // 5 seconds
+    }, 3000); 
 
     return () => clearTimeout(timer);
   }, []);
+
+  const handleLinkClick = (href: string) => {
+      const element = document.querySelector(href);
+      if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+      }
+      setIsSheetOpen(false);
+  };
 
   if (loading) {
     return <LoadingScreen />;
@@ -220,7 +228,7 @@ export default function Page() {
                 </Avatar>
                 <span className="font-bold text-lg">Fahad Kabir</span>
             </div>
-            <Sheet>
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
                 <SheetTrigger asChild>
                     <Button variant="ghost" size="icon">
                         <Menu className="h-6 w-6" />
@@ -228,7 +236,7 @@ export default function Page() {
                 </SheetTrigger>
                 <SheetContent side="right" className="w-64 flex flex-col p-8">
                    <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
-                   <SidebarContent isMobile={true}/>
+                   <SidebarContent onLinkClick={handleLinkClick} />
                 </SheetContent>
             </Sheet>
         </header>
@@ -391,7 +399,5 @@ export default function Page() {
     </div>
   );
 }
-
-    
 
     
