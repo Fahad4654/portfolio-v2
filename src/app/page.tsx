@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import React from "react";
@@ -39,6 +38,7 @@ import {
   SheetContent,
   SheetTrigger,
   SheetClose,
+  SheetTitle,
 } from "@/components/ui/sheet";
 import { ContactForm } from "@/components/contact-form";
 import LoadingScreen from "@/components/loading-screen";
@@ -230,6 +230,7 @@ export default function Page() {
                     </Button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-64 flex flex-col p-8">
+                   <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                    <SidebarContent isMobile={true}/>
                 </SheetContent>
             </Sheet>
@@ -393,3 +394,5 @@ export default function Page() {
     </div>
   );
 }
+
+    

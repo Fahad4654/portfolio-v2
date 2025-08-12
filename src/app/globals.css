@@ -45,6 +45,20 @@ body {
   }
 }
 
+@layer utilities {
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+}
+
 @keyframes typing {
   from { width: 0 }
   to { width: 100% }
@@ -64,3 +78,5 @@ body {
     typing 3.5s steps(35, end),
     blink-caret .75s step-end infinite;
 }
+
+    
