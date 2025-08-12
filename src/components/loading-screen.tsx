@@ -35,7 +35,7 @@ export default function LoadingScreen() {
           <div key={index} className="flex items-center gap-2">
             <p className="text-sm text-muted-foreground whitespace-pre-wrap">
               {line}
-              {index === lines.length -1 && !showTyping && <span className="animate-ping">_</span>}
+              {index === lines.length -1 && !showTyping && <span className="animate-pulse">_</span>}
             </p>
           </div>
         ))}
