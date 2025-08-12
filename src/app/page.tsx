@@ -14,6 +14,7 @@ import {
   BookUser,
   MessageSquare,
   FileText,
+  Download,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -145,6 +146,16 @@ export default function Page() {
                   <span>Contact</span>
               </a>
           </nav>
+
+          <div className="mt-8 text-center">
+            <Button asChild>
+                <a href="https://drive.google.com/uc?export=download&id=1oWiQ9cEj0yBZ_8aVMaNYFJOxhTYalIcd" target="_blank" download="Fahad_Kabir_CV.pdf">
+                    <Download className="mr-2 h-4 w-4" />
+                    Download CV
+                </a>
+            </Button>
+          </div>
+
           <div className="mt-auto text-center">
              <div className="flex justify-center gap-4">
               <a href="https://github.com" target="_blank" aria-label="GitHub" className="text-muted-foreground hover:text-primary">
