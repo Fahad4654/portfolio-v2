@@ -1,12 +1,15 @@
 
-import { Loader2 } from "lucide-react";
+import { Terminal } from "lucide-react";
 
 export default function LoadingScreen() {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background font-code">
       <div className="flex flex-col items-center gap-4">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        <p className="text-lg text-muted-foreground">Loading Portfolio...</p>
+        <Terminal className="h-12 w-12 text-primary" />
+        <div className="flex items-center gap-2">
+            <span className="text-lg text-muted-foreground">$</span>
+            <p className="text-lg text-muted-foreground typing-text">Loading Portfolio...</p>
+        </div>
       </div>
     </div>
   );
