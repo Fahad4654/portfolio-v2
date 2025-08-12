@@ -9,7 +9,6 @@ const bootLines = [
   "Mounting /sysroot...",
   "[  OK  ] Reached target Basic System.",
   "[  OK  ] Started udev Kernel Device Manager.",
-  "Welcome to Ubuntu 24.04 LTS!",
   "fahad@portfolio:~$ ",
 ];
 
@@ -49,5 +48,4 @@ export default function LoadingScreen() {
     </div>
   );
 }
-
     
