@@ -115,7 +115,7 @@ export default function Page() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 3500); // 3.5 seconds
+    }, 5000); // 5 seconds
 
     return () => clearTimeout(timer);
   }, []);
@@ -337,3 +337,5 @@ export default function Page() {
     </div>
   );
 }
+
+    
