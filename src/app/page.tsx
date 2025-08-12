@@ -19,7 +19,7 @@ import {
   Download,
   Menu,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -188,6 +188,7 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<Section>('profile');
+  const mainContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -196,6 +197,12 @@ export default function Page() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (mainContentRef.current) {
+      mainContentRef.current.scrollTo(0, 0);
+    }
+  }, [activeSection]);
 
   const handleLinkClick = (section: Section) => {
       setActiveSection(section);
@@ -212,7 +219,7 @@ export default function Page() {
           <SidebarContent activeSection={activeSection} onLinkClick={handleLinkClick} />
       </aside>
       
-      <main className="flex-1 overflow-y-auto relative">
+      <main ref={mainContentRef} className="flex-1 overflow-y-auto relative">
          <div className="md:hidden fixed bottom-6 left-6 z-20">
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
                 <SheetTrigger asChild>
