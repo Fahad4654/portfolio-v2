@@ -1,3 +1,6 @@
+
+"use client";
+
 import Image from "next/image";
 import {
   Github,
@@ -15,6 +18,7 @@ import {
   FileText,
   Download,
 } from "lucide-react";
+import { useState, useEffect } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +32,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ContactForm } from "@/components/contact-form";
+import LoadingScreen from "@/components/loading-screen";
 
 const projects = [
   {
@@ -105,6 +110,20 @@ const education = [
 ]
 
 export default function Page() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 3500); // 3.5 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+  
   return (
     <div className="flex min-h-screen bg-background text-foreground">
       <aside className="w-64 flex-shrink-0 p-8 border-r border-border flex flex-col sticky top-0 h-screen">
