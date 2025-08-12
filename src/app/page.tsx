@@ -190,10 +190,11 @@ const SidebarContent = ({ activeSection, onLinkClick, isMobile = false }: { acti
   </>
 )
 
-export default function Page() {
+const Page = () => {
   const [loading, setLoading] = useState(true);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<Section>('profile');
+  const contentAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -202,6 +203,12 @@ export default function Page() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (contentAreaRef.current) {
+      contentAreaRef.current.scrollTo(0, 0);
+    }
+  }, [activeSection]);
 
   const handleLinkClick = (section: Section) => {
       setActiveSection(section);
@@ -232,7 +239,7 @@ export default function Page() {
                 </SheetContent>
             </Sheet>
         </div>
-        <div key={activeSection} className="overflow-y-auto flex-1">
+        <div className="overflow-y-auto flex-1" ref={contentAreaRef} key={activeSection}>
           <div className="container mx-auto px-4 py-12 md:py-20">
             
             {activeSection === 'profile' && (
@@ -399,4 +406,7 @@ export default function Page() {
 
     </div>
   );
-}
+};
+export default Page;
+
+    
