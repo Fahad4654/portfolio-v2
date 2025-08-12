@@ -154,7 +154,7 @@ const NavLinks = ({ activeSection, onLinkClick }: { activeSection: Section, onLi
 
 const SidebarContent = ({ activeSection, onLinkClick, isMobile = false }: { activeSection: Section, onLinkClick: (section: Section) => void, isMobile?: boolean }) => (
   <>
-    <div className="text-center mb-10">
+    <div className="text-center mb-10 shrink-0">
       <Avatar className="w-24 h-24 mx-auto mb-4 border-4 border-primary/20 shadow-lg">
         <AvatarImage src="https://placehold.co/128x128.png" alt="Profile Picture" data-ai-hint="person portrait" />
         <AvatarFallback>FK</AvatarFallback>
@@ -165,19 +165,17 @@ const SidebarContent = ({ activeSection, onLinkClick, isMobile = false }: { acti
       <p className="text-md text-primary">DevOps Engineer</p>
     </div>
     
-    <div className="flex-1 -mx-2">
-      <ScrollArea className="h-full px-2">
-          {isMobile ? (
-            <SheetClose asChild>
-              <NavLinks activeSection={activeSection} onLinkClick={onLinkClick} />
-            </SheetClose>
-          ) : (
-            <NavLinks activeSection={activeSection} onLinkClick={onLinkClick} />
-          )}
-      </ScrollArea>
-    </div>
+    <ScrollArea className="flex-1 -mx-2 px-2">
+      {isMobile ? (
+        <SheetClose asChild>
+          <NavLinks activeSection={activeSection} onLinkClick={onLinkClick} />
+        </SheetClose>
+      ) : (
+        <NavLinks activeSection={activeSection} onLinkClick={onLinkClick} />
+      )}
+    </ScrollArea>
     
-    <div className="mt-auto text-center pt-8">
+    <div className="mt-auto text-center pt-8 shrink-0">
        <div className="flex justify-center gap-4">
         <a href="https://github.com" target="_blank" aria-label="GitHub" className="text-muted-foreground hover:text-primary">
             <Github />
