@@ -233,7 +233,7 @@ export default function Page() {
                 </SheetContent>
             </Sheet>
         </div>
-        <div className="container mx-auto px-4 py-12 md:py-20" key={activeSection}>
+        <div className="container mx-auto px-4 py-12 md:py-20">
           
           {activeSection === 'profile' && (
             <section id="profile" className="animate-slide-in">
