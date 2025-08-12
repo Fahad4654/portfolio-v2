@@ -196,7 +196,7 @@ export default function Page() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 3000); 
+    }, 5000); 
 
     return () => clearTimeout(timer);
   }, []);
@@ -219,18 +219,11 @@ export default function Page() {
           <SidebarContent />
       </aside>
       
-      <main className="flex-1 overflow-y-auto">
-         <header className="flex items-center justify-between p-4 border-b md:hidden sticky top-0 bg-background/80 backdrop-blur-sm z-10">
-            <div className="flex items-center gap-2">
-                <Avatar className="w-8 h-8 border-2 border-primary/20">
-                <AvatarImage src="https://placehold.co/128x128.png" alt="Profile Picture" data-ai-hint="person portrait" />
-                <AvatarFallback>FK</AvatarFallback>
-                </Avatar>
-                <span className="font-bold text-lg">Fahad Kabir</span>
-            </div>
+      <main className="flex-1 overflow-y-auto relative">
+         <div className="md:hidden fixed bottom-6 right-6 z-20">
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
                 <SheetTrigger asChild>
-                    <Button variant="ghost" size="icon">
+                    <Button variant="default" size="icon" className="rounded-full h-14 w-14 shadow-lg">
                         <Menu className="h-6 w-6" />
                     </Button>
                 </SheetTrigger>
@@ -239,7 +232,7 @@ export default function Page() {
                    <SidebarContent onLinkClick={handleLinkClick} />
                 </SheetContent>
             </Sheet>
-        </header>
+        </div>
         <div className="container mx-auto px-4 py-12 md:py-20">
           {/* Profile Section */}
           <section id="profile" className="mb-20 md:mb-28 scroll-mt-20">
