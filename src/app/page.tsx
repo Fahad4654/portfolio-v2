@@ -37,6 +37,7 @@ import {
   SheetContent,
   SheetHeader,
   SheetTrigger,
+  SheetClose,
 } from "@/components/ui/sheet";
 import { ContactForm } from "@/components/contact-form";
 import LoadingScreen from "@/components/loading-screen";
@@ -130,30 +131,42 @@ const SidebarContent = () => (
     </div>
 
     <nav className="flex flex-col gap-3">
-        <a href="#profile" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-            <User className="h-5 w-5" />
-            <span>Personal Info</span>
-        </a>
-        <a href="#skills" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-            <Shapes className="h-5 w-5" />
-            <span>Technical Skills</span>
-        </a>
-        <a href="#experience" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-            <BriefcaseBusiness className="h-5 w-5" />
-            <span>Work Experience</span>
-        </a>
-        <a href="#portfolio" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-            <FileText className="h-5 w-5" />
-            <span>Projects</span>
-        </a>
-        <a href="#education" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-            <GraduationCap className="h-5 w-5" />
-            <span>Education</span>
-        </a>
-        <a href="#contact" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-            <MessageSquare className="h-5 w-5" />
-            <span>Contact</span>
-        </a>
+        <SheetClose asChild>
+            <a href="#profile" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                <User className="h-5 w-5" />
+                <span>Personal Info</span>
+            </a>
+        </SheetClose>
+        <SheetClose asChild>
+            <a href="#skills" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                <Shapes className="h-5 w-5" />
+                <span>Technical Skills</span>
+            </a>
+        </SheetClose>
+        <SheetClose asChild>
+            <a href="#experience" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                <BriefcaseBusiness className="h-5 w-5" />
+                <span>Work Experience</span>
+            </a>
+        </SheetClose>
+        <SheetClose asChild>
+            <a href="#portfolio" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                <FileText className="h-5 w-5" />
+                <span>Projects</span>
+            </a>
+        </SheetClose>
+        <SheetClose asChild>
+            <a href="#education" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                <GraduationCap className="h-5 w-5" />
+                <span>Education</span>
+            </a>
+        </SheetClose>
+        <SheetClose asChild>
+            <a href="#contact" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                <MessageSquare className="h-5 w-5" />
+                <span>Contact</span>
+            </a>
+        </SheetClose>
     </nav>
 
     <div className="mt-auto text-center">
