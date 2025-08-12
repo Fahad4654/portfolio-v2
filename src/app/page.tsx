@@ -152,7 +152,7 @@ const NavLinks = ({ activeSection, onLinkClick }: { activeSection: Section, onLi
 };
 
 
-const SidebarContent = ({ activeSection, onLinkClick }: { activeSection: Section, onLinkClick: (section: Section) => void }) => (
+const SidebarContent = ({ activeSection, onLinkClick, isMobile = false }: { activeSection: Section, onLinkClick: (section: Section) => void, isMobile?: boolean }) => (
   <>
     <div className="text-center mb-10">
       <Avatar className="w-24 h-24 mx-auto mb-4 border-4 border-primary/20 shadow-lg">
@@ -165,11 +165,17 @@ const SidebarContent = ({ activeSection, onLinkClick }: { activeSection: Section
       <p className="text-md text-primary">DevOps Engineer</p>
     </div>
     
-    <ScrollArea className="flex-1 -mx-2">
-        <div className="px-2">
+    <div className="flex-1 -mx-2">
+      <ScrollArea className="h-full px-2">
+          {isMobile ? (
+            <SheetClose asChild>
+              <NavLinks activeSection={activeSection} onLinkClick={onLinkClick} />
+            </SheetClose>
+          ) : (
             <NavLinks activeSection={activeSection} onLinkClick={onLinkClick} />
-        </div>
-    </ScrollArea>
+          )}
+      </ScrollArea>
+    </div>
     
     <div className="mt-auto text-center pt-8">
        <div className="flex justify-center gap-4">
@@ -188,7 +194,6 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<Section>('profile');
-  const mainContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -197,12 +202,6 @@ export default function Page() {
 
     return () => clearTimeout(timer);
   }, []);
-
-  useEffect(() => {
-    if (mainContentRef.current) {
-      mainContentRef.current.scrollTo(0, 0);
-    }
-  }, [activeSection]);
 
   const handleLinkClick = (section: Section) => {
       setActiveSection(section);
@@ -229,11 +228,11 @@ export default function Page() {
                 </SheetTrigger>
                 <SheetContent side="left" className="w-64 flex flex-col p-8">
                    <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
-                   <SidebarContent activeSection={activeSection} onLinkClick={handleLinkClick} />
+                   <SidebarContent activeSection={activeSection} onLinkClick={handleLinkClick} isMobile />
                 </SheetContent>
             </Sheet>
         </div>
-        <div ref={mainContentRef} className="overflow-y-auto flex-1">
+        <div key={activeSection} className="overflow-y-auto flex-1">
           <div className="container mx-auto px-4 py-12 md:py-20">
             
             {activeSection === 'profile' && (
@@ -401,5 +400,3 @@ export default function Page() {
     </div>
   );
 }
-
-    
