@@ -17,6 +17,7 @@ import {
   MessageSquare,
   FileText,
   Download,
+  Menu,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -31,6 +32,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { ContactForm } from "@/components/contact-form";
 import LoadingScreen from "@/components/loading-screen";
 
@@ -109,6 +116,59 @@ const education = [
     }
 ]
 
+const SidebarContent = () => (
+  <>
+    <div className="text-center mb-10">
+      <Avatar className="w-24 h-24 mx-auto mb-4 border-4 border-primary/20 shadow-lg">
+        <AvatarImage src="https://placehold.co/128x128.png" alt="Profile Picture" data-ai-hint="person portrait" />
+        <AvatarFallback>FK</AvatarFallback>
+      </Avatar>
+      <h1 className="text-2xl font-bold text-foreground">
+        FAHAD KABIR
+      </h1>
+      <p className="text-md text-primary">DevOps Engineer</p>
+    </div>
+
+    <nav className="flex flex-col gap-3">
+        <a href="#profile" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+            <User className="h-5 w-5" />
+            <span>Personal Info</span>
+        </a>
+        <a href="#skills" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+            <Shapes className="h-5 w-5" />
+            <span>Technical Skills</span>
+        </a>
+        <a href="#experience" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+            <BriefcaseBusiness className="h-5 w-5" />
+            <span>Work Experience</span>
+        </a>
+        <a href="#portfolio" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+            <FileText className="h-5 w-5" />
+            <span>Projects</span>
+        </a>
+        <a href="#education" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+            <GraduationCap className="h-5 w-5" />
+            <span>Education</span>
+        </a>
+        <a href="#contact" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+            <MessageSquare className="h-5 w-5" />
+            <span>Contact</span>
+        </a>
+    </nav>
+
+    <div className="mt-auto text-center">
+       <div className="flex justify-center gap-4">
+        <a href="https://github.com" target="_blank" aria-label="GitHub" className="text-muted-foreground hover:text-primary">
+            <Github />
+        </a>
+        <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn" className="text-muted-foreground hover:text-primary">
+            <Linkedin />
+        </a>
+      </div>
+    </div>
+  </>
+)
+
 export default function Page() {
   const [loading, setLoading] = useState(true);
 
@@ -126,58 +186,30 @@ export default function Page() {
   
   return (
     <div className="flex min-h-screen bg-background text-foreground">
-      <aside className="w-64 flex-shrink-0 p-8 border-r border-border flex flex-col sticky top-0 h-screen">
-          <div className="text-center mb-10">
-            <Avatar className="w-24 h-24 mx-auto mb-4 border-4 border-primary/20 shadow-lg">
-              <AvatarImage src="https://placehold.co/128x128.png" alt="Profile Picture" data-ai-hint="person portrait" />
-              <AvatarFallback>FK</AvatarFallback>
-            </Avatar>
-            <h1 className="text-2xl font-bold text-foreground">
-              FAHAD KABIR
-            </h1>
-            <p className="text-md text-primary">DevOps Engineer</p>
-          </div>
-
-          <nav className="flex flex-col gap-3">
-              <a href="#profile" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                  <User className="h-5 w-5" />
-                  <span>Personal Info</span>
-              </a>
-              <a href="#skills" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                  <Shapes className="h-5 w-5" />
-                  <span>Technical Skills</span>
-              </a>
-              <a href="#experience" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                  <BriefcaseBusiness className="h-5 w-5" />
-                  <span>Work Experience</span>
-              </a>
-              <a href="#portfolio" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                  <FileText className="h-5 w-5" />
-                  <span>Projects</span>
-              </a>
-              <a href="#education" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                  <GraduationCap className="h-5 w-5" />
-                  <span>Education</span>
-              </a>
-              <a href="#contact" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                  <MessageSquare className="h-5 w-5" />
-                  <span>Contact</span>
-              </a>
-          </nav>
-
-          <div className="mt-auto text-center">
-             <div className="flex justify-center gap-4">
-              <a href="https://github.com" target="_blank" aria-label="GitHub" className="text-muted-foreground hover:text-primary">
-                  <Github />
-              </a>
-              <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn" className="text-muted-foreground hover:text-primary">
-                  <Linkedin />
-              </a>
-            </div>
-          </div>
+      <aside className="w-64 flex-shrink-0 p-8 border-r border-border hidden md:flex flex-col sticky top-0 h-screen">
+          <SidebarContent />
       </aside>
       
       <main className="flex-1 overflow-y-auto">
+         <header className="flex items-center justify-between p-4 border-b md:hidden sticky top-0 bg-background/80 backdrop-blur-sm z-10">
+            <div className="flex items-center gap-2">
+                <Avatar className="w-8 h-8 border-2 border-primary/20">
+                <AvatarImage src="https://placehold.co/128x128.png" alt="Profile Picture" data-ai-hint="person portrait" />
+                <AvatarFallback>FK</AvatarFallback>
+                </Avatar>
+                <span className="font-bold text-lg">Fahad Kabir</span>
+            </div>
+            <Sheet>
+                <SheetTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                        <Menu className="h-6 w-6" />
+                    </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-64 flex flex-col p-8">
+                   <SidebarContent />
+                </SheetContent>
+            </Sheet>
+        </header>
         <div className="container mx-auto px-4 py-12 md:py-20">
           {/* Profile Section */}
           <section id="profile" className="mb-20 md:mb-28 scroll-mt-20">
@@ -337,3 +369,5 @@ export default function Page() {
     </div>
   );
 }
+
+    
