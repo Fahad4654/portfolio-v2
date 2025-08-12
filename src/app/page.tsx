@@ -42,6 +42,7 @@ import {
 } from "@/components/ui/sheet";
 import { ContactForm } from "@/components/contact-form";
 import LoadingScreen from "@/components/loading-screen";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const projects = [
   {
@@ -119,47 +120,39 @@ const education = [
 ]
 
 const NavLinks = ({ isMobile }: { isMobile?: boolean }) => {
-    const Wrapper = isMobile ? SheetClose : React.Fragment;
-    const wrapperProps = isMobile ? { asChild: true } : {};
+    const commonClasses = "flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors";
+    const links = [
+        { href: "#profile", icon: User, text: "Personal Info" },
+        { href: "#skills", icon: Shapes, text: "Technical Skills" },
+        { href: "#experience", icon: BriefcaseBusiness, text: "Work Experience" },
+        { href: "#portfolio", icon: FileText, text: "Projects" },
+        { href: "#education", icon: GraduationCap, text: "Education" },
+        { href: "#contact", icon: MessageSquare, text: "Contact" },
+    ];
+
+    if (isMobile) {
+        return (
+            <nav className="flex flex-col gap-3">
+                {links.map(link => (
+                    <SheetClose asChild key={link.href}>
+                        <a href={link.href} className={commonClasses}>
+                            <link.icon className="h-5 w-5" />
+                            <span>{link.text}</span>
+                        </a>
+                    </SheetClose>
+                ))}
+            </nav>
+        );
+    }
 
     return (
         <nav className="flex flex-col gap-3">
-            <Wrapper {...wrapperProps}>
-                <a href="#profile" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                    <User className="h-5 w-5" />
-                    <span>Personal Info</span>
+            {links.map(link => (
+                <a key={link.href} href={link.href} className={commonClasses}>
+                    <link.icon className="h-5 w-5" />
+                    <span>{link.text}</span>
                 </a>
-            </Wrapper>
-            <Wrapper {...wrapperProps}>
-                <a href="#skills" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                    <Shapes className="h-5 w-5" />
-                    <span>Technical Skills</span>
-                </a>
-            </Wrapper>
-            <Wrapper {...wrapperProps}>
-                <a href="#experience" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                    <BriefcaseBusiness className="h-5 w-5" />
-                    <span>Work Experience</span>
-                </a>
-            </Wrapper>
-            <Wrapper {...wrapperProps}>
-                <a href="#portfolio" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                    <FileText className="h-5 w-5" />
-                    <span>Projects</span>
-                </a>
-            </Wrapper>
-            <Wrapper {...wrapperProps}>
-                <a href="#education" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                    <GraduationCap className="h-5 w-5" />
-                    <span>Education</span>
-                </a>
-            </Wrapper>
-            <Wrapper {...wrapperProps}>
-                <a href="#contact" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                    <MessageSquare className="h-5 w-5" />
-                    <span>Contact</span>
-                </a>
-            </Wrapper>
+            ))}
         </nav>
     );
 };
@@ -177,10 +170,14 @@ const SidebarContent = ({ isMobile = false }) => (
       </h1>
       <p className="text-md text-primary">DevOps Engineer</p>
     </div>
-
-    <NavLinks isMobile={isMobile} />
     
-    <div className="mt-auto text-center">
+    <ScrollArea className="flex-1 -mx-2">
+        <div className="px-2">
+            <NavLinks isMobile={isMobile} />
+        </div>
+    </ScrollArea>
+    
+    <div className="mt-auto text-center pt-8">
        <div className="flex justify-center gap-4">
         <a href="https://github.com" target="_blank" aria-label="GitHub" className="text-muted-foreground hover:text-primary">
             <Github />
@@ -394,5 +391,7 @@ export default function Page() {
     </div>
   );
 }
+
+    
 
     
