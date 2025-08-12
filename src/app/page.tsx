@@ -8,9 +8,12 @@ import {
   GraduationCap,
   MapPin,
   Phone,
-  Settings,
   User,
-  Star,
+  BriefcaseBusiness,
+  Shapes,
+  BookUser,
+  MessageSquare,
+  FileText,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -101,60 +104,97 @@ const education = [
     }
 ]
 
-export default function Home() {
+export default function Page() {
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <main className="flex-1">
-        <div className="container mx-auto px-4 py-12 md:py-20">
-          {/* Profile Section */}
-          <section id="profile" className="text-center mb-20 md:mb-28">
-            <Avatar className="w-32 h-32 mx-auto mb-4 border-4 border-primary/20 shadow-lg">
+    <div className="flex min-h-screen bg-background text-foreground">
+      <aside className="w-64 flex-shrink-0 p-8 border-r border-border flex flex-col sticky top-0 h-screen">
+          <div className="text-center mb-10">
+            <Avatar className="w-24 h-24 mx-auto mb-4 border-4 border-primary/20 shadow-lg">
               <AvatarImage src="https://placehold.co/128x128.png" alt="Profile Picture" data-ai-hint="person portrait" />
               <AvatarFallback>FK</AvatarFallback>
             </Avatar>
-            <h1 className="text-4xl md:text-5xl font-bold font-headline mb-2 text-foreground">
+            <h1 className="text-2xl font-bold text-foreground">
               FAHAD KABIR
             </h1>
-            <p className="text-xl font-semibold text-primary mb-4">DevOps Engineer</p>
-            <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-muted-foreground mb-6">
-                <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4" />
-                    <span>Bashundhara R/A, Dhaka</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <Phone className="h-4 w-4" />
-                    <span>+880 1772-967944</span>
-                </div>
-                 <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4" />
-                    <span>kabirkaife@gmail.com</span>
-                </div>
+            <p className="text-md text-primary">DevOps Engineer</p>
+          </div>
+
+          <nav className="flex flex-col gap-3">
+              <a href="#profile" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                  <User className="h-5 w-5" />
+                  <span>Personal Info</span>
+              </a>
+              <a href="#skills" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                  <Shapes className="h-5 w-5" />
+                  <span>Technical Skills</span>
+              </a>
+              <a href="#experience" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                  <BriefcaseBusiness className="h-5 w-5" />
+                  <span>Work Experience</span>
+              </a>
+              <a href="#portfolio" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                  <FileText className="h-5 w-5" />
+                  <span>Projects</span>
+              </a>
+              <a href="#education" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                  <GraduationCap className="h-5 w-5" />
+                  <span>Education</span>
+              </a>
+              <a href="#contact" className="flex items-center gap-3 p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                  <MessageSquare className="h-5 w-5" />
+                  <span>Contact</span>
+              </a>
+          </nav>
+          <div className="mt-auto text-center">
+             <div className="flex justify-center gap-4">
+              <a href="https://github.com" target="_blank" aria-label="GitHub" className="text-muted-foreground hover:text-primary">
+                  <Github />
+              </a>
+              <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn" className="text-muted-foreground hover:text-primary">
+                  <Linkedin />
+              </a>
             </div>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-6">
-              DevOps Engineer with expertise in cloud infrastructure, CI/CD pipelines, and system automation. Skilled in Node.js, React, Docker, and Ansible, with a strong background in problem-solving and optimizing system performance. Passionate about collaborating with teams to drive efficiency and innovation.
-            </p>
-            <div className="flex justify-center gap-2">
-              <Button variant="outline" asChild>
-                <a href="https://github.com" target="_blank" aria-label="GitHub">
-                  <Github /> GitHub
-                </a>
-              </Button>
-              <Button variant="outline" asChild>
-                <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
-                  <Linkedin /> LinkedIn
-                </a>
-              </Button>
-            </div>
+          </div>
+      </aside>
+      
+      <main className="flex-1 overflow-y-auto">
+        <div className="container mx-auto px-4 py-12 md:py-20">
+          {/* Profile Section */}
+          <section id="profile" className="mb-20 md:mb-28 scroll-mt-20">
+            <h2 className="text-3xl md:text-4xl font-bold mb-10 font-headline">
+              Personal Info
+            </h2>
+            <Card>
+                <CardContent className="p-6 text-lg">
+                     <p className="text-muted-foreground max-w-3xl mb-6">
+                      DevOps Engineer with expertise in cloud infrastructure, CI/CD pipelines, and system automation. Skilled in Node.js, React, Docker, and Ansible, with a strong background in problem-solving and optimizing system performance. Passionate about collaborating with teams to drive efficiency and innovation.
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-muted-foreground">
+                        <div className="flex items-center gap-3">
+                            <MapPin className="h-5 w-5 text-primary" />
+                            <span>Bashundhara R/A, Dhaka</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <Phone className="h-5 w-5 text-primary" />
+                            <span>+880 1772-967944</span>
+                        </div>
+                         <div className="flex items-center gap-3">
+                            <Mail className="h-5 w-5 text-primary" />
+                            <span>kabirkaife@gmail.com</span>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
           </section>
           
            {/* Skills Section */}
-          <section id="skills" className="mb-20 md:mb-28">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 font-headline">
+          <section id="skills" className="mb-20 md:mb-28 scroll-mt-20">
+            <h2 className="text-3xl md:text-4xl font-bold mb-10 font-headline">
               Technical Skills
             </h2>
             <Card>
                 <CardContent className="p-6">
-                    <div className="flex flex-wrap justify-center gap-3">
+                    <div className="flex flex-wrap justify-start gap-3">
                         {technicalSkills.map((skill) => (
                             <Badge key={skill} variant="secondary" className="text-base px-4 py-2 rounded-lg">{skill}</Badge>
                         ))}
@@ -164,8 +204,8 @@ export default function Home() {
           </section>
 
           {/* Experience Section */}
-            <section id="experience" className="mb-20 md:mb-28">
-                <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 font-headline">
+            <section id="experience" className="mb-20 md:mb-28 scroll-mt-20">
+                <h2 className="text-3xl md:text-4xl font-bold mb-12 font-headline">
                     Work Experience
                 </h2>
                 <div className="relative pl-6 after:absolute after:inset-y-0 after:left-0 after:w-px after:bg-border">
@@ -188,11 +228,11 @@ export default function Home() {
             </section>
 
           {/* Project Portfolio Section */}
-          <section id="portfolio" className="mb-20 md:mb-28">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 font-headline">
+          <section id="portfolio" className="mb-20 md:mb-28 scroll-mt-20">
+            <h2 className="text-3xl md:text-4xl font-bold mb-10 font-headline">
               My Projects
             </h2>
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-2">
               {projects.map((project, index) => (
                 <Card
                   key={index}
@@ -232,11 +272,11 @@ export default function Home() {
           </section>
           
            {/* Education Section */}
-            <section id="education" className="mb-20 md:mb-28">
-                <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 font-headline">
+            <section id="education" className="mb-20 md:mb-28 scroll-mt-20">
+                <h2 className="text-3xl md:text-4xl font-bold mb-12 font-headline">
                     Education
                 </h2>
-                <div className="grid md:grid-cols-3 gap-8">
+                <div className="grid md:grid-cols-2 gap-8">
                     {education.map((edu, index) => (
                          <Card key={index} className="flex flex-col items-center text-center p-6">
                             <GraduationCap className="h-10 w-10 mb-4 text-primary"/>
@@ -249,7 +289,7 @@ export default function Home() {
             </section>
 
           {/* Contact Section */}
-          <section id="contact" className="max-w-2xl mx-auto">
+          <section id="contact" className="max-w-2xl mx-auto scroll-mt-20">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 font-headline">
               Get In Touch
             </h2>
@@ -259,14 +299,15 @@ export default function Home() {
               </CardContent>
             </Card>
           </section>
+
+            <footer className="py-6 border-t mt-20 md:mt-28">
+                <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+                <p>&copy; {new Date().getFullYear()} Fahad Kabir. All rights reserved.</p>
+                </div>
+            </footer>
         </div>
       </main>
 
-      <footer className="py-6 border-t mt-20 md:mt-28">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Fahad Kabir. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 }
