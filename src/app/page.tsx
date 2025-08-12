@@ -213,14 +213,14 @@ export default function Page() {
       </aside>
       
       <main className="flex-1 overflow-y-auto relative">
-         <div className="md:hidden fixed bottom-6 right-6 z-20">
+         <div className="md:hidden fixed bottom-6 left-6 z-20">
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
                 <SheetTrigger asChild>
                     <Button variant="default" size="icon" className="rounded-full h-14 w-14 shadow-lg">
                         <Menu className="h-6 w-6" />
                     </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-64 flex flex-col p-8">
+                <SheetContent side="left" className="w-64 flex flex-col p-8">
                    <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                    <SidebarContent activeSection={activeSection} onLinkClick={handleLinkClick} />
                 </SheetContent>
