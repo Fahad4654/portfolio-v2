@@ -190,7 +190,7 @@ const SidebarContent = ({ activeSection, onLinkClick, isMobile = false }: { acti
   </>
 )
 
-export default function Page({}: {}) {
+export default function Page() {
   const [loading, setLoading] = useState(true);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<Section>('profile');
