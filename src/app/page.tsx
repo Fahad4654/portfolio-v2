@@ -164,6 +164,14 @@ const NavLinks = ({ activeSection, onLinkClick, isMobile = false }: { activeSect
 
 
 const SidebarContent = ({ activeSection, onLinkClick, isMobile = false }: { activeSection: Section, onLinkClick: (section: Section) => void, isMobile?: boolean }) => {
+    const navSection = (
+      <div className="flex-1 min-h-0">
+          <ScrollArea className="h-full pr-4 -mr-4">
+              <NavLinks activeSection={activeSection} onLinkClick={onLinkClick} isMobile={isMobile}/>
+          </ScrollArea>
+      </div>
+    );
+  
     return (
         <div className="flex flex-col h-full p-6 bg-card/50">
             <div className="text-center shrink-0">
@@ -177,10 +185,14 @@ const SidebarContent = ({ activeSection, onLinkClick, isMobile = false }: { acti
                 <p className="text-md text-primary">DevOps Engineer</p>
             </div>
             
-            <div className="mt-10 flex-1 min-h-0">
-                 <ScrollArea className="h-full pr-4 -mr-4">
-                    <NavLinks activeSection={activeSection} onLinkClick={onLinkClick} isMobile={isMobile}/>
-                </ScrollArea>
+            <div className="mt-10 flex-1 flex flex-col min-h-0">
+                {isMobile ? (
+                    navSection
+                ) : (
+                    <ScrollArea className="h-full pr-4 -mr-4">
+                        <NavLinks activeSection={activeSection} onLinkClick={onLinkClick} isMobile={isMobile}/>
+                    </ScrollArea>
+                )}
             </div>
             
             <div className="text-center shrink-0 mt-6">
@@ -235,7 +247,7 @@ const Page = () => {
       </aside>
       
       <main className="flex-1 relative flex flex-col">
-         <div className="md:hidden fixed bottom-6 left-6 z-20">
+         <div className="md:hidden fixed bottom-6 right-6 z-20">
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
                 <SheetTrigger asChild>
                     <Button variant="default" size="icon" className="rounded-full h-16 w-16 shadow-lg shadow-primary/30">
@@ -293,7 +305,7 @@ const Page = () => {
                 </h2>
                 <Card>
                     <CardContent className="p-8">
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                        <div className="flex flex-wrap gap-3 justify-center">
                             {technicalSkills.map((skill) => (
                                 <Badge key={skill} variant="secondary" className="text-base px-4 py-2 rounded-lg justify-center transition-transform hover:scale-105 hover:bg-primary/20">{skill}</Badge>
                             ))}
@@ -337,7 +349,7 @@ const Page = () => {
                   {projects.map((project, index) => (
                     <Card
                       key={index}
-                      className="flex flex-col overflow-hidden transition-all duration-300 ease-in-out hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1"
+                      className="flex flex-col overflow-hidden transition-all duration-300 ease-in-out hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1 bg-card/50"
                     >
                       <CardHeader className="p-0">
                         <Image
@@ -380,7 +392,7 @@ const Page = () => {
                   </h2>
                   <div className="grid md:grid-cols-2 gap-8">
                       {education.map((edu, index) => (
-                          <Card key={index} className="flex flex-col items-center text-center p-8 hover:border-primary/50 transition-colors">
+                          <Card key={index} className="flex flex-col items-center text-center p-8 hover:border-primary/50 transition-colors bg-card/50">
                               <GraduationCap className="h-12 w-12 mb-4 text-primary"/>
                               <CardTitle className="text-xl mb-1 font-headline">{edu.degree}</CardTitle>
                               <CardDescription className="mb-2">{edu.institution}</CardDescription>
@@ -396,7 +408,7 @@ const Page = () => {
                 <h2 className="text-4xl md:text-5xl font-bold text-center mb-10 font-headline text-primary">
                   Get In Touch
                 </h2>
-                <Card className="shadow-lg">
+                <Card className="shadow-lg bg-card/50">
                   <CardContent className="p-6 md:p-8">
                     <ContactForm />
                   </CardContent>
@@ -417,3 +429,5 @@ const Page = () => {
   );
 };
 export default Page;
+
+    
