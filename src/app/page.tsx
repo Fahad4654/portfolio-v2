@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from "react";
@@ -131,62 +132,78 @@ const links: { id: Section; icon: React.ElementType; text: string }[] = [
 ];
 
 
-const NavLinks = ({ activeSection, onLinkClick }: { activeSection: Section, onLinkClick: (section: Section) => void }) => {
-    return (
-        <nav className="flex flex-col gap-3">
-            {links.map(link => (
-                <button
-                    key={link.id}
-                    onClick={() => onLinkClick(link.id)}
-                    className={cn(
-                        "flex items-center gap-3 p-2 rounded-md transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                        activeSection === link.id && "bg-accent text-accent-foreground"
-                    )}
-                >
-                    <link.icon className="h-5 w-5" />
-                    <span>{link.text}</span>
-                </button>
-            ))}
-        </nav>
+const NavLinks = ({ activeSection, onLinkClick, isMobile = false }: { activeSection: Section, onLinkClick: (section: Section) => void, isMobile?: boolean }) => {
+    const NavLinkButtons = () => (
+      <nav className="flex flex-col gap-3">
+          {links.map(link => (
+              <button
+                  key={link.id}
+                  onClick={() => onLinkClick(link.id)}
+                  className={cn(
+                      "flex items-center gap-3 p-2 rounded-md transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                      activeSection === link.id && "bg-accent text-accent-foreground"
+                  )}
+              >
+                  <link.icon className="h-5 w-5" />
+                  <span>{link.text}</span>
+              </button>
+          ))}
+      </nav>
     );
+
+    if (isMobile) {
+      return (
+        <SheetClose asChild>
+          <NavLinkButtons />
+        </SheetClose>
+      )
+    }
+
+    return <NavLinkButtons />;
 };
 
 
-const SidebarContent = ({ activeSection, onLinkClick, isMobile = false }: { activeSection: Section, onLinkClick: (section: Section) => void, isMobile?: boolean }) => (
-  <>
-    <div className="text-center mb-10 shrink-0">
-      <Avatar className="w-24 h-24 mx-auto mb-4 border-4 border-primary/20 shadow-lg">
-        <AvatarImage src="https://placehold.co/128x128.png" alt="Profile Picture" data-ai-hint="person portrait" />
-        <AvatarFallback>FK</AvatarFallback>
-      </Avatar>
-      <h1 className="text-2xl font-bold text-foreground">
-        FAHAD KABIR
-      </h1>
-      <p className="text-md text-primary">DevOps Engineer</p>
-    </div>
+const SidebarContent = ({ activeSection, onLinkClick, isMobile = false }: { activeSection: Section, onLinkClick: (section: Section) => void, isMobile?: boolean }) => {
     
-    <ScrollArea className="flex-1 -mx-2 px-2">
-      {isMobile ? (
-        <SheetClose asChild>
-          <NavLinks activeSection={activeSection} onLinkClick={onLinkClick} />
-        </SheetClose>
-      ) : (
-        <NavLinks activeSection={activeSection} onLinkClick={onLinkClick} />
-      )}
-    </ScrollArea>
-    
-    <div className="mt-auto text-center pt-8 shrink-0">
-       <div className="flex justify-center gap-4">
-        <a href="https://github.com" target="_blank" aria-label="GitHub" className="text-muted-foreground hover:text-primary">
-            <Github />
-        </a>
-        <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn" className="text-muted-foreground hover:text-primary">
-            <Linkedin />
-        </a>
-      </div>
-    </div>
-  </>
-)
+    const content = (
+      <>
+        <div className="text-center shrink-0">
+          <Avatar className="w-24 h-24 mx-auto mb-4 border-4 border-primary/20 shadow-lg">
+            <AvatarImage src="https://placehold.co/128x128.png" alt="Profile Picture" data-ai-hint="person portrait" />
+            <AvatarFallback>FK</AvatarFallback>
+          </Avatar>
+          <h1 className="text-2xl font-bold text-foreground">
+            FAHAD KABIR
+          </h1>
+          <p className="text-md text-primary">DevOps Engineer</p>
+        </div>
+        
+        <div className="mt-10 mb-8 flex-1 min-h-0">
+            <ScrollArea className="h-full -mx-2 px-2">
+                <NavLinks activeSection={activeSection} onLinkClick={onLinkClick} isMobile={isMobile}/>
+            </ScrollArea>
+        </div>
+        
+        <div className="text-center shrink-0">
+           <div className="flex justify-center gap-4">
+            <a href="https://github.com" target="_blank" aria-label="GitHub" className="text-muted-foreground hover:text-primary">
+                <Github />
+            </a>
+            <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn" className="text-muted-foreground hover:text-primary">
+                <Linkedin />
+            </a>
+          </div>
+        </div>
+      </>
+    );
+
+    if(isMobile) {
+        return <div className="p-8 flex flex-col h-full">{content}</div>
+    }
+
+    return <div className="p-8 border-r border-border flex flex-col sticky top-0 h-screen">{content}</div>
+};
+
 
 const Page = () => {
   const [loading, setLoading] = useState(true);
@@ -202,12 +219,6 @@ const Page = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  useEffect(() => {
-    if (contentAreaRef.current) {
-      contentAreaRef.current.scrollTo(0, 0);
-    }
-  }, [activeSection]);
-
   const handleLinkClick = (section: Section) => {
       setActiveSection(section);
       setIsSheetOpen(false);
@@ -219,7 +230,7 @@ const Page = () => {
   
   return (
     <div className="flex min-h-screen bg-background text-foreground">
-      <aside className="w-64 flex-shrink-0 p-8 border-r border-border hidden md:flex flex-col sticky top-0 h-screen">
+      <aside className="w-64 flex-shrink-0 hidden md:block">
           <SidebarContent activeSection={activeSection} onLinkClick={handleLinkClick} />
       </aside>
       
@@ -231,13 +242,13 @@ const Page = () => {
                         <Menu className="h-6 w-6" />
                     </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="w-64 flex flex-col p-8">
+                <SheetContent side="left" className="w-64 p-0">
                    <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                    <SidebarContent activeSection={activeSection} onLinkClick={handleLinkClick} isMobile />
                 </SheetContent>
             </Sheet>
         </div>
-        <div key={activeSection} ref={contentAreaRef} className="overflow-y-auto flex-1">
+        <div key={activeSection} className="overflow-y-auto flex-1">
           <div className="container mx-auto px-4 py-12 md:py-20">
             
             {activeSection === 'profile' && (
@@ -247,7 +258,7 @@ const Page = () => {
                 </h2>
                 <Card>
                     <CardContent className="p-6 text-lg">
-                        <p className="text-muted-foreground max-w-3xl mb-6">
+                        <p className="text-muted-foreground mb-6">
                           DevOps Engineer with expertise in cloud infrastructure, CI/CD pipelines, and system automation. Skilled in Node.js, React, Docker, and Ansible, with a strong background in problem-solving and optimizing system performance. Passionate about collaborating with teams to drive efficiency and innovation.
                         </p>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-muted-foreground mb-6">
