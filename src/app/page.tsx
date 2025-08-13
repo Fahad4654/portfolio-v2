@@ -261,7 +261,7 @@ const Page = () => {
             </Sheet>
         </div>
         <div ref={contentAreaRef} className="overflow-y-auto flex-1">
-          <div key={activeSection} className="container mx-auto px-6 py-16 md:px-12 md:py-24 animate-slide-in">
+          <div className="container mx-auto px-6 py-16 md:px-12 md:py-24 animate-slide-in">
             
             {activeSection === 'profile' && (
               <section id="profile">
@@ -304,13 +304,13 @@ const Page = () => {
                   Technical Skills
                 </h2>
                 <Card>
-                    <CardContent className="p-8">
-                        <div className="flex flex-wrap gap-3 justify-center">
-                            {technicalSkills.map((skill) => (
-                                <Badge key={skill} variant="secondary" className="text-base px-4 py-2 rounded-lg justify-center transition-transform hover:scale-105 hover:bg-primary/20">{skill}</Badge>
-                            ))}
-                        </div>
-                    </CardContent>
+                  <CardContent className="p-8">
+                      <div className="flex flex-wrap gap-3 justify-center">
+                          {technicalSkills.map((skill) => (
+                              <Badge key={skill} variant="outline" className="text-base px-4 py-2 rounded-lg justify-center transition-transform hover:scale-105 hover:bg-primary/20 bg-transparent">{skill}</Badge>
+                          ))}
+                      </div>
+                  </CardContent>
                 </Card>
               </section>
             )}
@@ -429,5 +429,3 @@ const Page = () => {
   );
 };
 export default Page;
-
-    
