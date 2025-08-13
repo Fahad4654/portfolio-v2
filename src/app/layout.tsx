@@ -1,11 +1,22 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
+import { Inter, Playfair_Display } from 'next/font/google'
 
 export const metadata: Metadata = {
   title: 'Fahad Kabir | DevOps Engineer',
   description: 'Your Personal & Professional Space',
 };
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+})
+
+const playfairDisplay = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair-display',
+})
 
 export default function RootLayout({
   children,
@@ -14,12 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark scroll-smooth">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
-      </head>
-      <body className="font-body antialiased">
+      <body className={`${inter.variable} ${playfairDisplay.variable} font-body antialiased`}>
         <Toaster />
         {children}
       </body>
