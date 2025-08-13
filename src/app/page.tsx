@@ -164,8 +164,8 @@ const NavLinks = ({ activeSection, onLinkClick, isMobile = false }: { activeSect
 
 
 const SidebarContent = ({ activeSection, onLinkClick, isMobile = false }: { activeSection: Section, onLinkClick: (section: Section) => void, isMobile?: boolean }) => {
-  return (
-    <div className="flex flex-col h-full p-6 bg-card/50">
+  const content = (
+    <>
       <div className="text-center shrink-0">
         <Avatar className="w-28 h-28 mx-auto mb-4 border-4 border-primary/20 shadow-lg">
           <AvatarImage src="https://placehold.co/128x128.png" alt="Profile Picture" data-ai-hint="person portrait" />
@@ -178,9 +178,7 @@ const SidebarContent = ({ activeSection, onLinkClick, isMobile = false }: { acti
       </div>
 
       <div className="mt-10 flex-1 flex flex-col min-h-0">
-        <ScrollArea className="h-full pr-4 -mr-4">
           <NavLinks activeSection={activeSection} onLinkClick={onLinkClick} isMobile={isMobile}/>
-        </ScrollArea>
       </div>
 
       <div className="text-center shrink-0 mt-6">
@@ -193,6 +191,46 @@ const SidebarContent = ({ activeSection, onLinkClick, isMobile = false }: { acti
           </a>
         </div>
       </div>
+    </>
+  );
+
+  if (isMobile) {
+    return (
+      <div className="flex flex-col h-full p-6 bg-card/50">
+        <div className="text-center shrink-0">
+          <Avatar className="w-28 h-28 mx-auto mb-4 border-4 border-primary/20 shadow-lg">
+            <AvatarImage src="https://placehold.co/128x128.png" alt="Profile Picture" data-ai-hint="person portrait" />
+            <AvatarFallback>FK</AvatarFallback>
+          </Avatar>
+          <h1 className="text-2xl font-bold text-foreground font-headline">
+            FAHAD KABIR
+          </h1>
+          <p className="text-md text-primary">DevOps Engineer</p>
+        </div>
+
+        <div className="mt-10 flex-1 min-h-0">
+          <ScrollArea className="h-full pr-4 -mr-4">
+            <NavLinks activeSection={activeSection} onLinkClick={onLinkClick} isMobile={isMobile} />
+          </ScrollArea>
+        </div>
+
+        <div className="text-center shrink-0 mt-6">
+          <div className="flex justify-center gap-4">
+            <a href="https://github.com" target="_blank" aria-label="GitHub" className="text-muted-foreground hover:text-primary transition-colors">
+              <Github />
+            </a>
+            <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn" className="text-muted-foreground hover:text-primary transition-colors">
+              <Linkedin />
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col h-full p-6 bg-card/50">
+      {content}
     </div>
   );
 };
@@ -251,9 +289,9 @@ const Page = () => {
         <div
           key={activeSection}
           ref={contentAreaRef}
-          className="overflow-y-auto flex-1"
+          className="overflow-y-auto flex-1 animate-slide-in"
         >
-          <div className="container mx-auto px-6 py-16 md:px-12 md:py-24 animate-slide-in">
+          <div className="container mx-auto px-6 py-16 md:px-12 md:py-24">
             
             {activeSection === 'profile' && (
               <section id="profile">
@@ -297,7 +335,7 @@ const Page = () => {
                 </h2>
                 <Card className="bg-card/50">
                   <CardContent className="p-8">
-                      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3">
+                      <div className="flex flex-wrap gap-3">
                           {technicalSkills.map((skill) => (
                               <Badge key={skill} variant="outline" className="text-base px-4 py-2 rounded-lg justify-center transition-transform hover:scale-105 hover:bg-primary/20 bg-transparent">{skill}</Badge>
                           ))}
@@ -421,5 +459,3 @@ const Page = () => {
   );
 };
 export default Page;
-
-    
