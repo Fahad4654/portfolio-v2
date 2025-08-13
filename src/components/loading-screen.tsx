@@ -28,13 +28,30 @@ export default function LoadingScreen() {
     });
   }, []);
 
+  const renderLine = (line: string) => {
+    if (line.includes("[  OK  ]")) {
+      const parts = line.split(/(\[  OK  \])/);
+      return parts.map((part, i) => {
+        if (part === "[  OK  ]") {
+          return (
+            <span key={i}>
+              [<span className="text-green-500">  OK  </span>]
+            </span>
+          );
+        }
+        return part;
+      });
+    }
+    return line;
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background font-code">
       <div className="w-full max-w-xl p-4">
         {lines.map((line, index) => (
           <div key={index} className="flex items-center gap-2">
             <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-              {line}
+              {renderLine(line)}
               {index === lines.length -1 && !showTyping && <span className="animate-pulse">_</span>}
             </p>
           </div>
