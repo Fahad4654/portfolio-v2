@@ -164,7 +164,6 @@ const NavLinks = ({ activeSection, onLinkClick, isMobile = false }: { activeSect
 
 
 const SidebarContent = ({ activeSection, onLinkClick, isMobile = false }: { activeSection: Section, onLinkClick: (section: Section) => void, isMobile?: boolean }) => {
-    
     return (
         <div className="flex flex-col h-full p-6 bg-card/50">
             <div className="text-center shrink-0">
@@ -179,7 +178,7 @@ const SidebarContent = ({ activeSection, onLinkClick, isMobile = false }: { acti
             </div>
             
             <div className="mt-10 flex-1 min-h-0">
-                <ScrollArea className="h-full pr-4 -mr-4">
+                 <ScrollArea className="h-full pr-4 -mr-4">
                     <NavLinks activeSection={activeSection} onLinkClick={onLinkClick} isMobile={isMobile}/>
                 </ScrollArea>
             </div>
@@ -250,14 +249,14 @@ const Page = () => {
             </Sheet>
         </div>
         <div ref={contentAreaRef} className="overflow-y-auto flex-1">
-          <div key={activeSection} className="container mx-auto px-6 py-16 md:px-12 md:py-24">
+          <div key={activeSection} className="container mx-auto px-6 py-16 md:px-12 md:py-24 animate-slide-in">
             
             {activeSection === 'profile' && (
-              <section id="profile" className="animate-slide-in">
+              <section id="profile">
                 <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary">
                   Personal Info
                 </h2>
-                <Card className="bg-card/50 border-border/20">
+                <Card>
                     <CardContent className="p-8 text-lg">
                         <p className="text-muted-foreground mb-8 leading-relaxed">
                           DevOps Engineer with expertise in cloud infrastructure, CI/CD pipelines, and system automation. Skilled in Node.js, React, Docker, and Ansible, with a strong background in problem-solving and optimizing system performance. Passionate about collaborating with teams to drive efficiency and innovation.
@@ -288,11 +287,11 @@ const Page = () => {
             )}
             
             {activeSection === 'skills' && (
-              <section id="skills" className="animate-slide-in">
+              <section id="skills">
                 <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary">
                   Technical Skills
                 </h2>
-                <Card className="bg-card/50 border-border/20">
+                <Card>
                     <CardContent className="p-8">
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
                             {technicalSkills.map((skill) => (
@@ -305,7 +304,7 @@ const Page = () => {
             )}
 
             {activeSection === 'experience' && (
-              <section id="experience" className="animate-slide-in">
+              <section id="experience">
                   <h2 className="text-4xl md:text-5xl font-bold mb-12 font-headline text-primary">
                       Work Experience
                   </h2>
@@ -330,7 +329,7 @@ const Page = () => {
             )}
 
             {activeSection === 'portfolio' && (
-              <section id="portfolio" className="animate-slide-in">
+              <section id="portfolio">
                 <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary">
                   My Projects
                 </h2>
@@ -338,7 +337,7 @@ const Page = () => {
                   {projects.map((project, index) => (
                     <Card
                       key={index}
-                      className="flex flex-col overflow-hidden bg-card/50 border-border/20 transition-all duration-300 ease-in-out hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1"
+                      className="flex flex-col overflow-hidden transition-all duration-300 ease-in-out hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1"
                     >
                       <CardHeader className="p-0">
                         <Image
@@ -375,13 +374,13 @@ const Page = () => {
             )}
             
             {activeSection === 'education' && (
-              <section id="education" className="animate-slide-in">
+              <section id="education">
                   <h2 className="text-4xl md:text-5xl font-bold mb-12 font-headline text-primary">
                       Education
                   </h2>
                   <div className="grid md:grid-cols-2 gap-8">
                       {education.map((edu, index) => (
-                          <Card key={index} className="flex flex-col items-center text-center p-8 bg-card/50 border-border/20 hover:border-primary/50 transition-colors">
+                          <Card key={index} className="flex flex-col items-center text-center p-8 hover:border-primary/50 transition-colors">
                               <GraduationCap className="h-12 w-12 mb-4 text-primary"/>
                               <CardTitle className="text-xl mb-1 font-headline">{edu.degree}</CardTitle>
                               <CardDescription className="mb-2">{edu.institution}</CardDescription>
@@ -393,11 +392,11 @@ const Page = () => {
             )}
 
             {activeSection === 'contact' && (
-              <section id="contact" className="max-w-2xl mx-auto animate-slide-in">
+              <section id="contact" className="max-w-2xl mx-auto">
                 <h2 className="text-4xl md:text-5xl font-bold text-center mb-10 font-headline text-primary">
                   Get In Touch
                 </h2>
-                <Card className="shadow-lg bg-card/50 border-border/20">
+                <Card className="shadow-lg">
                   <CardContent className="p-6 md:p-8">
                     <ContactForm />
                   </CardContent>
