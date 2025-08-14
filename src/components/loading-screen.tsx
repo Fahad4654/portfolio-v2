@@ -58,7 +58,7 @@ export default function LoadingScreen() {
         ))}
         {showTyping && (
            <div className="flex items-center gap-2">
-              <p className="text-sm text-muted-foreground typing-text">WELCOME TO FAHAD KABIR'S PORTFOLIO</p>
+              <p className="text-sm text-muted-foreground typing-text">WELCOME TO FAHAD KABIR'S PORTFOLIO...</p>
           </div>
         )}
       </div>
