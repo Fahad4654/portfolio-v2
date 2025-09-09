@@ -12,7 +12,10 @@ const formSchema = z.object({
 // Initialize Firebase Admin SDK only if it hasn't been already.
 if (!admin.apps.length) {
   try {
-    admin.initializeApp();
+    admin.initializeApp({
+      credential: admin.credential.applicationDefault(),
+      databaseURL: process.env.FIREBASE_DATABASE_URL,
+    });
   } catch (e) {
     console.error('Firebase admin initialization error', e);
   }
