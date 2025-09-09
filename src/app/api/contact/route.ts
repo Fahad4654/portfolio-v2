@@ -9,16 +9,14 @@ const formSchema = z.object({
   message: z.string().min(10),
 });
 
-// Initialize Firebase Admin SDK
-try {
-  if (!admin.apps.length) {
-    // When deployed to Firebase/Google Cloud, the SDK will automatically find the credentials
+// Initialize Firebase Admin SDK only if it hasn't been already.
+if (!admin.apps.length) {
+  try {
     admin.initializeApp();
+  } catch (e) {
+    console.error('Firebase admin initialization error', e);
   }
-} catch (e) {
-  console.error('Firebase admin initialization error', e);
 }
-
 
 const db = admin.firestore();
 
