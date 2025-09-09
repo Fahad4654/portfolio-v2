@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import * as admin from "firebase-admin";
 import { z } from "zod";
+import { firestore } from "@/lib/firebaseAdmin";
 
 // Validation schema
 const formSchema = z.object({
@@ -8,21 +8,6 @@ const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
   message: z.string().min(10, { message: "Message must be at least 10 characters." }),
 });
-
-// Initialize Firebase Admin once
-if (!admin.apps.length) {
-  try {
-    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT as string);
-
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-    });
-
-    console.log("✅ Firebase Admin initialized");
-  } catch (error) {
-    console.error("❌ Firebase Admin initialization failed:", error);
-  }
-}
 
 export async function POST(req: Request) {
   try {
@@ -38,12 +23,11 @@ export async function POST(req: Request) {
 
     const { name, email, message } = validation.data;
 
-    const db = admin.firestore();
-    await db.collection("messages").add({
+    await firestore.collection("messages").add({
       name,
       email,
       message,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      createdAt: new Date(),
     });
 
     return NextResponse.json({ success: true, message: "Message saved successfully." });
