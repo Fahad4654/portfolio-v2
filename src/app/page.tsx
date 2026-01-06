@@ -402,7 +402,7 @@ const Page = () => {
                         </a>
                       </div>
                     </div>
-                    <p className="text-muted-foreground mb-4">See more in my resume</p>
+                    <p className="text-sm text-muted-foreground mb-4">Further details are available in my resume.</p>
                     <Button
                       asChild
                       className="shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-shadow"
