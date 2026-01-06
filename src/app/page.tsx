@@ -401,12 +401,12 @@ const Page = () => {
                       className="shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-shadow"
                     >
                       <a
-                        href="https://drive.google.com/uc?export=download&id=1oWiQ9cEj0yBZ_8aVMaNYFJOxhTYalIcd"
+                        href="https://drive.google.com/file/d/1tERFX5p_dUU_75cuF6WsDpuMPJp4JnvI/view?usp=drive_link"
                         target="_blank"
-                        download="Fahad_Kabir_CV.pdf"
+                        download="Fahad_Kabir_Resume.pdf"
                       >
                         <Download className="mr-2 h-4 w-4" />
-                        Download CV
+                        Download Resume
                       </a>
                     </Button>
                   </CardContent>
