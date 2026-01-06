@@ -393,7 +393,11 @@ const Page = () => {
                       </div>
                       <div className="flex items-center gap-3">
                         <Mail className="h-5 w-5 text-primary" />
-                        <a href="mailto:kabirkaife@gmail.com" className="hover:underline hover:text-primary transition-colors">
+                        <a 
+                          href="https://mail.google.com/mail/?view=cm&fs=1&to=kabirkaife@gmail.com" 
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:underline hover:text-primary transition-colors">
                           kabirkaife@gmail.com
                         </a>
                       </div>
@@ -588,5 +592,3 @@ const Page = () => {
   );
 };
 export default Page;
-
-    
