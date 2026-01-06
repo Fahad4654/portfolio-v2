@@ -402,7 +402,7 @@ const Page = () => {
                         </a>
                       </div>
                     </div>
-                    <p className="text-sm text-muted-foreground mb-4">Further details are available in my resume.</p>
+                    
                     <Button
                       asChild
                       className="shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-shadow"
@@ -416,6 +416,7 @@ const Page = () => {
                         Download Resume
                       </a>
                     </Button>
+                    <p className="text-sm text-muted-foreground mt-4">Further details are available in my resume.</p>
                   </CardContent>
                 </Card>
               </section>
