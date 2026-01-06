@@ -393,7 +393,9 @@ const Page = () => {
                       </div>
                       <div className="flex items-center gap-3">
                         <Mail className="h-5 w-5 text-primary" />
-                        <span>kabirkaife@gmail.com</span>
+                        <a href="mailto:kabirkaife@gmail.com" className="hover:underline hover:text-primary transition-colors">
+                          kabirkaife@gmail.com
+                        </a>
                       </div>
                     </div>
                     <Button
