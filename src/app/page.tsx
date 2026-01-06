@@ -402,6 +402,7 @@ const Page = () => {
                         </a>
                       </div>
                     </div>
+                    <p className="text-muted-foreground mb-4">See more in my resume</p>
                     <Button
                       asChild
                       className="shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-shadow"
@@ -592,3 +593,5 @@ const Page = () => {
   );
 };
 export default Page;
+
+    
