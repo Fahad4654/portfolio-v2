@@ -8,28 +8,38 @@ import {
 const skillGroups = [
     {
       title: "Languages & Scripting",
-      skills: ["C++", "Java", "Python", "JavaScript", "TypeScript", "Bash scripting"],
+      skills: ["Python", "TypeScript", "JavaScript", "Bash scripting"],
     },
     {
-      title: "Backend & Frontend",
-      skills: ["Node.js", "React"],
+      title: "Backend Development",
+      skills: ["Node.js", "ExpressJs", "NestJs", "Django", "FastApi", "RESTful APIs"],
     },
     {
-      title: "Databases",
-      skills: ["PostgreSQL", "MySQL", "Firebase"],
+      title: "Frontend Development",
+      skills: ["React", "Remix", "HTML5", "CSS3", "Tailwind", "Material UI"],
+    },
+    {
+      title: "Databases & ORMs",
+      skills: ["PostgreSQL", "MySQL", "Sequelize", "Redis", "Firebase", "Prisma"],
     },
     {
       title: "DevOps, CI/CD & Tooling",
       skills: [
+        "Git",
         "Docker",
         "Ansible",
         "Linux",
         "Jenkins",
         "SonarQube",
-        "CI/CD",
+        "Elasticsearch",
         "System Monitoring",
+        "CI/CD",
       ],
     },
+    {
+      title: "Soft Skills",
+      skills: ["Problem-Solving", "Analytical Thinking"],
+    }
   ];
 
 export const SkillsSection = () => {
