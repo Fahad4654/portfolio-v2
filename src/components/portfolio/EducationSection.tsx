@@ -10,17 +10,17 @@ const education = [
     {
       degree: "B.Sc. in Computer Science and Engineering",
       institution: "Independent University, Bangladesh",
-      period: "2023 | CGPA: 3.23",
+      period: "2023",
     },
     {
       degree: "H.S.C. (Science)",
       institution: "Nawab Siraj-Ud-Dowla Government College, Natore",
-      period: "2017 | GPA: 5.00",
+      period: "2017",
     },
     {
       degree: "S.S.C. (Science)",
       institution: "Natore Govt. Boys' High School, Natore",
-      period: "2015 | GPA: 5.00",
+      period: "2015",
     },
   ];
 
