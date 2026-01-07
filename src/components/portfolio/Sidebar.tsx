@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from 'react';
@@ -22,13 +21,13 @@ export const Sidebar = ({
   const content = (
       <div className={cn("flex flex-col h-full p-6 bg-card/50", isCollapsed && !isMobile && "p-2 pt-6")}>
       <Header isCollapsed={isCollapsed && !isMobile} />
-      <div className="flex-1 flex flex-col mt-16">
+        <nav className="mt-16 flex-1 flex flex-col gap-4">
           <NavLinks
             activeSection={activeSection}
             onLinkClick={onLinkClick}
             isCollapsed={isCollapsed && !isMobile}
           />
-      </div>
+        </nav>
       <div className={cn("text-center shrink-0 mt-6", isCollapsed && !isMobile ? "sr-only" : "")}>
         <div className="flex justify-center gap-4">
           <a
