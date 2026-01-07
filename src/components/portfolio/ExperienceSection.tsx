@@ -15,9 +15,13 @@ const experiences = [
       companyLink: "https://mpower-social.com/",
       period: "Sept 2023 – Present",
       description: [
-        "Implement and maintain CI/CD pipelines.",
-        "Optimize cloud infrastructure and automate deployments.",
-        "Collaborate with development teams to enhance system performance.",
+        "Full-Stack Application Support utilizing deep development knowledge to debug and optimize complex Node.js and React application code, reducing critical production bugs by 15%.",
+        "Managed the performance and reliability of production databases (PostgreSQL/MySQL), including implementing automated backup and recovery strategies to ensure data integrity.",
+        "Designed, implemented, and maintained Jenkins-based CI/CD pipelines, resulting in a 30% reduction in deployment lead time across four critical applications.",
+        "Automated infrastructure configuration and application deployments using Ansible playbooks, standardizing environment setup and minimizing manual configuration errors.",
+        "Integrated SonarQube scanning into the build process to enforce code quality standards and enable early detection of performance bottlenecks and security vulnerabilities.",
+        "Monitored and maintained Linux-based production servers to ensure system reliability and peak performance during high-traffic events.",
+        "Conducted root cause analysis and debugging for CI/CD failures and production incidents by reviewing centralized logs and monitoring systems (e.g., Elasticsearch).",
       ],
     },
     {
@@ -26,8 +30,8 @@ const experiences = [
       companyLink: "https://mpower-social.com/",
       period: "Feb 2023 – May 2023",
       description: [
-        "Developed front-end features for web applications using React and TypeScript.",
-        "Assisted in system design and troubleshooting.",
+        "Developed and delivered new front-end features for core web applications using React and TypeScript.",
+        "Assisted senior engineers in system design, API integration, and troubleshooting application issues across development environments.",
       ],
     },
   ];
