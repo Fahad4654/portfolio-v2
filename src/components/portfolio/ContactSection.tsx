@@ -15,17 +15,42 @@ export const ContactSection = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted", { name, email, message });
-    toast({
-      title: "Message Sent!",
-      description: "Thanks for reaching out. I'll get back to you soon.",
-    });
-    setName("");
-    setEmail("");
-    setMessage("");
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, message }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Message Sent!",
+          description: "Thanks for reaching out. I'll get back to you soon.",
+        });
+        setName("");
+        setEmail("");
+        setMessage("");
+      } else {
+        throw new Error('Failed to send message');
+      }
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "Could not send your message. Please try again later.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -47,6 +72,7 @@ export const ContactSection = () => {
                   onChange={(e) => setName(e.target.value)}
                   required
                   className="bg-input"
+                  disabled={isSubmitting}
                 />
               </div>
               <div className="space-y-2">
@@ -59,6 +85,7 @@ export const ContactSection = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   className="bg-input"
+                  disabled={isSubmitting}
                 />
               </div>
             </div>
@@ -71,14 +98,16 @@ export const ContactSection = () => {
                 onChange={(e) => setMessage(e.target.value)}
                 required
                 className="min-h-[150px] bg-input"
+                disabled={isSubmitting}
               />
             </div>
             <Button
               type="submit"
               className="shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-shadow"
+              disabled={isSubmitting}
             >
               <Send className="mr-2 h-4 w-4" />
-              Send Message
+              {isSubmitting ? 'Sending...' : 'Send Message'}
             </Button>
           </form>
         </CardContent>
