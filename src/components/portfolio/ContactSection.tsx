@@ -135,16 +135,6 @@ export const ContactSection = () => {
             </h3>
             <div className="flex justify-center items-center gap-6">
               <a
-                href="https://www.instagram.com/kaife_kabir"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="text-muted-foreground hover:text-primary transition-colors flex flex-col items-center gap-2"
-              >
-                <Instagram className="h-7 w-7" />
-                <span>Instagram</span>
-              </a>
-              <a
                 href="https://www.facebook.com/kaife.kabir"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -153,6 +143,16 @@ export const ContactSection = () => {
               >
                 <Facebook className="h-7 w-7" />
                 <span>Facebook</span>
+              </a>
+              <a
+                href="https://www.instagram.com/kaife_kabir"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="text-muted-foreground hover:text-primary transition-colors flex flex-col items-center gap-2"
+              >
+                <Instagram className="h-7 w-7" />
+                <span>Instagram</span>
               </a>
             </div>
           </div>
