@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useRef, useEffect } from 'react';
@@ -20,56 +19,56 @@ export const DigitalRain = () => {
 
     setCanvasSize();
 
-    // Using a mix of symbols and characters similar to the image
-    const characters = 'ABCDEFHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%"\'#&_(),.;:?!\\|{}<>[]^~';
-    const fontSize = 14;
-    let columns = Math.floor(canvas.width / fontSize);
-    let drops: number[] = Array(columns).fill(1);
+    // The image uses a mix of Latin, symbols, and numbers
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%!"\'#&_(),.;:?!\\|{}<>[]^~@';
+    const fontSize = 15;
+    // We increase density by reducing the column gap
+    const columns = Math.floor(canvas.width / (fontSize - 2));
+    
+    // To get that "full screen" look from the start, we randomize initial Y positions
+    const drops: number[] = [];
+    for (let i = 0; i < columns; i++) {
+      drops[i] = Math.random() * -100; 
+    }
 
     let animationFrameId: number;
 
     const draw = () => {
-      // 1. Background trail color (Dark Burgundy/Purple tint)
-      // Changing the alpha (0.1) controls how long the trails stay visible
-      ctx.fillStyle = 'rgba(40, 10, 30, 0.1)'; 
+      // Background: Dark Plum/Burgundy with slight transparency for trails
+      ctx.fillStyle = 'rgba(26, 5, 20, 0.15)'; 
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       ctx.font = `${fontSize}px monospace`;
 
       for (let i = 0; i < drops.length; i++) {
-        const text = characters.charAt(Math.floor(Math.random() * characters.length));
+        const text = chars.charAt(Math.floor(Math.random() * chars.length));
         
-        // 2. Character Color
-        // The image shows a mix of light blue/teal and white-ish characters
-        const isBright = Math.random() > 0.95;
-        ctx.fillStyle = isBright ? '#fff' : '#4fd1c5'; // Teal/Cyan color
-        
-        // 3. Subtle Glow (optional)
-        if (isBright) {
-          ctx.shadowBlur = 8;
-          ctx.shadowColor = '#4fd1c5';
+        // Color Palette from your image: Teal/Cyan with occasional highlight
+        const randomState = Math.random();
+        if (randomState > 0.98) {
+          ctx.fillStyle = '#ffffff'; // Occasional bright white
+        } else if (randomState > 0.90) {
+          ctx.fillStyle = '#b2f5ea'; // Very light teal
         } else {
-          ctx.shadowBlur = 0;
+          ctx.fillStyle = '#4fd1c5'; // Main Teal color
         }
 
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        ctx.fillText(text, i * (fontSize - 2), drops[i] * fontSize);
 
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        // Reset drop to top with randomness
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.985) {
           drops[i] = 0;
         }
-        drops[i]++;
+        
+        // Slowing it down slightly to match the "static rain" feel
+        drops[i] += 0.75; 
       }
       animationFrameId = requestAnimationFrame(draw);
     };
 
     draw();
 
-    const handleResize = () => {
-      setCanvasSize();
-      columns = Math.floor(canvas.width / fontSize);
-      drops = Array(columns).fill(1);
-    };
-
+    const handleResize = () => setCanvasSize();
     window.addEventListener('resize', handleResize);
 
     return () => {
@@ -80,9 +79,12 @@ export const DigitalRain = () => {
 
   return (
     <canvas
-      id="digital-rain-canvas"
       ref={canvasRef}
       className="fixed top-0 left-0 w-full h-full pointer-events-none"
+      style={{ 
+        zIndex: -1, 
+        backgroundColor: '#1a0514' // Solid base color
+      }}
     />
   );
 };

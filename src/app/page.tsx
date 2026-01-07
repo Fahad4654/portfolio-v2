@@ -88,7 +88,7 @@ const Page = () => {
 
       <main className={cn(
         "flex-1 relative flex flex-col transition-all duration-300 ease-in-out",
-        "bg-background/90 dark:bg-transparent backdrop-blur-sm", // Add some transparency to see the rain
+        "bg-background/40 backdrop-blur-[1px]", // Keep it light so the rain is clear
         isCollapsed ? "md:ml-20" : "md:ml-72"
         )}>
         <div className="md:hidden fixed bottom-6 right-6 z-20">
