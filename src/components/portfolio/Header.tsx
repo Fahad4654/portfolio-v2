@@ -59,7 +59,7 @@ export const Header = ({
               variant="ghost"
               size="icon"
               className={cn(
-                "absolute top-0 rounded-full z-20",
+                "absolute top-0 rounded-full z-20 hidden md:block",
                 "right-0"
               )}
               onClick={onToggleCollapse}
