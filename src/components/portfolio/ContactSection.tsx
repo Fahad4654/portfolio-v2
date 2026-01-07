@@ -135,7 +135,7 @@ export const ContactSection = () => {
             </h3>
             <div className="flex justify-center items-center gap-6">
               <a
-                href="https://www.instagram.com/fahad_kabir_kaife"
+                href="https://www.instagram.com/kaife_kabir"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
