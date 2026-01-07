@@ -3,6 +3,8 @@
 import React from "react";
 import {
   Menu,
+  PanelLeftClose,
+  PanelRightClose
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
@@ -23,6 +25,7 @@ import { ExperienceSection } from "@/components/portfolio/ExperienceSection";
 import { ProjectsSection } from "@/components/portfolio/ProjectsSection";
 import { EducationSection } from "@/components/portfolio/EducationSection";
 import { User, Shapes, GraduationCap, BriefcaseBusiness, FileText } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export type Section = "profile" | "skills" | "experience" | "portfolio" | "education";
 
@@ -38,6 +41,7 @@ export const links: { id: Section; icon: React.ElementType; text: string }[] = [
 const Page = () => {
   const [loading, setLoading] = useState(true);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [activeSection, setActiveSection] = useState<Section>("profile");
   const contentAreaRef = useRef<HTMLDivElement>(null);
 
@@ -66,12 +70,24 @@ const Page = () => {
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">
-      <aside className="w-80 flex-shrink-0 hidden md:block sticky top-0 h-screen border-r border-border/20">
+      <div className={cn(
+        "hidden md:flex flex-col relative transition-all duration-300 ease-in-out",
+        isCollapsed ? "w-20" : "w-80"
+      )}>
         <Sidebar
           activeSection={activeSection}
           onLinkClick={handleLinkClick}
+          isCollapsed={isCollapsed}
         />
-      </aside>
+         <Button
+            variant="ghost"
+            size="icon"
+            className="absolute bottom-4 right-4 hidden md:inline-flex rounded-full bg-background/50 backdrop-blur-sm"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+          >
+            {isCollapsed ? <PanelRightClose /> : <PanelLeftClose />}
+          </Button>
+      </div>
 
       <main className="flex-1 relative flex flex-col">
         <div className="md:hidden fixed bottom-6 right-6 z-20">

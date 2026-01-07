@@ -7,26 +7,32 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { NavLinks } from './NavLinks';
 import { Section } from '@/app/page';
 import { Header } from './Header';
+import { cn } from '@/lib/utils';
 
 export const Sidebar = ({
   activeSection,
   onLinkClick,
   isMobile = false,
+  isCollapsed = false,
 }: {
   activeSection: Section;
   onLinkClick: (section: Section) => void;
   isMobile?: boolean;
+  isCollapsed?: boolean;
 }) => {
   const commonContent = (
-    <>
-      <Header />
+    <div className={cn("flex flex-col h-full p-6 bg-card/50", isCollapsed && "p-2 pt-6")}>
+      <Header isCollapsed={isCollapsed} />
       <div className="mt-10 flex-1 flex flex-col min-h-0">
-        <NavLinks
-          activeSection={activeSection}
-          onLinkClick={onLinkClick}
-        />
+        <ScrollArea className="h-full pr-4 -mr-4">
+          <NavLinks
+            activeSection={activeSection}
+            onLinkClick={onLinkClick}
+            isCollapsed={isCollapsed}
+          />
+        </ScrollArea>
       </div>
-      <div className="text-center shrink-0 mt-6">
+      <div className={cn("text-center shrink-0 mt-6", isCollapsed && "sr-only")}>
         <div className="flex justify-center gap-4">
           <a
             href="https://github.com/Fahad4654"
@@ -46,7 +52,7 @@ export const Sidebar = ({
           </a>
         </div>
       </div>
-    </>
+    </div>
   );
 
   if (isMobile) {
@@ -85,5 +91,5 @@ export const Sidebar = ({
     );
   }
 
-  return <div className="flex flex-col h-full p-6 bg-card/50">{commonContent}</div>;
+  return commonContent;
 };
