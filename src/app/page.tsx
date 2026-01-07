@@ -86,35 +86,35 @@ const Page = () => {
         />
       </div>
 
+      <div className="md:hidden fixed bottom-6 right-6 z-50">
+        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+          <SheetTrigger asChild>
+            <Button
+              variant="default"
+              size="icon"
+              className="rounded-full h-16 w-16 shadow-2xl shadow-primary/50"
+            >
+              <Menu className="h-7 w-7" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-80 p-0 border-r-0 z-[60]">
+            <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
+              <Sidebar
+                activeSection={activeSection}
+                onLinkClick={handleLinkClick}
+                isMobile
+                onToggleCollapse={() => {}}
+              />
+          </SheetContent>
+        </Sheet>
+      </div>
+
       <main className={cn(
         "relative flex-1 min-h-screen transition-all duration-300 ease-in-out z-10",
         "bg-background/40 backdrop-blur-[1px]",
         isCollapsed ? "md:ml-20" : "md:ml-72"
         )}>
         
-        <div className="md:hidden fixed bottom-6 right-6 z-50">
-          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetTrigger asChild>
-              <Button
-                variant="default"
-                size="icon"
-                className="rounded-full h-16 w-16 shadow-2xl shadow-primary/50"
-              >
-                <Menu className="h-7 w-7" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-80 p-0 border-r-0 z-[60]">
-              <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
-                <Sidebar
-                  activeSection={activeSection}
-                  onLinkClick={handleLinkClick}
-                  isMobile
-                  onToggleCollapse={() => {}}
-                />
-            </SheetContent>
-          </Sheet>
-        </div>
-
         <div
           key={activeSection}
           ref={contentAreaRef}
