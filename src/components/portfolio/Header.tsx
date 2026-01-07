@@ -59,8 +59,9 @@ export const Header = ({
               variant="ghost"
               size="icon"
               className={cn(
-                "absolute top-0 rounded-full z-20 hidden md:block",
-                "right-0"
+                "absolute top-0 right-0 z-20 h-8 w-8 rounded-full border shadow-sm",
+                "hidden md:flex items-center justify-center bg-background hover:bg-accent",
+                "translate-x-1/4 -translate-y-1/4" // This centers the button on the top-right edge
               )}
               onClick={onToggleCollapse}
             >
