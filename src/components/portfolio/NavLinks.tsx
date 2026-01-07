@@ -26,13 +26,13 @@ export const NavLinks = ({
               key={link.id}
               onClick={() => onLinkClick(link.id)}
               className={cn(
-                "flex items-center gap-3 p-2.5 rounded-lg transition-all duration-300 text-muted-foreground hover:bg-primary/10 hover:text-primary text-sm",
+                "flex items-center gap-3 p-2.5 rounded-lg transition-all duration-300 text-muted-foreground hover:bg-primary/10 hover:text-primary",
                 activeSection === link.id &&
                   "bg-primary/10 text-primary font-semibold",
-                isCollapsed && "justify-center"
+                isCollapsed ? "justify-center text-base" : "text-sm",
               )}
             >
-              <link.icon className="h-4 w-4 shrink-0" />
+              <link.icon className={cn("shrink-0", isCollapsed ? "h-5 w-5" : "h-4 w-4")} />
               <span className={cn("transition-all duration-300", isCollapsed && "sr-only")}>{link.text}</span>
             </button>
           );

@@ -9,7 +9,7 @@ export const Header = ({ isCollapsed }: { isCollapsed?: boolean }) => {
         <div className={cn("text-center shrink-0", isCollapsed && "px-1 pt-12")}>
             <Avatar className={cn(
                 "w-24 h-24 mx-auto mb-3 border-4 border-primary/20 shadow-lg transition-all duration-300",
-                isCollapsed && "w-11 h-11"
+                isCollapsed && "w-12 h-12"
             )}>
             <AvatarImage src={profilePic.src} alt="Profile Picture" />
             <AvatarFallback>FK</AvatarFallback>
