@@ -13,13 +13,25 @@ export const DigitalRain = () => {
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        let width = canvas.width = window.innerWidth;
-        let height = canvas.height = window.innerHeight;
-
+        const setupCanvas = () => {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            
+            return {
+                width: rect.width,
+                height: rect.height,
+                columns: Math.floor(rect.width / fontSize),
+            };
+        };
+        
+        const fontSize = 16;
         const characters = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         const charactersArray = characters.split('');
-        const fontSize = 16;
-        const columns = Math.floor(width / fontSize);
+
+        let { width, height, columns } = setupCanvas();
 
         const drops: number[] = [];
         for (let x = 0; x < columns; x++) {
@@ -35,16 +47,15 @@ export const DigitalRain = () => {
             for (let i = 0; i < drops.length; i++) {
                 const text = charactersArray[Math.floor(Math.random() * charactersArray.length)];
                 
-                // Style for the falling characters
-                ctx.fillStyle = '#0f0'; // Brighter green
+                // Style for the falling characters (the trail)
+                ctx.fillStyle = '#0f0'; // Brighter green for the trail
                 ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
-                // Style for the leading character (brighter)
+                // The leading character is drawn brighter/whiter
                 if (drops[i] * fontSize < height) {
-                    ctx.fillStyle = '#cfc'; // Light green/white
-                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                     ctx.fillStyle = '#cfc'; // Light green/white for the lead
+                     ctx.fillText(text, i * fontSize, drops[i] * fontSize);
                 }
-
 
                 if (drops[i] * fontSize > height && Math.random() > 0.975) {
                     drops[i] = 0;
@@ -53,18 +64,24 @@ export const DigitalRain = () => {
             }
         };
         
-        const intervalId = setInterval(draw, 33); // Draw every ~30 FPS
+        const intervalId = setInterval(draw, 33);
 
         const handleResize = () => {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            // Re-initialize drops for new column count
-            for (let x = 0; x < Math.floor(width / fontSize); x++) {
+            const newDims = setupCanvas();
+            width = newDims.width;
+            height = newDims.height;
+            columns = newDims.columns;
+            
+            drops.length = 0; // Clear existing drops
+            for (let x = 0; x < columns; x++) {
                 drops[x] = 1;
             }
         };
 
         window.addEventListener('resize', handleResize);
+
+        // Initial call to set dimensions correctly
+        handleResize();
 
         return () => {
             window.removeEventListener('resize', handleResize);
