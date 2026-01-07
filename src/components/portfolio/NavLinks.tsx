@@ -32,7 +32,7 @@ export const NavLinks = ({
                 isCollapsed ? "justify-center text-base" : "text-sm",
               )}
             >
-              <link.icon className={cn("shrink-0", isCollapsed ? "h-5 w-5" : "h-4 w-4")} />
+              <link.icon className={cn("shrink-0 h-5 w-5")} />
               <span className={cn("transition-all duration-300", isCollapsed && "sr-only")}>{link.text}</span>
             </button>
           );
