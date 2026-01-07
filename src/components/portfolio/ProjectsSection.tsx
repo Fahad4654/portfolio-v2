@@ -16,11 +16,11 @@ import {
 
 const projects = [
     {
-      title: "Neighbor Nexus (Online Helping Web App)",
+      title: "Neighbor Nexus",
       description: "Architected the deployment environment using Docker Compose and wrote custom Bash scripts for database automation on a Linux VM. Developed the full-stack system using ExpressJs, TypeScript, PostgreSQL, and React.",
       image: "https://placehold.co/600x400/1a0514/4fd1c5?text=Neighbor+Nexus",
       hint: "community help",
-      tags: ["Docker", "Bash", "Linux", "ExpressJs", "TypeScript", "PostgreSQL", "React"],
+      tags: ["Docker", "Bash", "Linux", "ExpressJs", "TypeScript", "PostgreSQL", "React", "Sequelize", "Redis"],
     },
     {
       title: "E-commerce App (Business Facility App)",
