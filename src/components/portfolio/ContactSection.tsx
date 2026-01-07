@@ -145,7 +145,7 @@ export const ContactSection = () => {
                 <span>Instagram</span>
               </a>
               <a
-                href="https://www.facebook.com/fahad.kabir.kaife"
+                href="https://www.facebook.com/kaife.kabir"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
