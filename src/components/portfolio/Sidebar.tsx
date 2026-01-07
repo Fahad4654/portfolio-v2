@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from 'react';
@@ -24,22 +25,20 @@ export const Sidebar = ({
   onToggleCollapse: () => void;
 }) => {
   const content = (
-      <div className={cn("flex flex-col h-full p-6 bg-card/50", isCollapsed && !isMobile && "p-2 pt-6")}>
-        <Header isCollapsed={isCollapsed && !isMobile} />
-        
+      <div className={cn("relative flex flex-col h-full p-6 bg-card/50", isCollapsed && !isMobile && "p-2 pt-6")}>
         {!isMobile && (
-          <div className={cn("text-center mt-4", isCollapsed && "w-full flex justify-center")}>
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full"
+              className="absolute top-4 right-4 rounded-full"
               onClick={onToggleCollapse}
             >
               {isCollapsed ? <PanelRightClose /> : <PanelLeftClose />}
             </Button>
-          </div>
         )}
-
+        
+        <Header isCollapsed={isCollapsed && !isMobile} />
+        
         <ScrollArea className="flex-1 mt-8">
           <NavLinks
             activeSection={activeSection}
