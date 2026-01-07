@@ -1,5 +1,12 @@
 
 import { Briefcase } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const experiences = [
     {
@@ -31,27 +38,33 @@ export const ExperienceSection = () => {
       <h2 className="text-4xl md:text-5xl font-bold mb-12 font-headline text-primary">
         Work Experience
       </h2>
-      <div className="relative pl-8 after:absolute after:inset-y-0 after:left-0 after:w-px after:bg-border/50">
+      <div className="grid grid-cols-1 gap-8">
         {experiences.map((exp, index) => (
-          <div key={index} className="relative pl-10 mb-12 group">
-            <div className="absolute -left-5 top-1 flex h-10 w-10 items-center justify-center rounded-full bg-background border-2 border-primary/50 transition-all duration-300 group-hover:bg-primary group-hover:scale-110">
-              <Briefcase className="h-5 w-5 text-primary transition-all duration-300 group-hover:text-primary-foreground" />
-            </div>
-            <p className="text-sm text-muted-foreground">
-              {exp.period}
-            </p>
-            <h3 className="text-xl font-bold text-foreground mt-1 font-headline">
-              {exp.title}
-            </h3>
-            <a href={exp.companyLink} target="_blank" rel="noopener noreferrer" className="text-lg text-primary mb-3 inline-block hover:underline">
-                {exp.company}
-            </a>
-            <ul className="list-disc list-inside text-muted-foreground space-y-1.5">
-              {exp.description.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
-          </div>
+          <Card key={index} className="bg-card hover:border-primary/50 transition-colors">
+            <CardHeader>
+              <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                      <CardTitle className="text-xl font-bold font-headline">
+                          {exp.title}
+                      </CardTitle>
+                      <CardDescription>
+                          <a href={exp.companyLink} target="_blank" rel="noopener noreferrer" className="hover:underline text-primary">
+                              {exp.company}
+                          </a>
+                          <span className="block text-sm text-muted-foreground mt-1">{exp.period}</span>
+                      </CardDescription>
+                  </div>
+                  <Briefcase className="h-8 w-8 text-primary shrink-0" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <ul className="list-disc list-inside text-muted-foreground space-y-2">
+                {exp.description.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
         ))}
       </div>
     </section>
