@@ -27,6 +27,7 @@ import { EducationSection } from "@/components/portfolio/EducationSection";
 import { ContactSection } from "@/components/portfolio/ContactSection";
 import { User, Shapes, GraduationCap, BriefcaseBusiness, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DigitalRain } from "@/components/portfolio/DigitalRain";
 
 export type Section = "profile" | "skills" | "experience" | "portfolio" | "education" | "contact";
 
@@ -72,6 +73,7 @@ const Page = () => {
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">
+      <DigitalRain />
       <div className={cn(
         "hidden md:block fixed top-0 left-0 h-full transition-all duration-300 ease-in-out z-10",
         isCollapsed ? "w-20" : "w-72"
@@ -86,6 +88,7 @@ const Page = () => {
 
       <main className={cn(
         "flex-1 relative flex flex-col transition-all duration-300 ease-in-out",
+        "bg-background/90 backdrop-blur-sm", // Add some transparency to see the rain
         isCollapsed ? "md:ml-20" : "md:ml-72"
         )}>
         <div className="md:hidden fixed bottom-6 right-6 z-20">
