@@ -2,13 +2,12 @@
 "use client";
 
 import React from 'react';
-import { Github, Linkedin, PanelLeftClose, PanelRightClose } from 'lucide-react';
+import { Github, Linkedin } from 'lucide-react';
 import { NavLinks } from './NavLinks';
 import { Section } from '@/app/page';
 import { Header } from './Header';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
-import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
 
 export const Sidebar = ({
@@ -26,18 +25,8 @@ export const Sidebar = ({
 }) => {
   const content = (
       <div className={cn("relative flex flex-col h-full p-4 bg-card/50", isCollapsed && !isMobile && "p-2 pt-4")}>
-        {!isMobile && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className={cn("absolute top-2 right-2 rounded-full z-20")}
-              onClick={onToggleCollapse}
-            >
-              {isCollapsed ? <PanelRightClose /> : <PanelLeftClose />}
-            </Button>
-        )}
         
-        <Header isCollapsed={isCollapsed && !isMobile} />
+        <Header isCollapsed={isCollapsed && !isMobile} onToggleCollapse={onToggleCollapse} />
         
         <ScrollArea className="flex-1 mt-6">
           <NavLinks
