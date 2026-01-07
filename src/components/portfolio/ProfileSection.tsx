@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Mail, MapPin, Phone, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
 export const ProfileSection = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -31,9 +32,23 @@ export const ProfileSection = () => {
       </h2>
       <Card className="bg-card/50">
         <CardContent className="p-8 text-lg">
-          <p className="text-muted-foreground mb-8 leading-relaxed">
-            DevOps Engineer | Infrastructure Automation | Full-Stack Enthusiast I specialize in turning manual, error-prone deployment processes into automated, high-availability engines. By leveraging Linux, Docker, and Ansible, I help teams ship code faster and spend less time debugging infrastructure. Currently, I am focused on optimizing cloud environments and bridging the gap between Development and Operations through robust CI/CD architecture.
-          </p>
+          <div>
+            <h3 className="text-xl font-semibold text-foreground mb-2">
+              DevOps Engineer | Infrastructure Automation | Full-Stack Enthusiast
+            </h3>
+            <Separator className="mb-6" />
+
+            <h4 className="text-lg font-semibold text-primary mb-4">
+              Overview
+            </h4>
+            
+            <p className="text-muted-foreground mb-4 leading-relaxed">
+              I specialize in turning manual, error-prone deployment processes into automated, high-availability engines. By leveraging <strong>Linux, Docker, and Ansible</strong>, I help teams ship code faster and spend less time debugging infrastructure.
+            </p>
+            <p className="text-muted-foreground mb-8 leading-relaxed">
+              Currently, I am focused on optimizing cloud environments and bridging the gap between Development and Operations through robust CI/CD architecture.
+            </p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-muted-foreground mb-8">
             <div className="flex items-center gap-3">
               <MapPin className="h-5 w-5 text-primary" />
