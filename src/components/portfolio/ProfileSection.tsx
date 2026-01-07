@@ -57,7 +57,7 @@ export const ProfileSection = () => {
               I specialize in turning manual, error-prone deployment processes into automated, high-availability engines. By leveraging <strong>Linux, Docker, and Ansible</strong>, I help teams ship code faster and spend less time debugging infrastructure.
             </p>
             <p className="text-muted-foreground mb-4 leading-relaxed">
-              Currently, I am focused on optimizing cloud environments and bridging the gap between Development and Operations through robust CI/CD architecture. Beyond infrastructure, I have a strong foundation in software development with proficiency in languages like <strong>C++, Java, and Python</strong>, and enjoy building full-stack applications.
+              Currently, I am focused on optimizing cloud environments and bridging the gap between Development and Operations through robust CI/CD architecture. Beyond infrastructure, I have a strong foundation in software development and enjoy building full-stack applications with technologies like <strong>Node.js, Express.js, React, and TypeScript</strong>, alongside proficiency in languages such as <strong>C++, Java, and Python</strong>.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-muted-foreground mb-8">
