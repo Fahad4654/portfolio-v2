@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -126,8 +127,10 @@ body {
   height: 100%;
   opacity: 0;
   transition: opacity 0.5s ease-in-out;
+  display: none;
 }
 
 .dark #digital-rain-canvas {
   opacity: 1; /* Visible only in dark mode */
+  display: block;
 }

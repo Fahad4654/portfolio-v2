@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useRef, useEffect } from 'react';
@@ -80,6 +81,7 @@ export const DigitalRain = () => {
   return (
     <canvas
       ref={canvasRef}
+      id="digital-rain-canvas"
       className="fixed top-0 left-0 w-full h-full pointer-events-none"
       style={{ 
         zIndex: -1, 
