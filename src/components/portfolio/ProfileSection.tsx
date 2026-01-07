@@ -65,7 +65,7 @@ export const ProfileSection = () => {
             className="shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-shadow"
           >
             <a
-              href="https://docs.google.com/document/d/1tERFX5p_dUU_75cuF6WsDpuMPJp4JnvI/edit?usp=sharing"
+              href="https://drive.google.com/file/d/1tERFX5p_dUU_75cuF6WsDpuMPJp4JnvI/view?usp=sharing"
               target="_blank"
               download="Fahad_Kabir_Resume.pdf"
             >
