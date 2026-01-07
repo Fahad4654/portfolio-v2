@@ -37,7 +37,7 @@ export const EducationSection = () => {
             {education.map((edu, index) => (
                 <Card
                 key={index}
-                className="flex flex-col items-center text-center p-8 hover:border-primary/50 transition-colors bg-card/50"
+                className="flex flex-col items-center text-center p-8 hover:border-primary/50 transition-colors bg-card"
                 >
                 <GraduationCap className="h-12 w-12 mb-4 text-primary" />
                 <CardTitle className="text-xl mb-1 font-headline">

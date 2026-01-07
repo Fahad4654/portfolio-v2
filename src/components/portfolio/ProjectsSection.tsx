@@ -54,7 +54,7 @@ export const ProjectsSection = () => {
             {projects.map((project, index) => (
                 <Card
                 key={index}
-                className="flex flex-col overflow-hidden transition-all duration-300 ease-in-out hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1 bg-card/50"
+                className="flex flex-col overflow-hidden transition-all duration-300 ease-in-out hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1 bg-card"
                 >
                 <CardHeader className="p-0">
                     <Image

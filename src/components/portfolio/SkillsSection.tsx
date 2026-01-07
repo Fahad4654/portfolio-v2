@@ -32,7 +32,7 @@ export const SkillsSection = () => {
             <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary">
                 Technical Skills
             </h2>
-            <Card className="bg-card/50">
+            <Card className="bg-card">
                 <CardContent className="p-8">
                 <div className="flex flex-wrap gap-3">
                     {technicalSkills.map((skill) => (

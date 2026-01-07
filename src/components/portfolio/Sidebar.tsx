@@ -9,6 +9,7 @@ import { Header } from './Header';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
+import { ThemeToggle } from '../theme-toggle';
 
 export const Sidebar = ({
   activeSection,
@@ -24,7 +25,7 @@ export const Sidebar = ({
   onToggleCollapse: () => void;
 }) => {
   const content = (
-      <div className={cn("relative flex flex-col h-full p-4 bg-card/50", isCollapsed && !isMobile && "p-2 pt-4")}>
+      <div className={cn("relative flex flex-col h-full p-4 bg-card", isCollapsed && !isMobile && "p-2 pt-4")}>
         
         <Header isCollapsed={isCollapsed && !isMobile} onToggleCollapse={onToggleCollapse} />
         
@@ -36,9 +37,9 @@ export const Sidebar = ({
           />
         </ScrollArea>
         
-        <div className={cn("text-center shrink-0 mt-4", isCollapsed && !isMobile ? "sr-only" : "")}>
+        <div className={cn("shrink-0 mt-4", isCollapsed && !isMobile ? "hidden" : "")}>
            <Separator className="my-3" />
-          <div className="flex justify-center gap-4">
+          <div className="flex justify-center items-center gap-4">
             <a
               href="https://github.com/Fahad4654"
               target="_blank"
@@ -55,8 +56,17 @@ export const Sidebar = ({
             >
               <Linkedin className="h-4 w-4" />
             </a>
+            <Separator orientation='vertical' className="h-5" />
+            <ThemeToggle />
           </div>
         </div>
+
+        {isCollapsed && !isMobile && (
+          <div className="mt-4 flex flex-col items-center gap-2">
+            <Separator />
+            <ThemeToggle />
+          </div>
+        )}
     </div>
   );
 

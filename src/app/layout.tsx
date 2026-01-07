@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { Inter, Playfair_Display } from 'next/font/google'
+import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
   title: 'Fahad Kabir | DevOps Engineer',
@@ -24,10 +25,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark scroll-smooth">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${playfairDisplay.variable} font-body antialiased`}>
-        <Toaster />
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Toaster />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

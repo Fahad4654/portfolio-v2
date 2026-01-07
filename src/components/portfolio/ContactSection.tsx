@@ -71,7 +71,7 @@ export const ContactSection = () => {
       <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary">
         Contact Me
       </h2>
-      <Card className="bg-card/50">
+      <Card className="bg-card">
         <CardContent className="p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -45,7 +45,7 @@ export const ProfileSection = () => {
       <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary">
         Personal Info
       </h2>
-      <Card className="bg-card/50">
+      <Card className="bg-card">
         <CardContent className="p-8 text-lg">
           <div>
             <h3 className="text-xl font-semibold text-foreground mb-2">
