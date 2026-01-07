@@ -2,7 +2,7 @@
 "use client";
 
 import React from 'react';
-import { Github, Linkedin } from 'lucide-react';
+import { Github, Linkedin, Instagram, Facebook } from 'lucide-react';
 import { NavLinks } from './NavLinks';
 import { Section } from '@/app/page';
 import { Header } from './Header';
@@ -55,6 +55,22 @@ export const Sidebar = ({
               className="text-muted-foreground hover:text-primary transition-colors"
             >
               <Linkedin className="h-4 w-4" />
+            </a>
+            <a
+              href="https://www.instagram.com/fahad_kabir_kaife"
+              target="_blank"
+              aria-label="Instagram"
+              className="text-muted-foreground hover:text-primary transition-colors"
+            >
+              <Instagram className="h-4 w-4" />
+            </a>
+            <a
+              href="https://www.facebook.com/fahad.kabir.kaife"
+              target="_blank"
+              aria-label="Facebook"
+              className="text-muted-foreground hover:text-primary transition-colors"
+            >
+              <Facebook className="h-4 w-4" />
             </a>
             <Separator orientation='vertical' className="h-5" />
             <ThemeToggle />
