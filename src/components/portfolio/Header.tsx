@@ -46,7 +46,7 @@ export const Header = ({
               <Tooltip>
                 <TooltipTrigger asChild>{avatar}</TooltipTrigger>
                 <TooltipContent side="right" sideOffset={5}>
-                  <p className="text-base text-foreground">FAHAD KABIR</p>
+                  <p className="text-base text-foreground">Fahad Kabir</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -88,7 +88,7 @@ export const Header = ({
         )}
       >
         <h1 className="text-2xl font-bold text-foreground font-headline">
-          FAHAD KABIR
+          Fahad Kabir
         </h1>
         <p className="text-sm text-primary">DevOps Engineer</p>
       </div>
