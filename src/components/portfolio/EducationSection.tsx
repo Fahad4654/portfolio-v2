@@ -16,6 +16,7 @@ const education = [
     {
       degree: "H.S.C. (Science)",
       institution: "Nawab Siraj-Ud-Dowla Government College, Natore",
+      link: "https://nsc.edu.bd",
       period: "2017",
     },
     {
