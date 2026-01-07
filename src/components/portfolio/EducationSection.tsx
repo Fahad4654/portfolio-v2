@@ -22,6 +22,7 @@ const education = [
     {
       degree: "S.S.C. (Science)",
       institution: "Natore Govt. Boys' High School, Natore",
+      link: "http://www.ngbhsnatore.edu.bd/",
       period: "2015",
     },
   ];
