@@ -32,11 +32,7 @@ export const ProfileSection = () => {
       <Card className="bg-card/50">
         <CardContent className="p-8 text-lg">
           <p className="text-muted-foreground mb-8 leading-relaxed">
-            DevOps Engineer with expertise in cloud infrastructure, CI/CD
-            pipelines, and system automation. Skilled in Node.js, React, Docker,
-            and Ansible, with a strong background in problem-solving and
-            optimizing system performance. Passionate about collaborating with
-            teams to drive efficiency and innovation.
+            DevOps Engineer | Infrastructure Automation | Full-Stack Enthusiast I specialize in turning manual, error-prone deployment processes into automated, high-availability engines. By leveraging Linux, Docker, and Ansible, I help teams ship code faster and spend less time debugging infrastructure. Currently, I am focused on optimizing cloud environments and bridging the gap between Development and Operations through robust CI/CD architecture.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-muted-foreground mb-8">
             <div className="flex items-center gap-3">
