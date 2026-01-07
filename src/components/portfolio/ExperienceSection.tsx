@@ -1,5 +1,8 @@
 
-import { Briefcase } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import { Briefcase, ChevronDown } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -7,6 +10,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const experiences = [
     {
@@ -37,6 +42,12 @@ const experiences = [
   ];
 
 export const ExperienceSection = () => {
+  const [expanded, setExpanded] = useState<number | null>(0);
+
+  const toggleExpand = (index: number) => {
+    setExpanded(expanded === index ? null : index);
+  };
+
   return (
     <section id="experience">
       <h2 className="text-4xl md:text-5xl font-bold mb-12 font-headline text-primary">
@@ -61,13 +72,21 @@ export const ExperienceSection = () => {
                   <Briefcase className="h-8 w-8 text-primary shrink-0" />
               </div>
             </CardHeader>
-            <CardContent>
-              <ul className="list-disc list-inside text-muted-foreground space-y-2">
-                {exp.description.map((item, i) => (
-                  <li key={i}>{item}</li>
-                ))}
-              </ul>
-            </CardContent>
+            {expanded === index && (
+              <CardContent>
+                <ul className="list-disc list-inside text-muted-foreground space-y-2">
+                  {exp.description.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </CardContent>
+            )}
+            <div className="p-6 pt-0">
+               <Button variant="link" onClick={() => toggleExpand(index)} className="p-0 h-auto text-primary">
+                {expanded === index ? "Show less" : "Show more"}
+                <ChevronDown className={cn("ml-2 h-4 w-4 transition-transform", expanded === index && "rotate-180")} />
+              </Button>
+            </div>
           </Card>
         ))}
       </div>
