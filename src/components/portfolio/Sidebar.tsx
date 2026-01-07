@@ -1,34 +1,56 @@
 "use client";
 
 import React from 'react';
-import { Github, Linkedin } from 'lucide-react';
+import { Github, Linkedin, PanelLeftClose, PanelRightClose } from 'lucide-react';
 import { NavLinks } from './NavLinks';
 import { Section } from '@/app/page';
 import { Header } from './Header';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
+import { Button } from '../ui/button';
+import { Separator } from '../ui/separator';
 
 export const Sidebar = ({
   activeSection,
   onLinkClick,
   isMobile = false,
   isCollapsed = false,
+  onToggleCollapse,
 }: {
   activeSection: Section;
   onLinkClick: (section: Section) => void;
   isMobile?: boolean;
   isCollapsed?: boolean;
+  onToggleCollapse: () => void;
 }) => {
   const content = (
       <div className={cn("flex flex-col h-full p-6 bg-card/50", isCollapsed && !isMobile && "p-2 pt-6")}>
         <Header isCollapsed={isCollapsed && !isMobile} />
-        <ScrollArea className="mt-8 flex-1">
+        
+        <ScrollArea className="flex-1 mt-8">
           <NavLinks
             activeSection={activeSection}
             onLinkClick={onLinkClick}
             isCollapsed={isCollapsed && !isMobile}
           />
         </ScrollArea>
+        
+        {!isMobile && (
+          <>
+            <Separator className="my-4" />
+            <div className={cn("flex", isCollapsed ? "justify-center" : "justify-end")}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full"
+                onClick={onToggleCollapse}
+              >
+                {isCollapsed ? <PanelRightClose /> : <PanelLeftClose />}
+              </Button>
+            </div>
+          </>
+        )}
+
         <div className={cn("text-center shrink-0 mt-6", isCollapsed && !isMobile ? "sr-only" : "")}>
           <div className="flex justify-center gap-4">
             <a

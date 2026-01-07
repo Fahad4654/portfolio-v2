@@ -3,8 +3,6 @@
 import React from "react";
 import {
   Menu,
-  PanelLeftClose,
-  PanelRightClose
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
@@ -78,15 +76,8 @@ const Page = () => {
           activeSection={activeSection}
           onLinkClick={handleLinkClick}
           isCollapsed={isCollapsed}
+          onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
         />
-         <Button
-            variant="ghost"
-            size="icon"
-            className="absolute bottom-4 right-4 hidden md:inline-flex rounded-full bg-background/50 backdrop-blur-sm"
-            onClick={() => setIsCollapsed(!isCollapsed)}
-          >
-            {isCollapsed ? <PanelRightClose /> : <PanelLeftClose />}
-          </Button>
       </div>
 
       <main className={cn(
@@ -111,6 +102,7 @@ const Page = () => {
                   activeSection={activeSection}
                   onLinkClick={handleLinkClick}
                   isMobile
+                  onToggleCollapse={() => {}}
                 />
               </SheetClose>
             </SheetContent>
