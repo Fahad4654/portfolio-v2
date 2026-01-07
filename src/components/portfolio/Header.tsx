@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -92,7 +91,7 @@ export const Header = ({
           isCollapsed ? "opacity-0 h-0 overflow-hidden" : "opacity-100"
         )}
       >
-        <h1 className="text-xl font-bold text-foreground font-headline">
+        <h1 className="text-2xl font-bold text-foreground font-headline">
           FAHAD KABIR
         </h1>
         <p className="text-sm text-primary">DevOps Engineer</p>
