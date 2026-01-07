@@ -25,21 +25,21 @@ export const Sidebar = ({
   onToggleCollapse: () => void;
 }) => {
   const content = (
-      <div className={cn("relative flex flex-col h-full p-6 bg-card/50", isCollapsed && !isMobile && "p-2 pt-6")}>
+      <div className={cn("relative flex flex-col h-full p-4 bg-card/50", isCollapsed && !isMobile && "p-2 pt-4")}>
         {!isMobile && (
             <Button
               variant="ghost"
               size="icon"
-              className="absolute top-4 right-4 rounded-full z-20"
+              className="absolute top-2 right-2 rounded-full z-20 h-8 w-8"
               onClick={onToggleCollapse}
             >
-              {isCollapsed ? <PanelRightClose /> : <PanelLeftClose />}
+              {isCollapsed ? <PanelRightClose className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
             </Button>
         )}
         
         <Header isCollapsed={isCollapsed && !isMobile} />
         
-        <ScrollArea className="flex-1 mt-8">
+        <ScrollArea className="flex-1 mt-6">
           <NavLinks
             activeSection={activeSection}
             onLinkClick={onLinkClick}
@@ -47,8 +47,8 @@ export const Sidebar = ({
           />
         </ScrollArea>
         
-        <div className={cn("text-center shrink-0 mt-6", isCollapsed && !isMobile ? "sr-only" : "")}>
-           <Separator className="my-4" />
+        <div className={cn("text-center shrink-0 mt-4", isCollapsed && !isMobile ? "sr-only" : "")}>
+           <Separator className="my-3" />
           <div className="flex justify-center gap-4">
             <a
               href="https://github.com/Fahad4654"
@@ -56,7 +56,7 @@ export const Sidebar = ({
               aria-label="GitHub"
               className="text-muted-foreground hover:text-primary transition-colors"
             >
-              <Github />
+              <Github className="h-4 w-4" />
             </a>
             <a
               href="https://www.linkedin.com/in/fahad-kabir-6559211a8"
@@ -64,7 +64,7 @@ export const Sidebar = ({
               aria-label="LinkedIn"
               className="text-muted-foreground hover:text-primary transition-colors"
             >
-              <Linkedin />
+              <Linkedin className="h-4 w-4" />
             </a>
           </div>
         </div>

@@ -19,20 +19,20 @@ export const NavLinks = ({
 }) => {
   return (
     <TooltipProvider delayDuration={0}>
-      <nav className="flex flex-col gap-4">
+      <nav className="flex flex-col gap-2">
         {links.map((link) => {
           const content = (
             <button
               key={link.id}
               onClick={() => onLinkClick(link.id)}
               className={cn(
-                "flex items-center gap-4 p-3 rounded-lg transition-all duration-300 text-muted-foreground hover:bg-primary/10 hover:text-primary",
+                "flex items-center gap-3 p-2.5 rounded-lg transition-all duration-300 text-muted-foreground hover:bg-primary/10 hover:text-primary text-sm",
                 activeSection === link.id &&
                   "bg-primary/10 text-primary font-semibold",
                 isCollapsed && "justify-center"
               )}
             >
-              <link.icon className="h-5 w-5 shrink-0" />
+              <link.icon className="h-4 w-4 shrink-0" />
               <span className={cn("transition-all duration-300", isCollapsed && "sr-only")}>{link.text}</span>
             </button>
           );

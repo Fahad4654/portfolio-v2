@@ -70,7 +70,7 @@ const Page = () => {
     <div className="flex min-h-screen bg-background text-foreground">
       <div className={cn(
         "hidden md:block fixed top-0 left-0 h-full transition-all duration-300 ease-in-out z-10",
-        isCollapsed ? "w-20" : "w-80"
+        isCollapsed ? "w-20" : "w-72"
       )}>
         <Sidebar
           activeSection={activeSection}
@@ -82,7 +82,7 @@ const Page = () => {
 
       <main className={cn(
         "flex-1 relative flex flex-col transition-all duration-300 ease-in-out",
-        isCollapsed ? "md:ml-20" : "md:ml-80"
+        isCollapsed ? "md:ml-20" : "md:ml-72"
         )}>
         <div className="md:hidden fixed bottom-6 right-6 z-20">
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
