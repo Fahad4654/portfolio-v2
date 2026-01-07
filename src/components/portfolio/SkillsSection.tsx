@@ -25,11 +25,11 @@ const skillGroups = [
     {
       title: "DevOps, CI/CD & Tooling",
       skills: [
+        "Linux",
         "Git",
         "GitHub Actions",
         "Docker",
         "Ansible",
-        "Linux",
         "Jenkins",
         "CI/CD",
         "SonarQube",
