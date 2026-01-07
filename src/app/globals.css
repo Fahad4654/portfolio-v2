@@ -116,15 +116,16 @@ body {
 }
 
 #digital-rain-canvas {
-  display: none; /* Hidden by default */
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   z-index: -1; /* Behind all content */
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
 }
 
 .dark #digital-rain-canvas {
-  display: block; /* Visible only in dark mode */
+  opacity: 1; /* Visible only in dark mode */
 }
