@@ -6,6 +6,7 @@ import { NavLinks } from './NavLinks';
 import { Section } from '@/app/page';
 import { Header } from './Header';
 import { cn } from '@/lib/utils';
+import { ScrollArea } from '../ui/scroll-area';
 
 export const Sidebar = ({
   activeSection,
@@ -20,34 +21,34 @@ export const Sidebar = ({
 }) => {
   const content = (
       <div className={cn("flex flex-col h-full p-6 bg-card/50", isCollapsed && !isMobile && "p-2 pt-6")}>
-      <Header isCollapsed={isCollapsed && !isMobile} />
-        <nav className="mt-10 flex-1 flex flex-col gap-4">
+        <Header isCollapsed={isCollapsed && !isMobile} />
+        <ScrollArea className="mt-8 flex-1">
           <NavLinks
             activeSection={activeSection}
             onLinkClick={onLinkClick}
             isCollapsed={isCollapsed && !isMobile}
           />
-        </nav>
-      <div className={cn("text-center shrink-0 mt-6", isCollapsed && !isMobile ? "sr-only" : "")}>
-        <div className="flex justify-center gap-4">
-          <a
-            href="https://github.com/Fahad4654"
-            target="_blank"
-            aria-label="GitHub"
-            className="text-muted-foreground hover:text-primary transition-colors"
-          >
-            <Github />
-          </a>
-          <a
-            href="https://www.linkedin.com/in/fahad-kabir-6559211a8"
-            target="_blank"
-            aria-label="LinkedIn"
-            className="text-muted-foreground hover:text-primary transition-colors"
-          >
-            <Linkedin />
-          </a>
+        </ScrollArea>
+        <div className={cn("text-center shrink-0 mt-6", isCollapsed && !isMobile ? "sr-only" : "")}>
+          <div className="flex justify-center gap-4">
+            <a
+              href="https://github.com/Fahad4654"
+              target="_blank"
+              aria-label="GitHub"
+              className="text-muted-foreground hover:text-primary transition-colors"
+            >
+              <Github />
+            </a>
+            <a
+              href="https://www.linkedin.com/in/fahad-kabir-6559211a8"
+              target="_blank"
+              aria-label="LinkedIn"
+              className="text-muted-foreground hover:text-primary transition-colors"
+            >
+              <Linkedin />
+            </a>
+          </div>
         </div>
-      </div>
     </div>
   );
 
