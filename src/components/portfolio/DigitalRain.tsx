@@ -16,7 +16,6 @@ export const DigitalRain = () => {
         let width = canvas.width = window.innerWidth;
         let height = canvas.height = window.innerHeight;
 
-        // Katakana characters + some numbers and symbols
         const characters = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン0123456789';
         const charactersArray = characters.split('');
         const fontSize = 16;
@@ -27,13 +26,11 @@ export const DigitalRain = () => {
             drops[x] = 1;
         }
 
-        let animationFrameId: number;
-
         const draw = () => {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
             ctx.fillRect(0, 0, width, height);
             
-            ctx.fillStyle = '#6f6'; // Lighter green text
+            ctx.fillStyle = '#6f6';
             ctx.font = `${fontSize}px monospace`;
 
             for (let i = 0; i < drops.length; i++) {
@@ -45,22 +42,20 @@ export const DigitalRain = () => {
                 }
                 drops[i]++;
             }
-            animationFrameId = requestAnimationFrame(draw);
         };
         
-        draw();
+        const intervalId = setInterval(draw, 33); // Draw every ~30 FPS
 
         const handleResize = () => {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
-            // No need to reset drops, it will adapt
         };
 
         window.addEventListener('resize', handleResize);
 
         return () => {
             window.removeEventListener('resize', handleResize);
-            cancelAnimationFrame(animationFrameId);
+            clearInterval(intervalId);
         };
 
     }, []);
