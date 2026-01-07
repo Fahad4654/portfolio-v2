@@ -8,7 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
-import { Send } from "lucide-react";
+import { Send, Instagram, Facebook } from "lucide-react";
+import { Separator } from "../ui/separator";
 
 const isValidEmail = (email: string) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -125,6 +126,36 @@ export const ContactSection = () => {
               </Button>
             </div>
           </form>
+
+          <Separator className="my-8" />
+
+          <div className="text-center">
+            <h3 className="text-lg font-semibold mb-4 text-foreground">
+              Connect on Social Media
+            </h3>
+            <div className="flex justify-center items-center gap-6">
+              <a
+                href="https://www.instagram.com/fahad_kabir_kaife"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="text-muted-foreground hover:text-primary transition-colors flex flex-col items-center gap-2"
+              >
+                <Instagram className="h-7 w-7" />
+                <span>Instagram</span>
+              </a>
+              <a
+                href="https://www.facebook.com/fahad.kabir.kaife"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="text-muted-foreground hover:text-primary transition-colors flex flex-col items-center gap-2"
+              >
+                <Facebook className="h-7 w-7" />
+                <span>Facebook</span>
+              </a>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </section>
