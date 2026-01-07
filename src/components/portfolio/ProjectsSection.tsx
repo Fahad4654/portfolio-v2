@@ -105,8 +105,7 @@ export const ProjectsSection = () => {
                         </a>
                     ) : (
                         <a href="#" className="cursor-not-allowed">
-                        Not permitted to show{" "}
-                        {/* <ArrowRight className="ml-2 h-4 w-4" /> */}
+                        Ongoing
                         </a>
                     )}
                     </Button>
