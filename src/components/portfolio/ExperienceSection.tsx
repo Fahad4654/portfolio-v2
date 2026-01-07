@@ -42,7 +42,7 @@ const experiences = [
   ];
 
 export const ExperienceSection = () => {
-  const [expanded, setExpanded] = useState<number | null>(0);
+  const [expanded, setExpanded] = useState<number | null>(null);
 
   const toggleExpand = (index: number) => {
     setExpanded(expanded === index ? null : index);
