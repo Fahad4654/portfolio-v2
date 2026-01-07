@@ -27,6 +27,19 @@ export const Sidebar = ({
       <div className={cn("flex flex-col h-full p-6 bg-card/50", isCollapsed && !isMobile && "p-2 pt-6")}>
         <Header isCollapsed={isCollapsed && !isMobile} />
         
+        {!isMobile && (
+          <div className={cn("text-center mt-4", isCollapsed && "w-full flex justify-center")}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full"
+              onClick={onToggleCollapse}
+            >
+              {isCollapsed ? <PanelRightClose /> : <PanelLeftClose />}
+            </Button>
+          </div>
+        )}
+
         <ScrollArea className="flex-1 mt-8">
           <NavLinks
             activeSection={activeSection}
@@ -35,23 +48,8 @@ export const Sidebar = ({
           />
         </ScrollArea>
         
-        {!isMobile && (
-          <>
-            <Separator className="my-4" />
-            <div className={cn("flex", isCollapsed ? "justify-center" : "justify-end")}>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-full"
-                onClick={onToggleCollapse}
-              >
-                {isCollapsed ? <PanelRightClose /> : <PanelLeftClose />}
-              </Button>
-            </div>
-          </>
-        )}
-
         <div className={cn("text-center shrink-0 mt-6", isCollapsed && !isMobile ? "sr-only" : "")}>
+           <Separator className="my-4" />
           <div className="flex justify-center gap-4">
             <a
               href="https://github.com/Fahad4654"
