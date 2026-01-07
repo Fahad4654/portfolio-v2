@@ -83,7 +83,8 @@ export const DigitalRain = () => {
       className="fixed top-0 left-0 w-full h-full pointer-events-none"
       style={{ 
         zIndex: -1, 
-        backgroundColor: '#1a0514' // Solid base color
+        backgroundColor: '#1a0514',
+        position: 'fixed'
       }}
     />
   );

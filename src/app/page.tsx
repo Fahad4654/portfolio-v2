@@ -13,7 +13,6 @@ import {
   Sheet,
   SheetContent,
   SheetTrigger,
-  SheetClose,
   SheetTitle,
 } from "@/components/ui/sheet";
 
@@ -72,10 +71,11 @@ const Page = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-background dark:bg-transparent text-foreground">
+    <div className="relative min-h-screen w-full overflow-x-hidden">
       <DigitalRain />
+      
       <div className={cn(
-        "hidden md:block fixed top-0 left-0 h-full transition-all duration-300 ease-in-out z-10",
+        "hidden md:block fixed top-0 left-0 h-full transition-all duration-300 ease-in-out z-30",
         isCollapsed ? "w-20" : "w-72"
       )}>
         <Sidebar
@@ -87,34 +87,34 @@ const Page = () => {
       </div>
 
       <main className={cn(
-        "flex-1 relative flex flex-col transition-all duration-300 ease-in-out",
-        "bg-background/40 backdrop-blur-[1px]", // Keep it light so the rain is clear
+        "relative flex-1 min-h-screen transition-all duration-300 ease-in-out z-10",
+        "bg-background/40 backdrop-blur-[1px]",
         isCollapsed ? "md:ml-20" : "md:ml-72"
         )}>
-        <div className="md:hidden fixed bottom-6 right-6 z-20">
+        
+        <div className="md:hidden fixed bottom-6 right-6 z-50">
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
               <Button
                 variant="default"
                 size="icon"
-                className="rounded-full h-16 w-16 shadow-lg shadow-primary/30"
+                className="rounded-full h-16 w-16 shadow-2xl shadow-primary/50"
               >
                 <Menu className="h-7 w-7" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-80 p-0 border-r-0">
+            <SheetContent side="left" className="w-80 p-0 border-r-0 z-[60]">
               <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
-              <SheetClose asChild>
                 <Sidebar
                   activeSection={activeSection}
                   onLinkClick={handleLinkClick}
                   isMobile
                   onToggleCollapse={() => {}}
                 />
-              </SheetClose>
             </SheetContent>
           </Sheet>
         </div>
+
         <div
           key={activeSection}
           ref={contentAreaRef}
