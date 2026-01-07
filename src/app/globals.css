@@ -124,6 +124,7 @@ body {
   z-index: -1; /* Behind all content */
   opacity: 0;
   transition: opacity 0.5s ease-in-out;
+  background-color: #1a0514;
 }
 
 .dark #digital-rain-canvas {

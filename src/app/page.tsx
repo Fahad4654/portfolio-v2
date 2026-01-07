@@ -72,7 +72,7 @@ const Page = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground dark:bg-transparent">
+    <div className="flex min-h-screen bg-background dark:bg-transparent text-foreground">
       <DigitalRain />
       <div className={cn(
         "hidden md:block fixed top-0 left-0 h-full transition-all duration-300 ease-in-out z-10",
