@@ -19,7 +19,7 @@ export const NavLinks = ({
 }) => {
   return (
     <TooltipProvider delayDuration={0}>
-      <nav className="flex flex-col gap-2">
+      <nav className="flex flex-col gap-4">
         {links.map((link) => {
           const content = (
             <button
