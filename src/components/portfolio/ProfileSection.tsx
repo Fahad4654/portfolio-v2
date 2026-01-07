@@ -6,6 +6,8 @@ import { Mail, MapPin, Phone, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import profilePic from "@/assets/pp.jpeg";
 
 export const ProfileSection = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -27,6 +29,19 @@ export const ProfileSection = () => {
 
   return (
     <section id="profile">
+       <div className="md:hidden mb-10 text-center">
+        <Avatar
+          className={"mx-auto w-24 h-24 mb-4 border-4 border-primary/20 shadow-lg"}
+        >
+          <AvatarImage src={profilePic.src} alt="Profile Picture" />
+          <AvatarFallback>FK</AvatarFallback>
+        </Avatar>
+        <h1 className="text-2xl font-bold text-foreground font-headline">
+          Fahad Kabir
+        </h1>
+        <p className="text-sm text-primary">DevOps Engineer</p>
+      </div>
+
       <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary">
         Personal Info
       </h2>
