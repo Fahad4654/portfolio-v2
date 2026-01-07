@@ -20,12 +20,13 @@ const skillGroups = [
     },
     {
       title: "Databases & ORMs",
-      skills: ["PostgreSQL", "MySQL", "Sequelize", "Redis", "Firebase", "Prisma"],
+      skills: ["PostgreSQL", "MySQL", "Sequelize", "Redis", "Firebase", "Prisma", "Database Management", "Database Optimization"],
     },
     {
       title: "DevOps, CI/CD & Tooling",
       skills: [
         "Git",
+        "GitHub Actions",
         "Docker",
         "Ansible",
         "Linux",
