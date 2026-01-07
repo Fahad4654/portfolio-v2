@@ -37,10 +37,6 @@ export const ProfileSection = () => {
               DevOps Engineer | Infrastructure Automation | Full-Stack Enthusiast
             </h3>
             <Separator className="mb-6" />
-
-            <h4 className="text-lg font-semibold text-primary mb-4">
-              Overview
-            </h4>
             
             <p className="text-muted-foreground mb-4 leading-relaxed">
               I specialize in turning manual, error-prone deployment processes into automated, high-availability engines. By leveraging <strong>Linux, Docker, and Ansible</strong>, I help teams ship code faster and spend less time debugging infrastructure.
