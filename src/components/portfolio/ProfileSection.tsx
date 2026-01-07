@@ -67,7 +67,9 @@ export const ProfileSection = () => {
             </div>
             <div className="flex items-center gap-3">
               <Phone className="h-5 w-5 text-primary" />
-              <span>+880 1772-967944</span>
+              <a href="tel:+8801772967944" className="hover:underline hover:text-primary transition-colors">
+                +880 1772-967944
+              </a>
             </div>
             <div className="flex items-center gap-3">
               <Mail className="h-5 w-5 text-primary" />
