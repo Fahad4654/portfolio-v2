@@ -36,10 +36,6 @@ const skillGroups = [
         "CI/CD",
       ],
     },
-    {
-      title: "Soft Skills",
-      skills: ["Problem-Solving", "Analytical Thinking"],
-    }
   ];
 
 export const SkillsSection = () => {
