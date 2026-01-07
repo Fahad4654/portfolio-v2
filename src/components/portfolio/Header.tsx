@@ -6,6 +6,12 @@ import profilePic from "@/assets/pp.jpeg";
 import { cn } from "@/lib/utils";
 import { PanelLeftClose, PanelRightClose } from "lucide-react";
 import { Button } from "../ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export const Header = ({
   isCollapsed,
@@ -14,6 +20,18 @@ export const Header = ({
   isCollapsed?: boolean;
   onToggleCollapse: () => void;
 }) => {
+  const avatar = (
+    <Avatar
+      className={cn(
+        "mx-auto border-4 border-primary/20 shadow-lg transition-all duration-300",
+        isCollapsed ? "w-12 h-12" : "w-24 h-24 mb-3"
+      )}
+    >
+      <AvatarImage src={profilePic.src} alt="Profile Picture" />
+      <AvatarFallback>FK</AvatarFallback>
+    </Avatar>
+  );
+
   return (
     <div className={cn("shrink-0", isCollapsed ? "px-2" : "text-center")}>
       <div
@@ -23,28 +41,36 @@ export const Header = ({
         )}
       >
         <div className={cn("relative", isCollapsed ? "" : "w-full")}>
-          <Avatar
-            className={cn(
-              "mx-auto border-4 border-primary/20 shadow-lg transition-all duration-300",
-              isCollapsed ? "w-12 h-12" : "w-24 h-24 mb-3"
-            )}
-          >
-            <AvatarImage src={profilePic.src} alt="Profile Picture" />
-            <AvatarFallback>FK</AvatarFallback>
-          </Avatar>
-          
+          {isCollapsed ? (
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger asChild>{avatar}</TooltipTrigger>
+                <TooltipContent side="right" sideOffset={5}>
+                  <div className="text-center">
+                    <h1 className="text-base font-bold text-foreground font-headline">
+                      FAHAD KABIR
+                    </h1>
+                    <p className="text-xs text-primary">DevOps Engineer</p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            avatar
+          )}
+
           {!isCollapsed && (
-             <Button
-                variant="ghost"
-                size="icon"
-                className={cn(
-                  "absolute top-0 rounded-full z-20",
-                   "right-0"
-                )}
-                onClick={onToggleCollapse}
-              >
-                <PanelLeftClose />
-              </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn(
+                "absolute top-0 rounded-full z-20",
+                "right-0"
+              )}
+              onClick={onToggleCollapse}
+            >
+              <PanelLeftClose />
+            </Button>
           )}
         </div>
 
