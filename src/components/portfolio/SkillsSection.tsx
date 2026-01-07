@@ -8,7 +8,7 @@ import {
 const skillGroups = [
     {
       title: "Languages & Scripting",
-      skills: ["TypeScript", "JavaScript", "Java", "Python", "Bash scripting"],
+      skills: ["TypeScript", "JavaScript", "Python", "Java", "Bash scripting"],
     },
     {
       title: "Backend Development",
