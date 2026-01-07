@@ -30,7 +30,7 @@ export const Sidebar = ({
             <Button
               variant="ghost"
               size="icon"
-              className={cn("absolute rounded-full z-20", isCollapsed ? "top-2 right-1" : "top-2 right-2")}
+              className={cn("absolute top-2 right-2 rounded-full z-20")}
               onClick={onToggleCollapse}
             >
               {isCollapsed ? <PanelRightClose /> : <PanelLeftClose />}
