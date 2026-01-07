@@ -10,6 +10,7 @@ const education = [
     {
       degree: "B.Sc. in Computer Science and Engineering",
       institution: "Independent University, Bangladesh",
+      link: "https://iub.ac.bd/",
       period: "2023",
     },
     {
@@ -41,7 +42,13 @@ export const EducationSection = () => {
                     {edu.degree}
                 </CardTitle>
                 <CardDescription className="mb-2">
-                    {edu.institution}
+                    {edu.link ? (
+                        <a href={edu.link} target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-primary transition-colors">
+                            {edu.institution}
+                        </a>
+                    ) : (
+                        edu.institution
+                    )}
                 </CardDescription>
                 <p className="text-sm text-muted-foreground">
                     {edu.period}
