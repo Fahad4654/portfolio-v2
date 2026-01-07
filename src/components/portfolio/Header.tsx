@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -45,12 +46,7 @@ export const Header = ({
               <Tooltip>
                 <TooltipTrigger asChild>{avatar}</TooltipTrigger>
                 <TooltipContent side="right" sideOffset={5}>
-                  <div className="text-center">
-                    <h1 className="text-base font-bold text-foreground font-headline">
-                      FAHAD KABIR
-                    </h1>
-                    <p className="text-xs text-primary">DevOps Engineer</p>
-                  </div>
+                  <p className="text-base text-foreground">FAHAD KABIR</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
