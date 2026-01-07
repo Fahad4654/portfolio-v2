@@ -4,6 +4,7 @@
 import React from "react";
 import {
   Menu,
+  Send,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
@@ -23,10 +24,11 @@ import { SkillsSection } from "@/components/portfolio/SkillsSection";
 import { ExperienceSection } from "@/components/portfolio/ExperienceSection";
 import { ProjectsSection } from "@/components/portfolio/ProjectsSection";
 import { EducationSection } from "@/components/portfolio/EducationSection";
+import { ContactSection } from "@/components/portfolio/ContactSection";
 import { User, Shapes, GraduationCap, BriefcaseBusiness, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type Section = "profile" | "skills" | "experience" | "portfolio" | "education";
+export type Section = "profile" | "skills" | "experience" | "portfolio" | "education" | "contact";
 
 export const links: { id: Section; icon: React.ElementType; text: string }[] = [
   { id: "profile", icon: User, text: "Personal Info" },
@@ -34,6 +36,7 @@ export const links: { id: Section; icon: React.ElementType; text: string }[] = [
   { id: "education", icon: GraduationCap, text: "Education" },
   { id: "experience", icon: BriefcaseBusiness, text: "Work Experience" },
   { id: "portfolio", icon: FileText, text: "Projects" },
+  { id: "contact", icon: Send, text: "Contact Me" },
 ];
 
 
@@ -120,6 +123,7 @@ const Page = () => {
             {activeSection === "experience" && <ExperienceSection />}
             {activeSection === "portfolio" && <ProjectsSection />}
             {activeSection === "education" && <EducationSection />}
+            {activeSection === "contact" && <ContactSection />}
 
             <footer className="py-8 border-t border-border/20 mt-24 md:mt-32">
               <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
