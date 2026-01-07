@@ -5,6 +5,7 @@ const experiences = [
     {
       title: "DevOps Engineer",
       company: "mPower Social Enterprises Ltd.",
+      companyLink: "https://mpower-social.com/",
       period: "Sept 2023 – Present",
       description: [
         "Implement and maintain CI/CD pipelines.",
@@ -15,6 +16,7 @@ const experiences = [
     {
       title: "Software Engineer Intern",
       company: "mPower Social Enterprises Ltd.",
+      companyLink: "https://mpower-social.com/",
       period: "Feb 2023 – May 2023",
       description: [
         "Developed front-end features for web applications using React and TypeScript.",
@@ -41,7 +43,9 @@ export const ExperienceSection = () => {
             <h3 className="text-xl font-bold text-foreground mt-1 font-headline">
               {exp.title}
             </h3>
-            <p className="text-lg text-primary mb-3">{exp.company}</p>
+            <a href={exp.companyLink} target="_blank" rel="noopener noreferrer" className="text-lg text-primary mb-3 inline-block hover:underline">
+                {exp.company}
+            </a>
             <ul className="list-disc list-inside text-muted-foreground space-y-1.5">
               {exp.description.map((item, i) => (
                 <li key={i}>{item}</li>
