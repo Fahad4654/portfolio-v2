@@ -22,7 +22,7 @@ export const Sidebar = ({
   const content = (
       <div className={cn("flex flex-col h-full p-6 bg-card/50", isCollapsed && !isMobile && "p-2 pt-6")}>
       <Header isCollapsed={isCollapsed && !isMobile} />
-      <div className="flex-1 flex flex-col justify-center mt-10">
+      <div className="flex-1 flex flex-col mt-16">
           <NavLinks
             activeSection={activeSection}
             onLinkClick={onLinkClick}
