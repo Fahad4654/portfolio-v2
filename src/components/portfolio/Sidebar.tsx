@@ -30,7 +30,7 @@ export const Sidebar = ({
             <Button
               variant="ghost"
               size="icon"
-              className="absolute top-4 right-4 rounded-full"
+              className="absolute top-4 right-4 rounded-full z-20"
               onClick={onToggleCollapse}
             >
               {isCollapsed ? <PanelRightClose /> : <PanelLeftClose />}
