@@ -105,7 +105,7 @@ export const ProjectsSection = () => {
                         </a>
                     ) : (
                         <a href="#" className="cursor-not-allowed">
-                        Ongoing
+                          {project.title.includes("Edmate") ? "Not permitted to show" : "Ongoing"}
                         </a>
                     )}
                     </Button>
