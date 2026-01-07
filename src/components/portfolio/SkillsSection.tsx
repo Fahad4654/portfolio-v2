@@ -30,6 +30,7 @@ const skillGroups = [
         "Ansible",
         "Linux",
         "Jenkins",
+        "Vite",
         "SonarQube",
         "Elasticsearch",
         "System Monitoring",
