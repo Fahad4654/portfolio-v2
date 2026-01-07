@@ -20,7 +20,7 @@ const skillGroups = [
     },
     {
       title: "Databases & ORMs",
-      skills: ["PostgreSQL", "MySQL", "Sequelize", "Redis", "Firebase", "Prisma", "Database Management", "Database Optimization"],
+      skills: ["PostgreSQL", "MySQL", "Sequelize", "Redis", "Firebase", "Prisma"],
     },
     {
       title: "DevOps, CI/CD & Tooling",
@@ -35,6 +35,8 @@ const skillGroups = [
         "SonarQube",
         "Elasticsearch",
         "System Monitoring",
+        "Database Management",
+        "Database Optimization",
       ],
     },
   ];
