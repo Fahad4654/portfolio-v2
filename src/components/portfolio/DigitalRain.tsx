@@ -16,7 +16,7 @@ export const DigitalRain = () => {
         let width = canvas.width = window.innerWidth;
         let height = canvas.height = window.innerHeight;
 
-        const characters = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン0123456789';
+        const characters = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         const charactersArray = characters.split('');
         const fontSize = 16;
         const columns = Math.floor(width / fontSize);
@@ -30,12 +30,21 @@ export const DigitalRain = () => {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
             ctx.fillRect(0, 0, width, height);
             
-            ctx.fillStyle = '#6f6';
             ctx.font = `${fontSize}px monospace`;
 
             for (let i = 0; i < drops.length; i++) {
                 const text = charactersArray[Math.floor(Math.random() * charactersArray.length)];
+                
+                // Style for the falling characters
+                ctx.fillStyle = '#0f0'; // Brighter green
                 ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                // Style for the leading character (brighter)
+                if (drops[i] * fontSize < height) {
+                    ctx.fillStyle = '#cfc'; // Light green/white
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                }
+
 
                 if (drops[i] * fontSize > height && Math.random() > 0.975) {
                     drops[i] = 0;
@@ -49,6 +58,10 @@ export const DigitalRain = () => {
         const handleResize = () => {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
+            // Re-initialize drops for new column count
+            for (let x = 0; x < Math.floor(width / fontSize); x++) {
+                drops[x] = 1;
+            }
         };
 
         window.addEventListener('resize', handleResize);
