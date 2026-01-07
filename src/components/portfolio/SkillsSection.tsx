@@ -16,7 +16,7 @@ const skillGroups = [
     },
     {
       title: "Frontend Development",
-      skills: ["React", "Remix", "Tailwind", "Material UI", "HTML5", "CSS3"],
+      skills: ["React", "Remix", "Vite", "Tailwind", "Material UI", "HTML5", "CSS3"],
     },
     {
       title: "Databases & ORMs",
@@ -30,7 +30,6 @@ const skillGroups = [
         "Ansible",
         "Linux",
         "Jenkins",
-        "Vite",
         "SonarQube",
         "Elasticsearch",
         "System Monitoring",
