@@ -19,30 +19,45 @@ export const Header = ({
       <div
         className={cn(
           "flex items-center justify-center relative",
-          !isCollapsed && "flex-col"
+          isCollapsed ? "flex-col gap-2" : "flex-col"
         )}
       >
-        <Avatar
-          className={cn(
-            "mx-auto mb-3 border-4 border-primary/20 shadow-lg transition-all duration-300",
-            isCollapsed ? "w-12 h-12 mb-0" : "w-24 h-24"
+        <div className={cn("relative", isCollapsed ? "" : "w-full")}>
+          <Avatar
+            className={cn(
+              "mx-auto border-4 border-primary/20 shadow-lg transition-all duration-300",
+              isCollapsed ? "w-12 h-12" : "w-24 h-24 mb-3"
+            )}
+          >
+            <AvatarImage src={profilePic.src} alt="Profile Picture" />
+            <AvatarFallback>FK</AvatarFallback>
+          </Avatar>
+          
+          {!isCollapsed && (
+             <Button
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  "absolute top-0 rounded-full z-20",
+                   "right-0"
+                )}
+                onClick={onToggleCollapse}
+              >
+                <PanelLeftClose />
+              </Button>
           )}
-        >
-          <AvatarImage src={profilePic.src} alt="Profile Picture" />
-          <AvatarFallback>FK</AvatarFallback>
-        </Avatar>
+        </div>
 
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn(
-            "absolute top-0 rounded-full z-20",
-            isCollapsed ? "right-0 translate-x-1/2" : "right-0"
-          )}
-          onClick={onToggleCollapse}
-        >
-          {isCollapsed ? <PanelRightClose /> : <PanelLeftClose />}
-        </Button>
+        {isCollapsed && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full z-20"
+            onClick={onToggleCollapse}
+          >
+            <PanelRightClose />
+          </Button>
+        )}
       </div>
 
       <div
