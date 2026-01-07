@@ -114,14 +114,16 @@ export const ContactSection = () => {
                 disabled={isSubmitting}
               />
             </div>
-            <Button
-              type="submit"
-              className="shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-shadow"
-              disabled={isSubmitting}
-            >
-              <Send className="mr-2 h-4 w-4" />
-              {isSubmitting ? 'Sending...' : 'Send Message'}
-            </Button>
+            <div className="flex justify-end">
+              <Button
+                type="submit"
+                className="shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-shadow"
+                disabled={isSubmitting}
+              >
+                <Send className="mr-2 h-4 w-4" />
+                {isSubmitting ? 'Sending...' : 'Send Message'}
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>
