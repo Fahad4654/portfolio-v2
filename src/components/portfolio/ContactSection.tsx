@@ -167,7 +167,7 @@ export const ContactSection = () => {
           </form>
 
           <p className="text-sm text-muted-foreground mt-4 text-center">
-            I'll be notified by email and will get back to you as soon as possible.
+            Please provide a valid email to receive a response. I'll get back to you as soon as possible.
           </p>
 
           <Separator className="my-8" />
