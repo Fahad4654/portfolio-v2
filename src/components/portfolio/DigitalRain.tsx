@@ -35,8 +35,8 @@ export const DigitalRain = () => {
     let animationFrameId: number;
 
     const draw = () => {
-      // Background: Dark Plum/Burgundy with slight transparency for trails
-      ctx.fillStyle = 'rgba(26, 5, 20, 0.15)'; 
+      // Background: Dark with slight transparency for trails
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.15)'; 
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       ctx.font = `${fontSize}px monospace`;
@@ -44,14 +44,14 @@ export const DigitalRain = () => {
       for (let i = 0; i < drops.length; i++) {
         const text = chars.charAt(Math.floor(Math.random() * chars.length));
         
-        // Color Palette from your image: Teal/Cyan with occasional highlight
+        // Neon green color palette
         const randomState = Math.random();
         if (randomState > 0.98) {
-          ctx.fillStyle = '#ffffff'; // Occasional bright white
+          ctx.fillStyle = '#ffffff'; // Occasional bright white highlight
         } else if (randomState > 0.90) {
-          ctx.fillStyle = '#b2f5ea'; // Very light teal
+          ctx.fillStyle = '#90EE90'; // Lighter green
         } else {
-          ctx.fillStyle = '#4fd1c5'; // Main Teal color
+          ctx.fillStyle = '#39FF14'; // Main neon green
         }
 
         ctx.fillText(text, i * (fontSize - 2), drops[i] * fontSize);
@@ -85,7 +85,7 @@ export const DigitalRain = () => {
       className="fixed top-0 left-0 w-full h-full pointer-events-none"
       style={{ 
         zIndex: -1, 
-        backgroundColor: '#1a0514',
+        backgroundColor: '#000000',
         position: 'fixed'
       }}
     />
