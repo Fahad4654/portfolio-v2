@@ -120,7 +120,7 @@ const Page = () => {
           ref={contentAreaRef}
           className="overflow-y-auto flex-1 animate-slide-in"
         >
-          <div className="container mx-auto px-6 py-16 md:px-12 md:py-24">
+          <div className="container mx-auto px-6 py-12 md:px-12 md:py-16">
             {activeSection === "profile" && <ProfileSection />}
             {activeSection === "skills" && <SkillsSection />}
             {activeSection === "experience" && <ExperienceSection />}
