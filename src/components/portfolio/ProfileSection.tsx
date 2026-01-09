@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { Mail, MapPin, Phone, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import profilePic from "@/assets/pp.jpeg";
@@ -46,13 +46,14 @@ export const ProfileSection = () => {
         Personal Info
       </h2>
       <Card className="bg-card">
-        <CardContent className="p-8 text-lg">
-          <div>
-            <h3 className="text-xl font-semibold text-foreground mb-2">
+        <CardHeader className="p-8 pb-4">
+            <CardTitle className="text-xl font-semibold text-foreground">
               DevOps Engineer | Infrastructure Automation | Full-Stack Enthusiast
-            </h3>
-            <Separator className="mb-6" />
-            
+            </CardTitle>
+            <Separator className="mt-4" />
+        </CardHeader>
+        <CardContent className="p-8 pt-4 text-lg">
+          <div>
             <p className="text-muted-foreground mb-4 leading-relaxed">
               I specialize in turning manual, error-prone deployment processes into automated, high-availability engines. By leveraging <strong>Linux, Docker, and Ansible</strong>, I help teams ship code faster and spend less time debugging infrastructure.
             </p>
