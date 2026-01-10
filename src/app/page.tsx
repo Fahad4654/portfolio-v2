@@ -112,7 +112,7 @@ const Page = () => {
       <main 
         ref={contentAreaRef}
         className={cn(
-        "relative flex-1 min-h-screen transition-all duration-300 ease-in-out z-10",
+        "relative flex-1 h-screen transition-all duration-300 ease-in-out z-10",
         "bg-background/40 backdrop-blur-[1px]",
         "overflow-y-auto",
         isCollapsed ? "md:ml-20" : "md:ml-72"
