@@ -109,16 +109,18 @@ const Page = () => {
         </Sheet>
       </div>
 
-      <main className={cn(
+      <main 
+        ref={contentAreaRef}
+        className={cn(
         "relative flex-1 min-h-screen transition-all duration-300 ease-in-out z-10",
         "bg-background/40 backdrop-blur-[1px]",
+        "overflow-y-auto",
         isCollapsed ? "md:ml-20" : "md:ml-72"
         )}>
         
         <div
           key={activeSection}
-          ref={contentAreaRef}
-          className="overflow-y-auto flex-1 animate-slide-in"
+          className="flex-1 animate-slide-in"
         >
           <div className="container mx-auto px-6 py-12 md:px-12 md:py-16">
             {activeSection === "profile" && <ProfileSection />}
