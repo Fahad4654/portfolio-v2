@@ -30,7 +30,7 @@ const education = [
 export const EducationSection = () => {
     return (
         <section id="education">
-            <h2 className="text-4xl md:text-5xl font-bold mb-12 font-headline text-primary">
+            <h2 className="text-4xl md:text-5xl font-bold mb-12 font-headline text-primary text-center">
             Education
             </h2>
             <div className="grid md:grid-cols-2 gap-8">

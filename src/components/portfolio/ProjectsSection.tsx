@@ -54,7 +54,7 @@ const projects = [
 export const ProjectsSection = () => {
     return (
         <section id="portfolio">
-            <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary">
+            <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary text-center">
             My Projects
             </h2>
             <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">

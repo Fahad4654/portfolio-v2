@@ -42,7 +42,7 @@ export const ProfileSection = () => {
         <p className="text-sm text-primary">DevOps Engineer</p>
       </div>
 
-      <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary">
+      <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary text-center">
         Personal Info
       </h2>
       <Card className="bg-card">

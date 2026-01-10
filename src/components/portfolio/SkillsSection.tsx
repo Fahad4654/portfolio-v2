@@ -44,7 +44,7 @@ const skillGroups = [
 export const SkillsSection = () => {
     return (
         <section id="skills">
-            <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary">
+            <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary text-center">
                 Technical Skills
             </h2>
             <Card className="bg-card">

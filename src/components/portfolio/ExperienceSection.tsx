@@ -50,7 +50,7 @@ export const ExperienceSection = () => {
 
   return (
     <section id="experience">
-      <h2 className="text-4xl md:text-5xl font-bold mb-12 font-headline text-primary">
+      <h2 className="text-4xl md:text-5xl font-bold mb-12 font-headline text-primary text-center">
         Work Experience
       </h2>
       <div className="grid grid-cols-1 gap-8">

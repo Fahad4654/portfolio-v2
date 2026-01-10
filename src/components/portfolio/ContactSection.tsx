@@ -108,7 +108,7 @@ export const ContactSection = () => {
 
   return (
     <section id="contact">
-      <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary">
+      <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary text-center">
         Contact Me
       </h2>
       <Card className="bg-card">
