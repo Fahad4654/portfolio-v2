@@ -60,7 +60,7 @@ export const SkillsSection = () => {
                                     <div className="h-[3px] w-full bg-gradient-to-r from-transparent via-primary to-transparent mt-2"></div>
                                   </div>
                                 </div>
-                                <div className="flex flex-wrap gap-3 justify-start">
+                                <div className="flex flex-wrap gap-3 justify-center">
                                     {group.skills.map((skill) => (
                                     <Badge
                                         key={skill}
