@@ -154,7 +154,7 @@ export const ContactSection = () => {
                 disabled={isSubmitting}
               />
             </div>
-            <div className="flex justify-end">
+            <div className="flex justify-center">
               <Button
                 type="submit"
                 className="shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-shadow"
