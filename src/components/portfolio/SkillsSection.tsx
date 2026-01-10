@@ -54,8 +54,10 @@ export const SkillsSection = () => {
                         {skillGroups.map((group) => (
                             <div key={group.title}>
                                 <div className="flex flex-col items-center mb-4">
-                                  <h3 className="text-lg font-semibold text-foreground mb-2">{group.title}</h3>
-                                  <Separator />
+                                  <div className="inline-block">
+                                    <h3 className="text-lg font-semibold text-foreground mb-2 text-center">{group.title}</h3>
+                                    <Separator />
+                                  </div>
                                 </div>
                                 <div className="flex flex-wrap gap-3 justify-start">
                                     {group.skills.map((skill) => (
