@@ -53,8 +53,10 @@ export const SkillsSection = () => {
                     <div className="space-y-8">
                         {skillGroups.map((group) => (
                             <div key={group.title}>
-                                <h3 className="text-lg font-semibold text-foreground mb-4 text-center">{group.title}</h3>
-                                <Separator className="mb-4" />
+                                <div className="flex flex-col items-center mb-4">
+                                  <h3 className="text-lg font-semibold text-foreground mb-2">{group.title}</h3>
+                                  <Separator />
+                                </div>
                                 <div className="flex flex-wrap gap-3 justify-start">
                                     {group.skills.map((skill) => (
                                     <Badge
