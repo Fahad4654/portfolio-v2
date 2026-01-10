@@ -46,7 +46,7 @@ export const ProfileSection = () => {
         Personal Info
       </h2>
       <Card className="bg-card">
-        <CardHeader className="p-8 pb-4 bg-secondary rounded-t-lg">
+        <CardHeader className="p-8 pb-4 bg-muted/50 rounded-t-lg">
             <CardTitle className="text-xl font-semibold text-foreground">
               DevOps Engineer | Infrastructure Automation | Full-Stack Enthusiast
             </CardTitle>
