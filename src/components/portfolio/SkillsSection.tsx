@@ -4,6 +4,7 @@ import {
   Card,
   CardContent,
 } from "@/components/ui/card";
+import { Separator } from "../ui/separator";
 
 const skillGroups = [
     {
@@ -53,6 +54,7 @@ export const SkillsSection = () => {
                         {skillGroups.map((group) => (
                             <div key={group.title}>
                                 <h3 className="text-lg font-semibold text-foreground mb-4">{group.title}</h3>
+                                <Separator className="mb-4" />
                                 <div className="flex flex-wrap gap-3">
                                     {group.skills.map((skill) => (
                                     <Badge
