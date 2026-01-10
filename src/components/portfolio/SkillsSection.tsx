@@ -1,3 +1,4 @@
+
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -54,8 +55,9 @@ export const SkillsSection = () => {
                             <div key={group.title}>
                                 <div className="flex flex-col items-center mb-4">
                                   <div className="inline-block">
-                                    <h3 className="text-lg font-semibold text-foreground mb-2 text-center">{group.title}</h3>
-                                    <div className="h-[3px] w-full bg-gradient-to-r from-transparent via-primary to-transparent"></div>
+                                    <div className="h-[3px] w-full bg-gradient-to-r from-transparent via-primary to-transparent mb-2"></div>
+                                    <h3 className="text-lg font-semibold text-foreground text-center">{group.title}</h3>
+                                    <div className="h-[3px] w-full bg-gradient-to-r from-transparent via-primary to-transparent mt-2"></div>
                                   </div>
                                 </div>
                                 <div className="flex flex-wrap gap-3 justify-start">
