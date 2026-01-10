@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { Mail, MapPin, Phone, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import profilePic from "@/assets/pp.jpeg";
 
@@ -50,7 +49,7 @@ export const ProfileSection = () => {
             <CardTitle className="text-xl font-semibold text-foreground">
               DevOps Engineer | Infrastructure Automation | Full-Stack Enthusiast
             </CardTitle>
-            <Separator className="mt-4" />
+            <div className="h-[3px] w-full bg-gradient-to-r from-transparent via-primary to-transparent mt-4"></div>
         </CardHeader>
         <CardContent className="p-8 pt-4 text-lg">
           <div>
