@@ -166,7 +166,7 @@ export const ContactSection = () => {
             </div>
           </form>
 
-          <p className="text-sm text-muted-foreground mt-4 text-center">
+          <p className="text-xs text-muted-foreground mt-4 text-center">
             Please provide a valid email to receive a response. I'll get back to you as soon as possible.
           </p>
 
