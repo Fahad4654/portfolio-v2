@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -8,6 +9,9 @@ import {
 } from "@/components/ui/card";
 import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
+import { useAuth } from "@/context/AuthContext";
+import { Button } from "../ui/button";
+import { Edit } from "lucide-react";
 
 type Skill = {
     id: string;
@@ -22,6 +26,7 @@ export type SkillGroup = {
 export const SkillsSection = () => {
     const [skillGroups, setSkillGroups] = useState<SkillGroup[]>([]);
     const [loading, setLoading] = useState(true);
+    const { isLoggedIn } = useAuth();
 
     useEffect(() => {
         const fetchSkills = async () => {
@@ -79,7 +84,12 @@ export const SkillsSection = () => {
             <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary text-center">
                 Technical Skills
             </h2>
-            <Card className="bg-card">
+            <Card className="bg-card relative">
+                {isLoggedIn && (
+                    <Button variant="outline" size="icon" className="absolute top-4 right-4 z-10">
+                        <Edit className="h-4 w-4" />
+                    </Button>
+                )}
                 <CardContent className="p-8">
                     <div className="space-y-8">
                         {skillGroups.map((group) => (

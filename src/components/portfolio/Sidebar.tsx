@@ -11,13 +11,14 @@ import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
 import { ThemeToggle } from '../theme-toggle';
 import { Button } from '../ui/button';
-import { LogIn } from 'lucide-react';
+import { LogIn, LogOut } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useAuth } from '@/context/AuthContext';
 
 export const Sidebar = ({
   activeSection,
@@ -32,6 +33,12 @@ export const Sidebar = ({
   isCollapsed?: boolean;
   onToggleCollapse: () => void;
 }) => {
+  const { isLoggedIn, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+  };
+
   const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -57,6 +64,39 @@ export const Sidebar = ({
       <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
     </svg>
   );
+
+  const authButton = (
+    isLoggedIn ? (
+      <TooltipProvider delayDuration={0}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" size="icon" onClick={handleLogout}>
+              <LogOut className="h-[1.2rem] w-[1.2rem]" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side={isCollapsed && !isMobile ? "right" : "top"} sideOffset={5}>
+            <p>Click to logout</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ) : (
+      <TooltipProvider delayDuration={0}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button asChild variant="ghost" size="icon">
+              <Link href="/login" aria-label="Login">
+                <LogIn className="h-[1.2rem] w-[1.2rem]" />
+              </Link>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side={isCollapsed && !isMobile ? "right" : "top"} sideOffset={5}>
+            <p>Click to login</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    )
+  );
+
 
   const content = (
       <div className={cn("relative flex flex-col h-full p-4 bg-card", isCollapsed && !isMobile && "p-2 pt-4")}>
@@ -92,20 +132,7 @@ export const Sidebar = ({
             </a>
             <Separator orientation='vertical' className="h-5" />
             <ThemeToggle />
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button asChild variant="ghost" size="icon">
-                    <Link href="/login" aria-label="Login">
-                      <LogIn className="h-[1.2rem] w-[1.2rem]" />
-                    </Link>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Click to login</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            {authButton}
           </div>
         </div>
 
@@ -113,20 +140,7 @@ export const Sidebar = ({
           <div className="mt-4 flex flex-col items-center gap-2">
             <Separator />
             <ThemeToggle />
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button asChild variant="ghost" size="icon">
-                    <Link href="/login" aria-label="Login">
-                      <LogIn className="h-[1.2rem] w-[1.2rem]" />
-                    </Link>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right" sideOffset={5}>
-                  <p>Click to login</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            {authButton}
           </div>
         )}
     </div>

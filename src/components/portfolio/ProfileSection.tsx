@@ -2,13 +2,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Mail, MapPin, Phone, Download } from "lucide-react";
+import { Mail, MapPin, Phone, Download, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import profilePic from "@/assets/pp.jpeg";
 import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
+import { useAuth } from "@/context/AuthContext";
 
 type Profile = {
   headline: string;
@@ -24,6 +25,7 @@ export const ProfileSection = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const { isLoggedIn } = useAuth();
 
   useEffect(() => {
     const userAgent =
@@ -108,7 +110,12 @@ export const ProfileSection = () => {
       <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary text-center">
         Personal Info
       </h2>
-      <Card className="bg-card">
+      <Card className="bg-card relative">
+        {isLoggedIn && (
+            <Button variant="outline" size="icon" className="absolute top-4 right-4 z-10">
+                <Edit className="h-4 w-4" />
+            </Button>
+        )}
         <CardHeader className="p-8 pb-4 bg-muted/50 rounded-t-lg text-center">
             <CardTitle className="text-xl font-semibold text-foreground" dangerouslySetInnerHTML={{ __html: profile.headline }} />
             <div className="h-[3px] w-full bg-gradient-to-r from-transparent via-primary to-transparent mt-4"></div>

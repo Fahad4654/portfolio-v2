@@ -11,10 +11,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import Link from 'next/link';
 import { Home } from 'lucide-react';
 import { DigitalRain } from '@/components/portfolio/DigitalRain';
+import { useAuth } from '@/context/AuthContext';
 
 const LoginPage = () => {
   const router = useRouter();
   const { toast } = useToast();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -37,6 +39,8 @@ const LoginPage = () => {
       if (!response.ok) {
         throw new Error(data.message || 'Login failed. Please check your credentials.');
       }
+
+      login();
 
       toast({
         title: 'Login Successful',

@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { GraduationCap } from "lucide-react";
+import { GraduationCap, Edit } from "lucide-react";
 import {
     Card,
     CardDescription,
@@ -10,6 +10,8 @@ import {
   } from "@/components/ui/card";
 import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
+import { useAuth } from "@/context/AuthContext";
+import { Button } from "../ui/button";
 
 type Education = {
     degree: string;
@@ -21,6 +23,7 @@ type Education = {
 export const EducationSection = () => {
     const [education, setEducation] = useState<Education[]>([]);
     const [loading, setLoading] = useState(true);
+    const { isLoggedIn } = useAuth();
 
     useEffect(() => {
         const fetchEducation = async () => {
@@ -71,7 +74,13 @@ export const EducationSection = () => {
                 key={index}
                 className="flex flex-col items-center text-center p-8 hover:border-primary/50 transition-colors bg-card"
                 >
-                <GraduationCap className="h-12 w-12 mb-4 text-primary" />
+                {isLoggedIn ? (
+                    <Button variant="outline" size="icon" className="mb-4">
+                        <Edit className="h-6 w-6" />
+                    </Button>
+                ) : (
+                    <GraduationCap className="h-12 w-12 mb-4 text-primary" />
+                )}
                 <CardTitle className="text-xl mb-1 font-headline">
                     {edu.degree}
                 </CardTitle>

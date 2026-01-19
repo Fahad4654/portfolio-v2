@@ -2,7 +2,7 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Edit } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
 import profilePic from "@/assets/pp.jpeg";
+import { useAuth } from "@/context/AuthContext";
 
 type Project = {
     title: string;
@@ -31,6 +32,7 @@ type Project = {
 export const ProjectsSection = () => {
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
+    const { isLoggedIn } = useAuth();
 
     useEffect(() => {
         const fetchProjects = async () => {
@@ -118,26 +120,33 @@ export const ProjectsSection = () => {
                         </Badge>
                     ))}
                     </div>
-                    <Button
-                    variant="link"
-                    className="p-0 h-auto text-primary"
-                    asChild
-                    >
-                    {project.link ? (
-                        <a
-                        href={project.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                    <div className="w-full flex items-center justify-between">
+                        <Button
+                        variant="link"
+                        className="p-0 h-auto text-primary"
+                        asChild
                         >
-                        {project.status_text}{" "}
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                        </a>
-                    ) : (
-                        <span className="cursor-not-allowed text-muted-foreground">
-                          {project.status_text}
-                        </span>
-                    )}
-                    </Button>
+                        {project.link ? (
+                            <a
+                            href={project.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >
+                            {project.status_text}{" "}
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                            </a>
+                        ) : (
+                            <span className="cursor-not-allowed text-muted-foreground">
+                            {project.status_text}
+                            </span>
+                        )}
+                        </Button>
+                        {isLoggedIn && (
+                            <Button variant="outline" size="icon">
+                                <Edit className="h-4 w-4" />
+                            </Button>
+                        )}
+                    </div>
                 </CardFooter>
                 </Card>
             ))}

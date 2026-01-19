@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Briefcase, ChevronDown } from "lucide-react";
+import { Briefcase, ChevronDown, Edit } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
+import { useAuth } from "@/context/AuthContext";
 
 type Experience = {
     title: string;
@@ -27,6 +28,7 @@ export const ExperienceSection = () => {
   const [expanded, setExpanded] = useState<number | null>(null);
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [loading, setLoading] = useState(true);
+  const { isLoggedIn } = useAuth();
 
   useEffect(() => {
     const fetchExperiences = async () => {
@@ -104,7 +106,13 @@ export const ExperienceSection = () => {
                           <span className="block text-sm text-muted-foreground mt-1">{exp.period}</span>
                       </CardDescription>
                   </div>
-                  <Briefcase className="h-8 w-8 text-primary shrink-0" />
+                  {isLoggedIn ? (
+                        <Button variant="outline" size="icon" className="shrink-0">
+                            <Edit className="h-4 w-4" />
+                        </Button>
+                    ) : (
+                        <Briefcase className="h-8 w-8 text-primary shrink-0" />
+                    )}
               </div>
             </CardHeader>
             {expanded === index && (
