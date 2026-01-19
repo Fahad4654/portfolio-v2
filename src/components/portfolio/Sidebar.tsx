@@ -1,7 +1,7 @@
-
 "use client";
 
 import React from 'react';
+import Link from 'next/link';
 import { NavLinks } from './NavLinks';
 import { Section } from '@/app/page';
 import { Header } from './Header';
@@ -9,6 +9,14 @@ import { cn } from '@/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
 import { ThemeToggle } from '../theme-toggle';
+import { Button } from '../ui/button';
+import { LogIn } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export const Sidebar = ({
   activeSection,
@@ -83,6 +91,11 @@ export const Sidebar = ({
             </a>
             <Separator orientation='vertical' className="h-5" />
             <ThemeToggle />
+            <Button asChild variant="ghost" size="icon">
+              <Link href="/login" aria-label="Login">
+                <LogIn className="h-[1.2rem] w-[1.2rem]" />
+              </Link>
+            </Button>
           </div>
         </div>
 
@@ -90,6 +103,20 @@ export const Sidebar = ({
           <div className="mt-4 flex flex-col items-center gap-2">
             <Separator />
             <ThemeToggle />
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button asChild variant="ghost" size="icon">
+                    <Link href="/login" aria-label="Login">
+                      <LogIn className="h-[1.2rem] w-[1.2rem]" />
+                    </Link>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right" sideOffset={5}>
+                  <p>Login</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         )}
     </div>
