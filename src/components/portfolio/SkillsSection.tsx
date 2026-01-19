@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -11,6 +10,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
 
 type Skill = {
+    id: string;
     name: string;
 };
 
@@ -27,7 +27,7 @@ export const SkillsSection = () => {
         const fetchSkills = async () => {
             const { data, error } = await supabase
                 .from('skill_groups')
-                .select('title, skills ( name )')
+                .select('title, skills ( id, name )')
                 .order('display_order', { ascending: true });
 
             if (error) {
@@ -94,7 +94,7 @@ export const SkillsSection = () => {
                                 <div className="flex flex-wrap gap-3 justify-center">
                                     {group.skills.map((skill) => (
                                     <Badge
-                                        key={skill.name}
+                                        key={skill.id}
                                         variant="outline"
                                         className="text-base px-4 py-2 rounded-lg justify-center transition-transform hover:scale-105 hover:bg-primary/20 bg-transparent"
                                     >
