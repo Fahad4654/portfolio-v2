@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
 import { Home } from 'lucide-react';
 import { DigitalRain } from '@/components/portfolio/DigitalRain';
@@ -24,24 +23,34 @@ const LoginPage = () => {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Login Failed',
-        description: error.message,
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
       });
-    } else {
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed. Please check your credentials.');
+      }
+
       toast({
         title: 'Login Successful',
         description: "Welcome back!",
       });
       router.push('/');
       router.refresh();
+
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Login Failed',
+        description: error.message || 'An error occurred during login.',
+      });
     }
 
     setLoading(false);
@@ -50,7 +59,7 @@ const LoginPage = () => {
   return (
     <div className="relative min-h-screen">
       <DigitalRain />
-      <div className="flex min-h-screen items-center justify-center bg-background/40 px-4">
+      <div className="flex min-h-screen items-center justify-center bg-background/80 px-4">
         <Card className="w-full max-w-md z-10 bg-card/80 backdrop-blur-sm">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
