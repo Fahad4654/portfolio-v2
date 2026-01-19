@@ -7,9 +7,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import profilePic from "@/assets/pp.jpeg";
+import { supabase } from "@/lib/supabaseClient";
+import { Skeleton } from "../ui/skeleton";
+
+type Profile = {
+  headline: string;
+  bio1: string;
+  bio2: string;
+  location: string;
+  phone: string;
+  email: string;
+  resume_url: string;
+};
 
 export const ProfileSection = () => {
   const [isMobile, setIsMobile] = useState(false);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const userAgent =
@@ -20,11 +34,61 @@ export const ProfileSection = () => {
       )
     );
     setIsMobile(mobile);
+
+    const fetchProfile = async () => {
+        const { data, error } = await supabase
+            .from('profile')
+            .select('*')
+            .single();
+
+        if (error) {
+            console.error("Error fetching profile:", error);
+        } else {
+            setProfile(data);
+        }
+        setLoading(false);
+    };
+
+    fetchProfile();
   }, []);
 
-  const mailHref = isMobile
-    ? "mailto:kabirkaife@gmail.com"
-    : "https://mail.google.com/mail/?view=cm&fs=1&to=kabirkaife@gmail.com";
+  const mailHref = isMobile && profile
+    ? `mailto:${profile.email}`
+    : `https://mail.google.com/mail/?view=cm&fs=1&to=${profile?.email}`;
+
+  if (loading || !profile) {
+      return (
+        <section id="profile">
+            <div className="md:hidden mb-10 text-center">
+                <Skeleton className="mx-auto w-24 h-24 mb-4 rounded-full" />
+                <Skeleton className="h-7 w-48 mx-auto mb-2" />
+                <Skeleton className="h-5 w-32 mx-auto" />
+            </div>
+
+            <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary text-center">
+                Personal Info
+            </h2>
+            <Card className="bg-card">
+                <CardHeader className="p-8 pb-4 bg-muted/50 rounded-t-lg text-center">
+                    <Skeleton className="h-6 w-3/4 mx-auto" />
+                    <div className="h-[3px] w-full bg-gradient-to-r from-transparent via-primary to-transparent mt-4"></div>
+                </CardHeader>
+                <CardContent className="p-8 pt-4 space-y-4">
+                    <Skeleton className="h-5 w-full" />
+                    <Skeleton className="h-5 w-full" />
+                    <Skeleton className="h-5 w-5/6" />
+                    <Skeleton className="h-5 w-full" />
+                    <Skeleton className="h-5 w-full" />
+                    <Skeleton className="h-5 w-3/4" />
+                    <div className="pt-4">
+                        <Skeleton className="h-10 w-44" />
+                        <Skeleton className="h-4 w-56 mt-4" />
+                    </div>
+                </CardContent>
+            </Card>
+        </section>
+      );
+  }
 
   return (
     <section id="profile">
@@ -46,29 +110,23 @@ export const ProfileSection = () => {
       </h2>
       <Card className="bg-card">
         <CardHeader className="p-8 pb-4 bg-muted/50 rounded-t-lg text-center">
-            <CardTitle className="text-xl font-semibold text-foreground">
-              DevOps Engineer | Infrastructure Automation | Full-Stack Enthusiast
-            </CardTitle>
+            <CardTitle className="text-xl font-semibold text-foreground" dangerouslySetInnerHTML={{ __html: profile.headline }} />
             <div className="h-[3px] w-full bg-gradient-to-r from-transparent via-primary to-transparent mt-4"></div>
         </CardHeader>
         <CardContent className="p-8 pt-4 text-lg">
           <div>
-            <p className="text-muted-foreground mb-4 leading-relaxed">
-              I specialize in turning manual, error-prone deployment processes into automated, high-availability engines. By leveraging <strong>Linux, Docker, and Ansible</strong>, I help teams ship code faster and spend less time debugging infrastructure.
-            </p>
-            <p className="text-muted-foreground mb-4 leading-relaxed">
-              Currently, I am focused on optimizing cloud environments and bridging the gap between Development and Operations through robust CI/CD architecture. Beyond infrastructure, I have a strong foundation in software development and enjoy building full-stack applications with technologies like <strong>Node.js, Express.js, React, and TypeScript</strong>, alongside proficiency in languages such as <strong>C++, Java, and Python</strong>.
-            </p>
+            <p className="text-muted-foreground mb-4 leading-relaxed" dangerouslySetInnerHTML={{ __html: profile.bio1 }} />
+            <p className="text-muted-foreground mb-4 leading-relaxed" dangerouslySetInnerHTML={{ __html: profile.bio2 }} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-muted-foreground mb-8">
             <div className="flex items-center gap-3">
               <MapPin className="h-5 w-5 text-primary" />
-              <span>Bashundhara R/A, Dhaka</span>
+              <span>{profile.location}</span>
             </div>
             <div className="flex items-center gap-3">
               <Phone className="h-5 w-5 text-primary" />
-              <a href="tel:+8801772967944" className="hover:underline hover:text-primary transition-colors">
-                +880 1772-967944
+              <a href={`tel:${profile.phone}`} className="hover:underline hover:text-primary transition-colors">
+                {profile.phone}
               </a>
             </div>
             <div className="flex items-center gap-3">
@@ -79,7 +137,7 @@ export const ProfileSection = () => {
                 rel="noopener noreferrer"
                 className="hover:underline hover:text-primary transition-colors"
               >
-                kabirkaife@gmail.com
+                {profile.email}
               </a>
             </div>
           </div>
@@ -89,7 +147,7 @@ export const ProfileSection = () => {
             className="shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-shadow"
           >
             <a
-              href="https://drive.google.com/file/d/1tERFX5p_dUU_75cuF6WsDpuMPJp4JnvI/view?usp=sharing"
+              href={profile.resume_url}
               target="_blank"
               download="Fahad_Kabir_Resume.pdf"
             >

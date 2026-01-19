@@ -1,48 +1,81 @@
 
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
 } from "@/components/ui/card";
-import { Separator } from "../ui/separator";
+import { supabase } from "@/lib/supabaseClient";
+import { useEffect, useState } from "react";
+import { Skeleton } from "../ui/skeleton";
 
-const skillGroups = [
-    {
-      title: "Languages & Scripting",
-      skills: ["TypeScript", "JavaScript", "Python", "Java", "Bash scripting"],
-    },
-    {
-      title: "Backend Development",
-      skills: ["Node.js", "ExpressJs", "NestJs", "Django", "FastApi", "RESTful APIs"],
-    },
-    {
-      title: "Frontend Development",
-      skills: ["React", "Remix", "Vite", "Tailwind", "Material UI", "HTML5", "CSS3"],
-    },
-    {
-      title: "Databases & ORMs",
-      skills: ["PostgreSQL", "MySQL", "Sequelize", "Redis", "Firebase", "Prisma"],
-    },
-    {
-      title: "DevOps, CI/CD & Tooling",
-      skills: [
-        "Linux",
-        "Git",
-        "GitHub Actions",
-        "Docker",
-        "Ansible",
-        "Jenkins",
-        "CI/CD",
-        "SonarQube",
-        "Elasticsearch",
-        "System Monitoring",
-        "Database Management",
-        "Database Optimization",
-      ],
-    },
-  ];
+type Skill = {
+    name: string;
+};
+
+type SkillGroup = {
+    title: string;
+    skills: Skill[];
+};
 
 export const SkillsSection = () => {
+    const [skillGroups, setSkillGroups] = useState<SkillGroup[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchSkills = async () => {
+            const { data, error } = await supabase
+                .from('skill_groups')
+                .select(`
+                    title,
+                    skills ( name )
+                `)
+                .order('display_order', { ascending: true });
+
+            if (error) {
+                console.error("Error fetching skills:", error);
+            } else {
+                setSkillGroups(data as SkillGroup[]);
+            }
+            setLoading(false);
+        };
+
+        fetchSkills();
+    }, []);
+
+    if (loading) {
+        return (
+            <section id="skills">
+                <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary text-center">
+                    Technical Skills
+                </h2>
+                <Card className="bg-card">
+                    <CardContent className="p-8">
+                        <div className="space-y-8">
+                            {[...Array(5)].map((_, groupIndex) => (
+                                <div key={groupIndex}>
+                                    <div className="flex flex-col items-center mb-4">
+                                      <div className="inline-block">
+                                        <div className="h-[3px] w-full bg-gradient-to-r from-transparent via-primary to-transparent mb-2"></div>
+                                        <Skeleton className="h-6 w-48" />
+                                        <div className="h-[3px] w-full bg-gradient-to-r from-transparent via-primary to-transparent mt-2"></div>
+                                      </div>
+                                    </div>
+                                    <div className="flex flex-wrap gap-3 justify-center">
+                                        {[...Array(6)].map((_, skillIndex) => (
+                                          <Skeleton key={skillIndex} className="h-9 w-24 rounded-lg" />
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
+            </section>
+        );
+    }
+
     return (
         <section id="skills">
             <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary text-center">
@@ -63,11 +96,11 @@ export const SkillsSection = () => {
                                 <div className="flex flex-wrap gap-3 justify-center">
                                     {group.skills.map((skill) => (
                                     <Badge
-                                        key={skill}
+                                        key={skill.name}
                                         variant="outline"
                                         className="text-base px-4 py-2 rounded-lg justify-center transition-transform hover:scale-105 hover:bg-primary/20 bg-transparent"
                                     >
-                                        {skill}
+                                        {skill.name}
                                     </Badge>
                                     ))}
                                 </div>

@@ -1,33 +1,65 @@
 
+"use client";
+
+import { useEffect, useState } from "react";
 import { GraduationCap } from "lucide-react";
 import {
     Card,
     CardDescription,
     CardTitle,
   } from "@/components/ui/card";
+import { supabase } from "@/lib/supabaseClient";
+import { Skeleton } from "../ui/skeleton";
 
-const education = [
-    {
-      degree: "B.Sc. in Computer Science and Engineering",
-      institution: "Independent University, Bangladesh",
-      link: "https://iub.ac.bd/",
-      period: "2023",
-    },
-    {
-      degree: "H.S.C. (Science)",
-      institution: "Nawab Siraj-Ud-Dowla Government College, Natore",
-      link: "https://nsc.edu.bd",
-      period: "2017",
-    },
-    {
-      degree: "S.S.C. (Science)",
-      institution: "Natore Govt. Boys' High School, Natore",
-      link: "http://www.ngbhsnatore.edu.bd/",
-      period: "2015",
-    },
-  ];
+type Education = {
+    degree: string;
+    institution: string;
+    link: string | null;
+    period: string;
+};
 
 export const EducationSection = () => {
+    const [education, setEducation] = useState<Education[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchEducation = async () => {
+            const { data, error } = await supabase
+                .from('education')
+                .select('*')
+                .order('display_order', { ascending: true });
+
+            if (error) {
+                console.error("Error fetching education:", error);
+            } else {
+                setEducation(data);
+            }
+            setLoading(false);
+        };
+
+        fetchEducation();
+    }, []);
+
+    if (loading) {
+        return (
+            <section id="education">
+                <h2 className="text-4xl md:text-5xl font-bold mb-12 font-headline text-primary text-center">
+                    Education
+                </h2>
+                <div className="grid md:grid-cols-2 gap-8">
+                    {[...Array(3)].map((_, index) => (
+                        <Card key={index} className="flex flex-col items-center text-center p-8 bg-card">
+                            <Skeleton className="h-12 w-12 mb-4 rounded-full" />
+                            <Skeleton className="h-6 w-3/4 mb-2" />
+                            <Skeleton className="h-4 w-1/2 mb-2" />
+                            <Skeleton className="h-4 w-1/4" />
+                        </Card>
+                    ))}
+                </div>
+            </section>
+        );
+    }
+
     return (
         <section id="education">
             <h2 className="text-4xl md:text-5xl font-bold mb-12 font-headline text-primary text-center">

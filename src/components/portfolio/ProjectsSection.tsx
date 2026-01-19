@@ -1,8 +1,8 @@
 
+"use client";
+
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
-import project1 from "@/assets/business.png";
-import project2 from "@/assets/edmate.png";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,45 +13,74 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
+import { Skeleton } from "../ui/skeleton";
 
-const projects = [
-    {
-      title: "Neighbor Nexus",
-      description: "Architected the deployment environment using Docker Compose and wrote custom Bash scripts for database automation on a Linux VM. Developed the full-stack system using ExpressJs, TypeScript, PostgreSQL, and React.",
-      image: "https://placehold.co/600x400/1a0514/4fd1c5?text=Neighbor+Nexus",
-      hint: "community help",
-      tags: ["Docker", "Bash", "Linux", "ExpressJs", "TypeScript", "PostgreSQL", "React", "Sequelize", "Redis"],
-    },
-    {
-      title: "E-commerce App (Business Facility App)",
-      description:
-        "Developed a chatting and notification system using Remix, React, and Firebase.",
-      image: project1,
-      hint: "business directory",
-      link: "https://allinonebusiness.co.uk/",
-      tags: ["Remix", "React", "Firebase", "Chat"],
-    },
-    {
-      title: "Edmate (E-learning Web App)",
-      description:
-        "Built front-end components using React and TypeScript for an e-learning platform.",
-      image: project2,
-      hint: "education technology",
-      // link: "#",
-      tags: ["React", "TypeScript", "E-learning"],
-    },
-    {
-      title: "Pre-registration App (Student Course Enrollment)",
-      description:
-        "Created a full-stack system for student course enrollment using PHP, JavaScript, and HTML.",
-      image: "https://placehold.co/600x400.png",
-      hint: "university portal",
-      link: "#",
-      tags: ["PHP", "JavaScript", "HTML", "Full-stack"],
-    },
-  ];
+type Project = {
+    title: string;
+    description: string;
+    image: string;
+    hint: string;
+    link: string | null;
+    tags: string[];
+    status_text: string;
+};
 
 export const ProjectsSection = () => {
+    const [projects, setProjects] = useState<Project[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProjects = async () => {
+            const { data, error } = await supabase
+                .from('projects')
+                .select('*')
+                .order('display_order', { ascending: true });
+            
+            if (error) {
+                console.error("Error fetching projects:", error);
+            } else {
+                setProjects(data);
+            }
+            setLoading(false);
+        };
+
+        fetchProjects();
+    }, []);
+
+    if (loading) {
+        return (
+            <section id="portfolio">
+                <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary text-center">
+                    My Projects
+                </h2>
+                <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">
+                    {[...Array(4)].map((_, index) => (
+                        <Card key={index} className="flex flex-col overflow-hidden bg-card">
+                            <CardHeader className="p-0">
+                                <Skeleton className="w-full h-56" />
+                            </CardHeader>
+                            <CardContent className="p-6 flex-1 flex flex-col">
+                                <Skeleton className="h-7 w-3/4 mb-4" />
+                                <Skeleton className="h-4 w-full" />
+                                <Skeleton className="h-4 w-full mt-2" />
+                            </CardContent>
+                            <CardFooter className="p-6 pt-0 flex flex-col items-start gap-4">
+                                <div className="flex flex-wrap gap-2">
+                                    <Skeleton className="h-6 w-16 rounded-full" />
+                                    <Skeleton className="h-6 w-20 rounded-full" />
+                                    <Skeleton className="h-6 w-24 rounded-full" />
+                                </div>
+                                <Skeleton className="h-6 w-32" />
+                            </CardFooter>
+                        </Card>
+                    ))}
+                </div>
+            </section>
+        )
+    }
+
     return (
         <section id="portfolio">
             <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary text-center">
@@ -100,13 +129,13 @@ export const ProjectsSection = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         >
-                        View Project{" "}
+                        {project.status_text}{" "}
                         <ArrowRight className="ml-2 h-4 w-4" />
                         </a>
                     ) : (
-                        <a href="#" className="cursor-not-allowed">
-                          {project.title.includes("Edmate") ? "Not permitted to show" : "Ongoing"}
-                        </a>
+                        <span className="cursor-not-allowed text-muted-foreground">
+                          {project.status_text}
+                        </span>
                     )}
                     </Button>
                 </CardFooter>
