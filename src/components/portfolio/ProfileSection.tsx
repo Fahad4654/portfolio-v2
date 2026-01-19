@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Mail, MapPin, Phone, Download, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,8 +10,10 @@ import profilePic from "@/assets/pp.jpeg";
 import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
+import { EditProfileDialog } from "./EditProfileDialog";
 
 type Profile = {
+  id: number;
   headline: string;
   bio1: string;
   bio2: string;
@@ -26,6 +28,7 @@ export const ProfileSection = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const { isLoggedIn } = useAuth();
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   useEffect(() => {
     const userAgent =
@@ -36,23 +39,28 @@ export const ProfileSection = () => {
       )
     );
     setIsMobile(mobile);
-
-    const fetchProfile = async () => {
-        const { data, error } = await supabase
-            .from('profile')
-            .select('*')
-            .single();
-
-        if (error) {
-            console.error("Error fetching profile:", error);
-        } else {
-            setProfile(data);
-        }
-        setLoading(false);
-    };
-
-    fetchProfile();
   }, []);
+
+  const fetchProfile = useCallback(async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+        .from('profile')
+        .select('*')
+        .single();
+
+    if (error) {
+        console.error("Error fetching profile:", error);
+        setProfile(null);
+    } else {
+        setProfile(data);
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
 
   const mailHref = isMobile && profile
     ? `mailto:${profile.email}`
@@ -112,7 +120,7 @@ export const ProfileSection = () => {
       </h2>
       <Card className="bg-card relative">
         {isLoggedIn && (
-            <Button variant="outline" size="icon" className="absolute top-4 right-4 z-10">
+            <Button variant="outline" size="icon" className="absolute top-4 right-4 z-10" onClick={() => setIsEditDialogOpen(true)}>
                 <Edit className="h-4 w-4" />
             </Button>
         )}
@@ -167,6 +175,15 @@ export const ProfileSection = () => {
           </p>
         </CardContent>
       </Card>
+      
+      {isLoggedIn && profile && (
+        <EditProfileDialog
+            profile={profile}
+            isOpen={isEditDialogOpen}
+            onOpenChange={setIsEditDialogOpen}
+            onProfileUpdate={fetchProfile}
+        />
+      )}
     </section>
   );
 };
