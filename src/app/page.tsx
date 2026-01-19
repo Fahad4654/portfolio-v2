@@ -66,12 +66,9 @@ const Page = () => {
     setIsSheetOpen(false);
   };
 
-  if (loading) {
-    return <LoadingScreen />;
-  }
-
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden">
+      {loading && <LoadingScreen />}
       <DigitalRain />
       
       <div className={cn(
