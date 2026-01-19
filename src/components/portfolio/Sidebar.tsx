@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from 'react';
@@ -91,11 +92,20 @@ export const Sidebar = ({
             </a>
             <Separator orientation='vertical' className="h-5" />
             <ThemeToggle />
-            <Button asChild variant="ghost" size="icon">
-              <Link href="/login" aria-label="Login">
-                <LogIn className="h-[1.2rem] w-[1.2rem]" />
-              </Link>
-            </Button>
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button asChild variant="ghost" size="icon">
+                    <Link href="/login" aria-label="Login">
+                      <LogIn className="h-[1.2rem] w-[1.2rem]" />
+                    </Link>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Click to login</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
 
@@ -113,7 +123,7 @@ export const Sidebar = ({
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="right" sideOffset={5}>
-                  <p>Login</p>
+                  <p>Click to login</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
