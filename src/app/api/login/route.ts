@@ -16,21 +16,28 @@ export async function POST(request: Request) {
       .eq('email', email)
       .single();
 
-    if (error || !user) {
-      // Generic message to avoid telling attackers if an email exists or not
-      return NextResponse.json({ message: 'Invalid credentials.' }, { status: 401 });
+    if (error) {
+      console.error('Supabase query error:', error);
+      // Be more specific about the error for debugging
+      return NextResponse.json({ message: `Database query failed: ${error.message}` }, { status: 500 });
+    }
+
+    if (!user) {
+      // This is the most likely branch if RLS is enabled and not configured
+      return NextResponse.json({ message: 'Invalid credentials. The user was not found in the database.' }, { status: 401 });
     }
 
     const passwordIsValid = await bcrypt.compare(password, user.password);
 
     if (!passwordIsValid) {
-      return NextResponse.json({ message: 'Invalid credentials.' }, { status: 401 });
+      // The user was found, but the password was wrong.
+      return NextResponse.json({ message: 'Invalid credentials. The password is incorrect.' }, { status: 401 });
     }
     
     return NextResponse.json({ message: 'Login Successful' }, { status: 200 });
 
-  } catch (err) {
+  } catch (err: any) {
     console.error('Login API error:', err);
-    return NextResponse.json({ message: 'An internal server error occurred.' }, { status: 500 });
+    return NextResponse.json({ message: `An internal server error occurred: ${err.message}` }, { status: 500 });
   }
 }
