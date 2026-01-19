@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Briefcase, ChevronDown, Edit } from "lucide-react";
 import {
   Card,
@@ -15,8 +15,10 @@ import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
+import { EditExperienceDialog } from "./EditExperienceDialog";
 
 type Experience = {
+    id: number;
     title: string;
     company: string;
     company_link: string | null;
@@ -29,27 +31,36 @@ export const ExperienceSection = () => {
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [loading, setLoading] = useState(true);
   const { isLoggedIn } = useAuth();
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null);
 
-  useEffect(() => {
-    const fetchExperiences = async () => {
-        const { data, error } = await supabase
-            .from('experiences')
-            .select('*')
-            .order('display_order', { ascending: true });
 
-        if (error) {
-            console.error("Error fetching experiences:", error);
-        } else {
-            setExperiences(data);
-        }
-        setLoading(false);
-    };
+  const fetchExperiences = useCallback(async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+        .from('experiences')
+        .select('*')
+        .order('display_order', { ascending: true });
 
-    fetchExperiences();
+    if (error) {
+        console.error("Error fetching experiences:", error);
+    } else {
+        setExperiences(data);
+    }
+    setLoading(false);
   }, []);
+  
+  useEffect(() => {
+    fetchExperiences();
+  }, [fetchExperiences]);
 
   const toggleExpand = (index: number) => {
     setExpanded(expanded === index ? null : index);
+  };
+  
+  const handleEditClick = (exp: Experience) => {
+    setSelectedExperience(exp);
+    setIsEditDialogOpen(true);
   };
 
   if (loading) {
@@ -88,7 +99,7 @@ export const ExperienceSection = () => {
       </h2>
       <div className="grid grid-cols-1 gap-8">
         {experiences.map((exp, index) => (
-          <Card key={index} className="bg-card hover:border-primary/50 transition-colors">
+          <Card key={exp.id} className="bg-card hover:border-primary/50 transition-colors">
             <CardHeader>
               <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
@@ -106,13 +117,14 @@ export const ExperienceSection = () => {
                           <span className="block text-sm text-muted-foreground mt-1">{exp.period}</span>
                       </CardDescription>
                   </div>
-                  {isLoggedIn ? (
-                        <Button variant="outline" size="icon" className="shrink-0">
+                  <div className="flex items-center gap-2">
+                    {isLoggedIn && (
+                        <Button variant="outline" size="icon" className="shrink-0" onClick={() => handleEditClick(exp)}>
                             <Edit className="h-4 w-4" />
                         </Button>
-                    ) : (
-                        <Briefcase className="h-8 w-8 text-primary shrink-0" />
                     )}
+                    <Briefcase className="h-8 w-8 text-primary shrink-0" />
+                  </div>
               </div>
             </CardHeader>
             {expanded === index && (
@@ -133,6 +145,14 @@ export const ExperienceSection = () => {
           </Card>
         ))}
       </div>
+       {isLoggedIn && (
+        <EditExperienceDialog
+          experience={selectedExperience}
+          isOpen={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+          onExperienceUpdate={fetchExperiences}
+        />
+      )}
     </section>
   )
 }

@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { GraduationCap, Edit } from "lucide-react";
 import {
     Card,
@@ -12,8 +12,10 @@ import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "../ui/button";
+import { EditEducationDialog } from "./EditEducationDialog";
 
 type Education = {
+    id: number;
     degree: string;
     institution: string;
     link: string | null;
@@ -24,24 +26,32 @@ export const EducationSection = () => {
     const [education, setEducation] = useState<Education[]>([]);
     const [loading, setLoading] = useState(true);
     const { isLoggedIn } = useAuth();
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+    const [selectedEducation, setSelectedEducation] = useState<Education | null>(null);
+
+    const fetchEducation = useCallback(async () => {
+        setLoading(true);
+        const { data, error } = await supabase
+            .from('education')
+            .select('*')
+            .order('display_order', { ascending: true });
+
+        if (error) {
+            console.error("Error fetching education:", error);
+        } else {
+            setEducation(data);
+        }
+        setLoading(false);
+    }, []);
 
     useEffect(() => {
-        const fetchEducation = async () => {
-            const { data, error } = await supabase
-                .from('education')
-                .select('*')
-                .order('display_order', { ascending: true });
-
-            if (error) {
-                console.error("Error fetching education:", error);
-            } else {
-                setEducation(data);
-            }
-            setLoading(false);
-        };
-
         fetchEducation();
-    }, []);
+    }, [fetchEducation]);
+    
+    const handleEditClick = (edu: Education) => {
+        setSelectedEducation(edu);
+        setIsEditDialogOpen(true);
+    };
 
     if (loading) {
         return (
@@ -69,18 +79,17 @@ export const EducationSection = () => {
             Education
             </h2>
             <div className="grid md:grid-cols-2 gap-8">
-            {education.map((edu, index) => (
+            {education.map((edu) => (
                 <Card
-                key={index}
-                className="flex flex-col items-center text-center p-8 hover:border-primary/50 transition-colors bg-card"
+                key={edu.id}
+                className="relative flex flex-col items-center text-center p-8 hover:border-primary/50 transition-colors bg-card"
                 >
-                {isLoggedIn ? (
-                    <Button variant="outline" size="icon" className="mb-4">
-                        <Edit className="h-6 w-6" />
+                {isLoggedIn && (
+                    <Button variant="outline" size="icon" className="absolute top-4 right-4" onClick={() => handleEditClick(edu)}>
+                        <Edit className="h-4 w-4" />
                     </Button>
-                ) : (
-                    <GraduationCap className="h-12 w-12 mb-4 text-primary" />
                 )}
+                <GraduationCap className="h-12 w-12 mb-4 text-primary" />
                 <CardTitle className="text-xl mb-1 font-headline">
                     {edu.degree}
                 </CardTitle>
@@ -99,6 +108,14 @@ export const EducationSection = () => {
                 </Card>
             ))}
             </div>
+            {isLoggedIn && (
+              <EditEducationDialog
+                education={selectedEducation}
+                isOpen={isEditDialogOpen}
+                onOpenChange={setIsEditDialogOpen}
+                onEducationUpdate={fetchEducation}
+              />
+            )}
         </section>
     )
 }
