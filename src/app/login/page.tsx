@@ -49,7 +49,7 @@ const LoginPage = () => {
   return (
     <div className="relative min-h-screen">
       <DigitalRain />
-      <div className="flex min-h-screen items-center justify-center bg-transparent px-4">
+      <div className="flex min-h-screen items-center justify-center bg-background/70 px-4">
         <Card className="w-full max-w-md z-10 bg-card/80 backdrop-blur-sm">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
