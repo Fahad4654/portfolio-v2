@@ -47,11 +47,16 @@ const Page = () => {
   const contentAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const navigationEntries = performance.getEntriesByType("navigation");
+    if (navigationEntries.length > 0 && (navigationEntries[0] as PerformanceNavigationTiming).type === 'back_forward') {
       setLoading(false);
-    }, 5000);
+    } else {
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 5000);
 
-    return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   useEffect(() => {
