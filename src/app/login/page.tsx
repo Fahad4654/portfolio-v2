@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -10,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
+import { Home } from 'lucide-react';
 
 const LoginPage = () => {
   const router = useRouter();
@@ -86,10 +86,14 @@ const LoginPage = () => {
             <Link href="#" className="underline">
               Sign up
             </Link>
-            <br/>
-            <Link href="/" className="underline mt-2 inline-block">
+          </div>
+          <div className="mt-4 flex justify-center">
+            <Button variant="outline" asChild>
+              <Link href="/">
+                <Home className="mr-2 h-4 w-4" />
                 Back to Portfolio
-            </Link>
+              </Link>
+            </Button>
           </div>
         </CardContent>
       </Card>
