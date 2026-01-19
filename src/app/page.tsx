@@ -76,7 +76,7 @@ const Page = () => {
       <DigitalRain />
       
       <div className={cn(
-        "hidden md:block fixed top-0 left-0 h-full transition-all duration-300 ease-in-out z-60",
+        "hidden md:block fixed top-0 left-0 h-full transition-all duration-300 ease-in-out z-[60]",
         isCollapsed ? "w-20" : "w-72"
       )}>
         <Sidebar
@@ -87,7 +87,7 @@ const Page = () => {
         />
       </div>
 
-      <div className="md:hidden fixed bottom-6 right-6 z-60">
+      <div className="md:hidden fixed bottom-6 right-6 z-[60]">
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger asChild>
             <Button
