@@ -78,33 +78,39 @@ export const SkillsSection = () => {
         if (!groupToDelete) return;
 
         try {
-            // Delete associated skills first
+            // 1. Delete associated skills first
             const { error: skillsError } = await supabase
                 .from('skills')
                 .delete()
                 .eq('group_id', groupToDelete.id);
             if (skillsError) throw skillsError;
 
-            // Delete the group itself
+            // 2. Delete the group itself
             const { error: groupError } = await supabase
                 .from('skill_groups')
                 .delete()
                 .eq('id', groupToDelete.id);
             if (groupError) throw groupError;
             
-            // Re-order remaining groups
-            const deletedOrder = groupToDelete.display_order;
-            const groupsToUpdate = skillGroups
-                .filter(g => g.display_order > deletedOrder && g.id !== groupToDelete.id)
-                .sort((a, b) => a.display_order - b.display_order);
+            // 3. Re-sequence all remaining groups to ensure consistency
+            const { data: remainingGroups, error: fetchError } = await supabase
+                .from('skill_groups')
+                .select('id, display_order')
+                .order('display_order', { ascending: true });
 
-            const updatePromises = groupsToUpdate.map(g =>
-                supabase
-                    .from('skill_groups')
-                    .update({ display_order: g.display_order - 1 })
-                    .eq('id', g.id)
-            );
-            await Promise.all(updatePromises);
+            if (fetchError) throw fetchError;
+            
+            if (remainingGroups) {
+                const updatePromises = remainingGroups.map((group, index) => {
+                    const expectedOrder = index + 1;
+                    if (group.display_order !== expectedOrder) {
+                        return supabase.from('skill_groups').update({ display_order: expectedOrder }).eq('id', group.id);
+                    }
+                    return null;
+                }).filter(p => p); // Filter out nulls
+                
+                await Promise.all(updatePromises);
+            }
             
             toast({
                 title: 'Skill Group Deleted',
@@ -118,7 +124,6 @@ export const SkillsSection = () => {
                 description: 'An error occurred while deleting the skill group. Please try again.',
             });
         } finally {
-            // Always refetch to ensure UI consistency
             fetchSkills();
             setGroupToDelete(null);
         }
@@ -128,21 +133,15 @@ export const SkillsSection = () => {
         if (!skillToDelete) return;
     
         try {
-            // Find the group and skill to get context for re-ordering
-            let skillGroup: SkillGroup | undefined;
-            let deletedSkillOrder: number = -1;
-    
+            let skillGroupId: string | undefined;
             for (const group of skillGroups) {
-                const skill = group.skills.find(s => s.id === skillToDelete.id);
-                if (skill) {
-                    skillGroup = group;
-                    deletedSkillOrder = skill.display_order;
+                if (group.skills.some(s => s.id === skillToDelete.id)) {
+                    skillGroupId = group.id;
                     break;
                 }
             }
-    
-            if (!skillGroup || deletedSkillOrder === -1) {
-                throw new Error("Could not find the skill's group to re-order remaining skills.");
+            if (!skillGroupId) {
+                throw new Error("Could not find the skill's group.");
             }
     
             // 1. Delete the skill
@@ -153,17 +152,24 @@ export const SkillsSection = () => {
             
             if (deleteError) throw deleteError;
     
-            // 2. Re-order remaining skills in the same group
-            const skillsToUpdate = skillGroup.skills
-                .filter(s => s.display_order > deletedSkillOrder && s.id !== skillToDelete.id)
-                .sort((a, b) => a.display_order - b.display_order);
+            // 2. Re-sequence all remaining skills in the group to ensure consistency
+            const { data: remainingSkills, error: fetchError } = await supabase
+                .from('skills')
+                .select('id, display_order')
+                .eq('group_id', skillGroupId)
+                .order('display_order', { ascending: true });
+
+            if (fetchError) throw fetchError;
+            if (!remainingSkills) return;
+
+            const updatePromises = remainingSkills.map((skill, index) => {
+                const expectedOrder = index + 1;
+                 if (skill.display_order !== expectedOrder) {
+                    return supabase.from('skills').update({ display_order: expectedOrder }).eq('id', skill.id);
+                }
+                return null;
+            }).filter(p => p); // Filter out nulls
     
-            const updatePromises = skillsToUpdate.map(s =>
-                supabase
-                    .from('skills')
-                    .update({ display_order: s.display_order - 1 })
-                    .eq('id', s.id)
-            );
             await Promise.all(updatePromises);
     
             toast({
@@ -179,7 +185,6 @@ export const SkillsSection = () => {
                 description: 'An error occurred while deleting the skill. Please try again.',
             });
         } finally {
-            // Always refetch to ensure UI is consistent
             fetchSkills();
             setSkillToDelete(null);
         }

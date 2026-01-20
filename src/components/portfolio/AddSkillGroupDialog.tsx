@@ -51,37 +51,44 @@ export const AddSkillGroupDialog = ({
     }
     setIsSaving(true);
 
-    const newOrder = displayOrder ? parseInt(displayOrder, 10) : null;
-
     try {
-      if (newOrder !== null && !isNaN(newOrder) && newOrder > 0) {
-        // Shift existing groups
-        const groupsToUpdate = skillGroups.filter(g => g.display_order >= newOrder);
-        const updatePromises = groupsToUpdate.map(g =>
-          supabase
-            .from('skill_groups')
-            .update({ display_order: g.display_order + 1 })
-            .eq('id', g.id)
-        );
-        await Promise.all(updatePromises);
+      const newOrder = displayOrder ? parseInt(displayOrder, 10) : null;
 
-        // Insert new group
+      // If no order is given, simply add to the end
+      if (newOrder === null || isNaN(newOrder) || newOrder <= 0) {
+        const maxDisplayOrder = skillGroups.length > 0 ? Math.max(...skillGroups.map(g => g.display_order)) : 0;
         const { error } = await supabase.from('skill_groups').insert({
           title: title,
-          display_order: newOrder,
+          display_order: maxDisplayOrder + 1,
         });
         if (error) throw error;
-
       } else {
-        // Insert at the end
-        const maxDisplayOrder = skillGroups.length > 0 ? Math.max(...skillGroups.map(g => g.display_order)) : 0;
-        const { error } = await supabase
-          .from('skill_groups')
-          .insert({
-            title: title,
-            display_order: maxDisplayOrder + 1,
-          });
-        if (error) throw error;
+        // If an order is given, we must re-sequence everything to ensure consistency
+        const currentGroups = [...skillGroups].sort((a,b) => a.display_order - b.display_order);
+
+        // Insert the new group with a temporary high order to avoid conflicts
+        const { data: newGroup, error: insertError } = await supabase
+            .from('skill_groups')
+            .insert({ title: title, display_order: 9999 })
+            .select('id')
+            .single();
+
+        if (insertError || !newGroup) throw insertError || new Error("Group insertion failed to return new group.");
+
+        // Create the final, correctly-ordered list in memory
+        const insertionIndex = Math.min(Math.max(0, newOrder - 1), currentGroups.length);
+        const finalOrderedGroups = [
+          ...currentGroups.slice(0, insertionIndex),
+          { id: newGroup.id, title, display_order: 0, skills: [] }, // Placeholder for new group
+          ...currentGroups.slice(insertionIndex)
+        ];
+
+        // Create update promises to re-sequence all groups in the database
+        const updatePromises = finalOrderedGroups.map((group, index) => {
+          const expectedOrder = index + 1;
+          return supabase.from('skill_groups').update({ display_order: expectedOrder }).eq('id', group.id);
+        });
+        await Promise.all(updatePromises);
       }
 
       toast({
