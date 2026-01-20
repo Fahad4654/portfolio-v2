@@ -11,7 +11,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "../ui/button";
-import { Edit } from "lucide-react";
+import { Plus, PlusCircle } from "lucide-react";
 
 type Skill = {
     id: string;
@@ -86,11 +86,18 @@ export const SkillsSection = () => {
             </h2>
             <Card className="bg-card relative">
                 {isLoggedIn && (
-                    <Button variant="outline" size="icon" className="absolute top-4 right-4 z-10">
-                        <Edit className="h-4 w-4" />
-                    </Button>
+                    <div className="absolute top-4 right-4 z-10 flex gap-2">
+                        <Button variant="outline" size="sm">
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Add Group
+                        </Button>
+                        <Button variant="outline" size="sm">
+                            <Plus className="mr-2 h-4 w-4" />
+                            Add Skill
+                        </Button>
+                    </div>
                 )}
-                <CardContent className="p-8">
+                <CardContent className="p-8 pt-20">
                     <div className="space-y-8">
                         {skillGroups.map((group) => (
                             <div key={group.title}>
