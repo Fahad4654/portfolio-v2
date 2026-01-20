@@ -13,12 +13,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
+import { EditProjectDialog } from "./EditProjectDialog";
 
 type Project = {
+    id: number;
     title: string;
     description: string;
     image: string;
@@ -32,24 +34,32 @@ export const ProjectsSection = () => {
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
     const { isLoggedIn } = useAuth();
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+    const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+
+    const fetchProjects = useCallback(async () => {
+        setLoading(true);
+        const { data, error } = await supabase
+            .from('projects')
+            .select('*')
+            .order('display_order', { ascending: true });
+        
+        if (error) {
+            console.error("Error fetching projects:", error);
+        } else {
+            setProjects(data as Project[]);
+        }
+        setLoading(false);
+    }, []);
 
     useEffect(() => {
-        const fetchProjects = async () => {
-            const { data, error } = await supabase
-                .from('projects')
-                .select('*')
-                .order('display_order', { ascending: true });
-            
-            if (error) {
-                console.error("Error fetching projects:", error);
-            } else {
-                setProjects(data);
-            }
-            setLoading(false);
-        };
-
         fetchProjects();
-    }, []);
+    }, [fetchProjects]);
+
+    const handleEditClick = (project: Project) => {
+        setSelectedProject(project);
+        setIsEditDialogOpen(true);
+    };
 
     if (loading) {
         return (
@@ -89,9 +99,9 @@ export const ProjectsSection = () => {
             My Projects
             </h2>
             <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">
-            {projects.map((project, index) => (
+            {projects.map((project) => (
                 <Card
-                key={index}
+                key={project.id}
                 className="flex flex-col overflow-hidden transition-all duration-300 ease-in-out hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1 bg-card"
                 >
                 <CardHeader className="p-0">
@@ -142,7 +152,7 @@ export const ProjectsSection = () => {
                         )}
                         </Button>
                         {isLoggedIn && (
-                            <Button variant="outline" size="icon">
+                            <Button variant="outline" size="icon" onClick={() => handleEditClick(project)}>
                                 <Edit className="h-4 w-4" />
                             </Button>
                         )}
@@ -151,6 +161,14 @@ export const ProjectsSection = () => {
                 </Card>
             ))}
             </div>
+            {isLoggedIn && (
+                <EditProjectDialog
+                    project={selectedProject}
+                    isOpen={isEditDialogOpen}
+                    onOpenChange={setIsEditDialogOpen}
+                    onProjectUpdate={fetchProjects}
+                />
+            )}
         </section>
     )
 }
