@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -12,6 +12,7 @@ import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "../ui/button";
 import { Plus, PlusCircle } from "lucide-react";
+import { AddSkillGroupDialog } from "./AddSkillGroupDialog";
 
 type Skill = {
     id: string;
@@ -19,7 +20,9 @@ type Skill = {
 };
 
 export type SkillGroup = {
+    id: string;
     title: string;
+    display_order: number;
     skills: Skill[];
 };
 
@@ -27,25 +30,31 @@ export const SkillsSection = () => {
     const [skillGroups, setSkillGroups] = useState<SkillGroup[]>([]);
     const [loading, setLoading] = useState(true);
     const { isLoggedIn } = useAuth();
+    const [isAddGroupDialogOpen, setIsAddGroupDialogOpen] = useState(false);
+
+    const fetchSkills = useCallback(async () => {
+        setLoading(true);
+        const { data, error } = await supabase
+            .from('skill_groups')
+            .select('*, skills ( id, name )')
+            .order('display_order', { ascending: true });
+
+        if (error) {
+            console.error("Error fetching skills:", error);
+            setSkillGroups([]);
+        } else {
+            setSkillGroups(data as SkillGroup[]);
+        }
+        setLoading(false);
+    }, []);
 
     useEffect(() => {
-        const fetchSkills = async () => {
-            const { data, error } = await supabase
-                .from('skill_groups')
-                .select('title, skills ( id, name )')
-                .order('display_order', { ascending: true });
-
-            if (error) {
-                console.error("Error fetching skills:", error);
-                setSkillGroups([]);
-            } else {
-                setSkillGroups(data as SkillGroup[]);
-            }
-            setLoading(false);
-        };
-
         fetchSkills();
-    }, []);
+    }, [fetchSkills]);
+
+    const maxDisplayOrder = skillGroups.length > 0
+        ? Math.max(...skillGroups.map(g => g.display_order))
+        : 0;
 
     if (loading) {
         return (
@@ -87,7 +96,7 @@ export const SkillsSection = () => {
             <Card className="bg-card relative">
                 {isLoggedIn && (
                     <div className="absolute top-4 right-4 z-10 flex gap-2">
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" onClick={() => setIsAddGroupDialogOpen(true)}>
                             <PlusCircle className="mr-2 h-4 w-4" />
                             Add Group
                         </Button>
@@ -100,7 +109,7 @@ export const SkillsSection = () => {
                 <CardContent className="p-8 pt-20">
                     <div className="space-y-8">
                         {skillGroups.map((group) => (
-                            <div key={group.title}>
+                            <div key={group.id}>
                                 <div className="flex flex-col items-center mb-4">
                                   <div className="inline-block">
                                     <div className="h-[3px] w-full bg-gradient-to-r from-transparent via-primary to-transparent mb-2"></div>
@@ -124,6 +133,14 @@ export const SkillsSection = () => {
                     </div>
                 </CardContent>
             </Card>
+            {isLoggedIn && (
+              <AddSkillGroupDialog
+                isOpen={isAddGroupDialogOpen}
+                onOpenChange={setIsAddGroupDialogOpen}
+                onGroupAdded={fetchSkills}
+                maxDisplayOrder={maxDisplayOrder}
+              />
+            )}
         </section>
     )
 }
