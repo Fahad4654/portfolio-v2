@@ -16,7 +16,6 @@ import {
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
-import profilePic from "@/assets/pp.jpeg";
 import { useAuth } from "@/context/AuthContext";
 
 type Project = {
@@ -97,11 +96,12 @@ export const ProjectsSection = () => {
                 >
                 <CardHeader className="p-0">
                     <Image
-                    src={profilePic.src}
+                    src={project.image}
                     alt={project.title}
                     width={600}
                     height={400}
                     className="w-full h-56 object-cover"
+                    data-ai-hint={project.hint}
                     />
                 </CardHeader>
                 <CardContent className="p-6 flex-1 flex flex-col">
