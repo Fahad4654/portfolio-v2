@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -39,11 +40,13 @@ export const AddSkillDialog = ({
   const { toast } = useToast();
   const [name, setName] = useState('');
   const [groupId, setGroupId] = useState('');
+  const [displayOrder, setDisplayOrder] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
   const resetForm = () => {
     setName('');
     setGroupId('');
+    setDisplayOrder('');
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -67,21 +70,52 @@ export const AddSkillDialog = ({
 
     setIsSaving(true);
 
+    const newOrder = displayOrder ? parseInt(displayOrder, 10) : null;
+    const selectedGroup = skillGroups.find(g => g.id === groupId);
+
+    if (!selectedGroup) {
+        toast({ variant: 'destructive', title: 'Error', description: 'Selected group not found.' });
+        setIsSaving(false);
+        return;
+    }
+
     try {
-      const { error } = await supabase.from('skills').insert({
-        name: name,
-        group_id: groupId,
-      });
+        if (newOrder !== null && !isNaN(newOrder) && newOrder > 0) {
+            // Shift existing skills in the selected group that are at or after the new order
+            const skillsToUpdate = selectedGroup.skills.filter(s => s.display_order >= newOrder);
+            const updatePromises = skillsToUpdate.map(s =>
+                supabase
+                    .from('skills')
+                    .update({ display_order: s.display_order + 1 })
+                    .eq('id', s.id)
+            );
+            await Promise.all(updatePromises);
 
-      if (error) throw error;
+            // Insert new skill
+            const { error } = await supabase.from('skills').insert({
+                name: name,
+                group_id: groupId,
+                display_order: newOrder,
+            });
+            if (error) throw error;
+        } else {
+            // Insert at the end of the selected group
+            const maxDisplayOrder = selectedGroup.skills.length > 0 ? Math.max(...selectedGroup.skills.map(s => s.display_order)) : 0;
+            const { error } = await supabase.from('skills').insert({
+                name: name,
+                group_id: groupId,
+                display_order: maxDisplayOrder + 1,
+            });
+            if (error) throw error;
+        }
 
-      toast({
-        title: 'Skill Added',
-        description: `The skill "${name}" has been added.`,
-      });
-      resetForm();
-      onSkillAdded();
-      onOpenChange(false);
+        toast({
+            title: 'Skill Added',
+            description: `The skill "${name}" has been added.`,
+        });
+        resetForm();
+        onSkillAdded(); // Refetch
+        onOpenChange(false);
 
     } catch (error: any) {
         console.error('Error adding skill:', error);
@@ -90,6 +124,8 @@ export const AddSkillDialog = ({
             title: 'Add Failed',
             description: 'Could not add the new skill. Please try again.',
         });
+        // Re-fetch to revert any inconsistent state
+        onSkillAdded();
     } finally {
         setIsSaving(false);
     }
@@ -135,6 +171,20 @@ export const AddSkillDialog = ({
                       ))}
                   </SelectContent>
               </Select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="display_order" className="text-right">
+                Order
+              </Label>
+              <Input
+                id="display_order"
+                type="number"
+                value={displayOrder}
+                onChange={(e) => setDisplayOrder(e.target.value)}
+                className="col-span-3"
+                placeholder="Optional (e.g., 1)"
+                min="1"
+              />
             </div>
           </div>
           <DialogFooter>

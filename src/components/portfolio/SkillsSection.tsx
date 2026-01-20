@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 type Skill = {
     id: string;
     name: string;
+    display_order: number;
 };
 
 export type SkillGroup = {
@@ -46,8 +47,9 @@ export const SkillsSection = () => {
         setLoading(true);
         const { data, error } = await supabase
             .from('skill_groups')
-            .select('*, skills ( id, name )')
-            .order('display_order', { ascending: true });
+            .select('*, skills ( id, name, display_order )')
+            .order('display_order', { ascending: true })
+            .order('display_order', { foreignTable: 'skills', ascending: true });
 
         if (error) {
             console.error("Error fetching skills:", error);
@@ -124,20 +126,51 @@ export const SkillsSection = () => {
 
     const handleDeleteSkillConfirm = async () => {
         if (!skillToDelete) return;
-
+    
         try {
-            const { error } = await supabase
+            // Find the group and skill to get context for re-ordering
+            let skillGroup: SkillGroup | undefined;
+            let deletedSkillOrder: number = -1;
+    
+            for (const group of skillGroups) {
+                const skill = group.skills.find(s => s.id === skillToDelete.id);
+                if (skill) {
+                    skillGroup = group;
+                    deletedSkillOrder = skill.display_order;
+                    break;
+                }
+            }
+    
+            if (!skillGroup || deletedSkillOrder === -1) {
+                throw new Error("Could not find the skill's group to re-order remaining skills.");
+            }
+    
+            // 1. Delete the skill
+            const { error: deleteError } = await supabase
                 .from('skills')
                 .delete()
                 .eq('id', skillToDelete.id);
             
-            if (error) throw error;
-
+            if (deleteError) throw deleteError;
+    
+            // 2. Re-order remaining skills in the same group
+            const skillsToUpdate = skillGroup.skills
+                .filter(s => s.display_order > deletedSkillOrder && s.id !== skillToDelete.id)
+                .sort((a, b) => a.display_order - b.display_order);
+    
+            const updatePromises = skillsToUpdate.map(s =>
+                supabase
+                    .from('skills')
+                    .update({ display_order: s.display_order - 1 })
+                    .eq('id', s.id)
+            );
+            await Promise.all(updatePromises);
+    
             toast({
                 title: 'Skill Deleted',
                 description: `The skill "${skillToDelete.name}" has been deleted.`,
             });
-
+    
         } catch (error: any) {
              console.error('Error deleting skill:', error);
             toast({
@@ -146,10 +179,12 @@ export const SkillsSection = () => {
                 description: 'An error occurred while deleting the skill. Please try again.',
             });
         } finally {
+            // Always refetch to ensure UI is consistent
             fetchSkills();
             setSkillToDelete(null);
         }
     };
+    
 
     if (loading) {
         return (
