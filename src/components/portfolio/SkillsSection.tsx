@@ -11,10 +11,12 @@ import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "../ui/button";
-import { Plus, PlusCircle, Trash2 } from "lucide-react";
+import { Plus, PlusCircle, Trash2, X } from "lucide-react";
 import { AddSkillGroupDialog } from "./AddSkillGroupDialog";
 import { useToast } from "@/hooks/use-toast";
 import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
+import { AddSkillDialog } from "./AddSkillDialog";
+import { cn } from "@/lib/utils";
 
 type Skill = {
     id: string;
@@ -34,8 +36,11 @@ export const SkillsSection = () => {
     const { isLoggedIn } = useAuth();
     const { toast } = useToast();
     const [isAddGroupDialogOpen, setIsAddGroupDialogOpen] = useState(false);
-    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [isAddSkillDialogOpen, setIsAddSkillDialogOpen] = useState(false);
+    const [isDeleteGroupDialogOpen, setIsDeleteGroupDialogOpen] = useState(false);
+    const [isDeleteSkillDialogOpen, setIsDeleteSkillDialogOpen] = useState(false);
     const [groupToDelete, setGroupToDelete] = useState<SkillGroup | null>(null);
+    const [skillToDelete, setSkillToDelete] = useState<Skill | null>(null);
 
     const fetchSkills = useCallback(async () => {
         setLoading(true);
@@ -57,12 +62,17 @@ export const SkillsSection = () => {
         fetchSkills();
     }, [fetchSkills]);
     
-    const handleDeleteClick = (group: SkillGroup) => {
+    const handleDeleteGroupClick = (group: SkillGroup) => {
         setGroupToDelete(group);
-        setIsDeleteDialogOpen(true);
+        setIsDeleteGroupDialogOpen(true);
     };
 
-    const handleDeleteConfirm = async () => {
+    const handleDeleteSkillClick = (skill: Skill) => {
+        setSkillToDelete(skill);
+        setIsDeleteSkillDialogOpen(true);
+    }
+
+    const handleDeleteGroupConfirm = async () => {
         if (!groupToDelete) return;
 
         try {
@@ -112,6 +122,35 @@ export const SkillsSection = () => {
         }
     };
 
+    const handleDeleteSkillConfirm = async () => {
+        if (!skillToDelete) return;
+
+        try {
+            const { error } = await supabase
+                .from('skills')
+                .delete()
+                .eq('id', skillToDelete.id);
+            
+            if (error) throw error;
+
+            toast({
+                title: 'Skill Deleted',
+                description: `The skill "${skillToDelete.name}" has been deleted.`,
+            });
+
+        } catch (error: any) {
+             console.error('Error deleting skill:', error);
+            toast({
+                variant: 'destructive',
+                title: 'Delete Failed',
+                description: 'An error occurred while deleting the skill. Please try again.',
+            });
+        } finally {
+            fetchSkills();
+            setSkillToDelete(null);
+        }
+    };
+
     if (loading) {
         return (
             <section id="skills">
@@ -156,7 +195,7 @@ export const SkillsSection = () => {
                             <PlusCircle className="mr-2 h-4 w-4" />
                             Add Group
                         </Button>
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" onClick={() => setIsAddSkillDialogOpen(true)}>
                             <Plus className="mr-2 h-4 w-4" />
                             Add Skill
                         </Button>
@@ -173,7 +212,7 @@ export const SkillsSection = () => {
                                     <div className="h-[3px] w-full bg-gradient-to-r from-transparent via-primary to-transparent mt-2"></div>
                                   </div>
                                   {isLoggedIn && (
-                                    <Button variant="ghost" size="icon" className="ml-4" onClick={() => handleDeleteClick(group)}>
+                                    <Button variant="ghost" size="icon" className="ml-4" onClick={() => handleDeleteGroupClick(group)}>
                                         <Trash2 className="h-4 w-4 text-destructive/70 hover:text-destructive" />
                                     </Button>
                                   )}
@@ -183,9 +222,21 @@ export const SkillsSection = () => {
                                     <Badge
                                         key={skill.id}
                                         variant="outline"
-                                        className="text-base px-4 py-2 rounded-lg justify-center transition-transform hover:scale-105 hover:bg-primary/20 bg-transparent"
+                                        className={cn(
+                                            "text-base px-4 py-2 rounded-lg justify-center transition-transform hover:scale-105 hover:bg-primary/20 bg-transparent relative group",
+                                            isLoggedIn && "pr-8"
+                                        )}
                                     >
                                         {skill.name}
+                                        {isLoggedIn && (
+                                            <button 
+                                                onClick={() => handleDeleteSkillClick(skill)}
+                                                className="absolute top-1/2 right-1 -translate-y-1/2 w-6 h-6 bg-transparent rounded-full items-center justify-center text-destructive/50 hover:text-destructive hover:bg-destructive/10 hidden group-hover:flex"
+                                                aria-label={`Delete skill ${skill.name}`}
+                                            >
+                                                <X className="h-4 w-4" />
+                                            </button>
+                                        )}
                                     </Badge>
                                     ))}
                                 </div>
@@ -202,13 +253,30 @@ export const SkillsSection = () => {
                 skillGroups={skillGroups}
               />
             )}
+            {isLoggedIn && (
+                <AddSkillDialog
+                    isOpen={isAddSkillDialogOpen}
+                    onOpenChange={setIsAddSkillDialogOpen}
+                    onSkillAdded={fetchSkills}
+                    skillGroups={skillGroups}
+                />
+            )}
             {isLoggedIn && groupToDelete && (
               <DeleteConfirmationDialog
-                isOpen={isDeleteDialogOpen}
-                onOpenChange={setIsDeleteDialogOpen}
-                onConfirm={handleDeleteConfirm}
+                isOpen={isDeleteGroupDialogOpen}
+                onOpenChange={setIsDeleteGroupDialogOpen}
+                onConfirm={handleDeleteGroupConfirm}
                 title={`Delete "${groupToDelete.title}"?`}
                 description="This will permanently delete the group and all skills within it. This action cannot be undone."
+              />
+            )}
+            {isLoggedIn && skillToDelete && (
+              <DeleteConfirmationDialog
+                isOpen={isDeleteSkillDialogOpen}
+                onOpenChange={setIsDeleteSkillDialogOpen}
+                onConfirm={handleDeleteSkillConfirm}
+                title={`Delete "${skillToDelete.name}"?`}
+                description="This will permanently delete the skill. This action cannot be undone."
               />
             )}
         </section>
