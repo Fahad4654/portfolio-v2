@@ -56,10 +56,6 @@ export const SkillsSection = () => {
     useEffect(() => {
         fetchSkills();
     }, [fetchSkills]);
-
-    const maxDisplayOrder = skillGroups.length > 0
-        ? Math.max(...skillGroups.map(g => g.display_order))
-        : 0;
     
     const handleDeleteClick = (group: SkillGroup) => {
         setGroupToDelete(group);
@@ -69,43 +65,51 @@ export const SkillsSection = () => {
     const handleDeleteConfirm = async () => {
         if (!groupToDelete) return;
 
-        // Note: This assumes skills are linked to skill_groups via a 'group_id' column.
-        // This is safer than relying on ON DELETE CASCADE if the DB schema is unknown.
-        const { error: skillsError } = await supabase
-            .from('skills')
-            .delete()
-            .eq('group_id', groupToDelete.id);
+        try {
+            // Delete associated skills first
+            const { error: skillsError } = await supabase
+                .from('skills')
+                .delete()
+                .eq('group_id', groupToDelete.id);
+            if (skillsError) throw skillsError;
 
-        if (skillsError) {
-            console.error('Error deleting skills:', skillsError);
-            toast({
-                variant: 'destructive',
-                title: 'Delete Failed',
-                description: 'Could not delete skills in the group. Please check console for details.',
-            });
-            return;
-        }
+            // Delete the group itself
+            const { error: groupError } = await supabase
+                .from('skill_groups')
+                .delete()
+                .eq('id', groupToDelete.id);
+            if (groupError) throw groupError;
+            
+            // Re-order remaining groups
+            const deletedOrder = groupToDelete.display_order;
+            const groupsToUpdate = skillGroups
+                .filter(g => g.display_order > deletedOrder && g.id !== groupToDelete.id)
+                .sort((a, b) => a.display_order - b.display_order);
 
-        const { error: groupError } = await supabase
-            .from('skill_groups')
-            .delete()
-            .eq('id', groupToDelete.id);
-
-        if (groupError) {
-            console.error('Error deleting skill group:', groupError);
-            toast({
-                variant: 'destructive',
-                title: 'Delete Failed',
-                description: 'Could not delete the skill group. Please try again.',
-            });
-        } else {
+            const updatePromises = groupsToUpdate.map(g =>
+                supabase
+                    .from('skill_groups')
+                    .update({ display_order: g.display_order - 1 })
+                    .eq('id', g.id)
+            );
+            await Promise.all(updatePromises);
+            
             toast({
                 title: 'Skill Group Deleted',
                 description: `The group "${groupToDelete.title}" has been deleted.`,
             });
+        } catch (error: any) {
+            console.error('Error during deletion process:', error);
+            toast({
+                variant: 'destructive',
+                title: 'Delete Failed',
+                description: 'An error occurred while deleting the skill group. Please try again.',
+            });
+        } finally {
+            // Always refetch to ensure UI consistency
             fetchSkills();
+            setGroupToDelete(null);
         }
-        setGroupToDelete(null);
     };
 
     if (loading) {
@@ -195,7 +199,7 @@ export const SkillsSection = () => {
                 isOpen={isAddGroupDialogOpen}
                 onOpenChange={setIsAddGroupDialogOpen}
                 onGroupAdded={fetchSkills}
-                maxDisplayOrder={maxDisplayOrder}
+                skillGroups={skillGroups}
               />
             )}
             {isLoggedIn && groupToDelete && (

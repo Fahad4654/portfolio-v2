@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -15,23 +14,30 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/lib/supabaseClient';
+import { SkillGroup } from './SkillsSection';
 
 interface AddSkillGroupDialogProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   onGroupAdded: () => void;
-  maxDisplayOrder: number;
+  skillGroups: SkillGroup[];
 }
 
 export const AddSkillGroupDialog = ({
   isOpen,
   onOpenChange,
   onGroupAdded,
-  maxDisplayOrder,
+  skillGroups,
 }: AddSkillGroupDialogProps) => {
   const { toast } = useToast();
   const [title, setTitle] = useState('');
+  const [displayOrder, setDisplayOrder] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+
+  const resetForm = () => {
+    setTitle('');
+    setDisplayOrder('');
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,40 +51,71 @@ export const AddSkillGroupDialog = ({
     }
     setIsSaving(true);
 
-    const { error } = await supabase
-      .from('skill_groups')
-      .insert({
-        title: title,
-        display_order: maxDisplayOrder + 1,
-      });
+    const newOrder = displayOrder ? parseInt(displayOrder, 10) : null;
 
-    setIsSaving(false);
+    try {
+      if (newOrder !== null && !isNaN(newOrder) && newOrder > 0) {
+        // Shift existing groups
+        const groupsToUpdate = skillGroups.filter(g => g.display_order >= newOrder);
+        const updatePromises = groupsToUpdate.map(g =>
+          supabase
+            .from('skill_groups')
+            .update({ display_order: g.display_order + 1 })
+            .eq('id', g.id)
+        );
+        await Promise.all(updatePromises);
 
-    if (error) {
-      console.error('Error adding skill group:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Add Failed',
-        description: 'Could not add the new skill group. Please try again.',
-      });
-    } else {
+        // Insert new group
+        const { error } = await supabase.from('skill_groups').insert({
+          title: title,
+          display_order: newOrder,
+        });
+        if (error) throw error;
+
+      } else {
+        // Insert at the end
+        const maxDisplayOrder = skillGroups.length > 0 ? Math.max(...skillGroups.map(g => g.display_order)) : 0;
+        const { error } = await supabase
+          .from('skill_groups')
+          .insert({
+            title: title,
+            display_order: maxDisplayOrder + 1,
+          });
+        if (error) throw error;
+      }
+
       toast({
         title: 'Skill Group Added',
         description: `The group "${title}" has been created.`,
       });
-      setTitle('');
-      onGroupAdded();
+      resetForm();
+      onGroupAdded(); // This will refetch and re-render
       onOpenChange(false);
+
+    } catch (error: any) {
+        console.error('Error adding skill group:', error);
+        toast({
+            variant: 'destructive',
+            title: 'Add Failed',
+            description: 'Could not add the new skill group. Please try again.',
+        });
+        // Important: refetch to revert inconsistent state
+        onGroupAdded();
+    } finally {
+        setIsSaving(false);
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      if (!open) resetForm();
+      onOpenChange(open);
+    }}>
       <DialogContent className="sm:max-w-[425px] bg-card">
         <DialogHeader>
           <DialogTitle>Add New Skill Group</DialogTitle>
           <DialogDescription>
-            Enter a title for the new group of skills.
+            Enter a title for the new group of skills. You can optionally set a display order.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
@@ -93,6 +130,20 @@ export const AddSkillGroupDialog = ({
                 onChange={(e) => setTitle(e.target.value)}
                 className="col-span-3"
                 placeholder="e.g., Cloud & Infrastructure"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="display_order" className="text-right">
+                Order
+              </Label>
+              <Input
+                id="display_order"
+                type="number"
+                value={displayOrder}
+                onChange={(e) => setDisplayOrder(e.target.value)}
+                className="col-span-3"
+                placeholder="Optional (e.g., 1)"
+                min="1"
               />
             </div>
           </div>
