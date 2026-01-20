@@ -11,8 +11,10 @@ import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "../ui/button";
-import { Plus, PlusCircle } from "lucide-react";
+import { Plus, PlusCircle, Trash2 } from "lucide-react";
 import { AddSkillGroupDialog } from "./AddSkillGroupDialog";
+import { useToast } from "@/hooks/use-toast";
+import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 
 type Skill = {
     id: string;
@@ -30,7 +32,10 @@ export const SkillsSection = () => {
     const [skillGroups, setSkillGroups] = useState<SkillGroup[]>([]);
     const [loading, setLoading] = useState(true);
     const { isLoggedIn } = useAuth();
+    const { toast } = useToast();
     const [isAddGroupDialogOpen, setIsAddGroupDialogOpen] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [groupToDelete, setGroupToDelete] = useState<SkillGroup | null>(null);
 
     const fetchSkills = useCallback(async () => {
         setLoading(true);
@@ -55,6 +60,53 @@ export const SkillsSection = () => {
     const maxDisplayOrder = skillGroups.length > 0
         ? Math.max(...skillGroups.map(g => g.display_order))
         : 0;
+    
+    const handleDeleteClick = (group: SkillGroup) => {
+        setGroupToDelete(group);
+        setIsDeleteDialogOpen(true);
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!groupToDelete) return;
+
+        // Note: This assumes skills are linked to skill_groups via a 'group_id' column.
+        // This is safer than relying on ON DELETE CASCADE if the DB schema is unknown.
+        const { error: skillsError } = await supabase
+            .from('skills')
+            .delete()
+            .eq('group_id', groupToDelete.id);
+
+        if (skillsError) {
+            console.error('Error deleting skills:', skillsError);
+            toast({
+                variant: 'destructive',
+                title: 'Delete Failed',
+                description: 'Could not delete skills in the group. Please check console for details.',
+            });
+            return;
+        }
+
+        const { error: groupError } = await supabase
+            .from('skill_groups')
+            .delete()
+            .eq('id', groupToDelete.id);
+
+        if (groupError) {
+            console.error('Error deleting skill group:', groupError);
+            toast({
+                variant: 'destructive',
+                title: 'Delete Failed',
+                description: 'Could not delete the skill group. Please try again.',
+            });
+        } else {
+            toast({
+                title: 'Skill Group Deleted',
+                description: `The group "${groupToDelete.title}" has been deleted.`,
+            });
+            fetchSkills();
+        }
+        setGroupToDelete(null);
+    };
 
     if (loading) {
         return (
@@ -110,12 +162,17 @@ export const SkillsSection = () => {
                     <div className="space-y-8">
                         {skillGroups.map((group) => (
                             <div key={group.id}>
-                                <div className="flex flex-col items-center mb-4">
-                                  <div className="inline-block">
+                                <div className="flex justify-center items-center mb-4">
+                                  <div className="inline-block text-center">
                                     <div className="h-[3px] w-full bg-gradient-to-r from-transparent via-primary to-transparent mb-2"></div>
                                     <h3 className="text-lg font-semibold text-foreground text-center">{group.title}</h3>
                                     <div className="h-[3px] w-full bg-gradient-to-r from-transparent via-primary to-transparent mt-2"></div>
                                   </div>
+                                  {isLoggedIn && (
+                                    <Button variant="ghost" size="icon" className="ml-4" onClick={() => handleDeleteClick(group)}>
+                                        <Trash2 className="h-4 w-4 text-destructive/70 hover:text-destructive" />
+                                    </Button>
+                                  )}
                                 </div>
                                 <div className="flex flex-wrap gap-3 justify-center">
                                     {group.skills.map((skill) => (
@@ -139,6 +196,15 @@ export const SkillsSection = () => {
                 onOpenChange={setIsAddGroupDialogOpen}
                 onGroupAdded={fetchSkills}
                 maxDisplayOrder={maxDisplayOrder}
+              />
+            )}
+            {isLoggedIn && groupToDelete && (
+              <DeleteConfirmationDialog
+                isOpen={isDeleteDialogOpen}
+                onOpenChange={setIsDeleteDialogOpen}
+                onConfirm={handleDeleteConfirm}
+                title={`Delete "${groupToDelete.title}"?`}
+                description="This will permanently delete the group and all skills within it. This action cannot be undone."
               />
             )}
         </section>
