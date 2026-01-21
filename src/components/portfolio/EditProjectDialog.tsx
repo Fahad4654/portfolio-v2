@@ -88,19 +88,20 @@ export const EditProjectDialog = ({
         let imageUrl = formData.image;
 
         if (newImageFile) {
-            const uploadFormData = new FormData();
-            uploadFormData.append('file', newImageFile);
+            const body = new FormData();
+            body.append('file', newImageFile);
 
             const response = await fetch('/api/upload-image', {
                 method: 'POST',
-                body: uploadFormData,
+                body,
             });
 
             const result = await response.json();
 
             if (!response.ok) {
-                throw new Error(result.message || 'Image upload failed. Check server logs.');
+                throw new Error(result.message || 'Image upload failed.');
             }
+            
             imageUrl = result.imageUrl;
         }
 
