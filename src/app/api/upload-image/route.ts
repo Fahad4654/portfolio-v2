@@ -1,19 +1,13 @@
 
 import { NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-
-// This is an object export, which is why "use server" would break it
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey)
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
 export async function POST(request: Request) {
   // Proactive check for environment variables
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
     return NextResponse.json({ 
-      message: 'Image upload failed due to server misconfiguration. Please ensure SUPABASE_SERVICE_ROLE_KEY and NEXT_PUBLIC_SUPABASE_URL are correctly set in your .env file and that the server has been restarted.'
+      message: 'Image upload failed due to a server authentication error. Please ensure SUPABASE_SERVICE_ROLE_KEY and NEXT_PUBLIC_SUPABASE_URL are correctly set in your .env file and that the server has been restarted.'
     }, { status: 500 });
   }
 
