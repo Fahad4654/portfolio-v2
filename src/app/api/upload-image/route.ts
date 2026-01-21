@@ -1,3 +1,4 @@
+
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { randomUUID } from 'crypto';
@@ -24,10 +25,12 @@ export async function POST(request: Request) {
 
     if (uploadError) {
       console.error('Supabase upload error:', uploadError.message);
-      if (uploadError.message.includes('violates row-level security policy')) {
-           return NextResponse.json({ message: 'Image upload failed: The server is not authorized. Check storage bucket policies and service role key.' }, { status: 500 });
-      }
-      return NextResponse.json({ message: 'Image upload failed.' }, { status: 500 });
+      
+      // If any upload error occurs, it's highly likely due to an authentication issue
+      // with the service role key. Return a helpful, specific error message.
+      return NextResponse.json({ 
+        message: 'Image upload failed. This is likely due to an authentication error on the server. Please ensure the `SUPABASE_SERVICE_ROLE_KEY` is correctly set in your .env file and that the server has been restarted.'
+      }, { status: 500 });
     }
 
     const { data: urlData } = supabaseAdmin.storage
