@@ -16,7 +16,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/supabaseClient';
 import { Skeleton } from '../ui/skeleton';
 
 type Project = {
@@ -56,13 +55,17 @@ const uploadProjectImage = async (file: File): Promise<string> => {
 
 // Helper function to update project data
 const updateProject = async (id: number, data: any) => {
-  const { error } = await supabase
-    .from('projects')
-    .update(data)
-    .eq('id', id);
+  const response = await fetch('/api/update-project', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ id, ...data }),
+  });
 
-  if (error) {
-    throw new Error(`Database update failed: ${error.message}`);
+  const result = await response.json();
+  if (!response.ok) {
+      throw new Error(result.message || 'Failed to update project.');
   }
 }
 
@@ -132,7 +135,7 @@ export const EditProjectDialog = ({
             image: imageUrl,
         };
 
-        // 3. Update the project in the database
+        // 3. Update the project in the database via the API route
         await updateProject(formData.id, updatedProjectData);
 
         toast({
