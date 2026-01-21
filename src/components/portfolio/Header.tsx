@@ -2,7 +2,6 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import profilePic from "@/assets/pp.jpeg";
 import { cn } from "@/lib/utils";
 import { PanelLeftClose, PanelRightClose } from "lucide-react";
 import { Button } from "../ui/button";
@@ -12,6 +11,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useInfo } from "@/context/InfoContext";
+import { Skeleton } from "../ui/skeleton";
 
 export const Header = ({
   isCollapsed,
@@ -20,6 +21,22 @@ export const Header = ({
   isCollapsed?: boolean;
   onToggleCollapse: () => void;
 }) => {
+  const { info, loading } = useInfo();
+
+  if (loading || !info) {
+    return (
+      <div className={cn("shrink-0", isCollapsed ? "px-2 pt-4" : "text-center")}>
+         <div className={cn("relative", isCollapsed ? "" : "w-full")}>
+            <Skeleton className={cn("mx-auto border-4 border-primary/20 shadow-lg rounded-full", isCollapsed ? "w-12 h-12" : "w-24 h-24 mb-3")} />
+          </div>
+          <div className={cn("transition-opacity duration-300 mt-3", isCollapsed ? "opacity-0 h-0 overflow-hidden" : "opacity-100")}>
+              <Skeleton className="h-7 w-36 mx-auto mb-2" />
+              <Skeleton className="h-5 w-28 mx-auto" />
+          </div>
+      </div>
+    )
+  }
+
   const avatar = (
     <Avatar
       className={cn(
@@ -27,8 +44,8 @@ export const Header = ({
         isCollapsed ? "w-12 h-12" : "w-24 h-24 mb-3"
       )}
     >
-      <AvatarImage src={profilePic.src} alt="Profile Picture" />
-      <AvatarFallback>FK</AvatarFallback>
+      <AvatarImage src={info.profile_pic_url} alt="Profile Picture" />
+      <AvatarFallback>{info.name.substring(0,2).toUpperCase()}</AvatarFallback>
     </Avatar>
   );
 
@@ -46,7 +63,7 @@ export const Header = ({
               <Tooltip>
                 <TooltipTrigger asChild>{avatar}</TooltipTrigger>
                 <TooltipContent side="right" sideOffset={5}>
-                  <p className="text-base text-foreground">Fahad Kabir</p>
+                  <p className="text-base text-foreground">{info.name}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -89,9 +106,9 @@ export const Header = ({
         )}
       >
         <h1 className="text-2xl font-bold text-foreground font-headline">
-          Fahad Kabir
+          {info.name}
         </h1>
-        <p className="text-sm text-primary">DevOps Engineer</p>
+        <p className="text-sm text-primary">{info.profession}</p>
       </div>
     </div>
   );

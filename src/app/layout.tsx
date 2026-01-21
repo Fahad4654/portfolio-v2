@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Inter, Playfair_Display } from 'next/font/google'
 import { ThemeProvider } from '@/components/theme-provider';
 import { AuthProvider } from '@/context/AuthContext';
+import { InfoProvider } from '@/context/InfoContext';
 
 export const metadata: Metadata = {
   title: 'Fahad Kabir | DevOps Engineer',
@@ -34,10 +35,12 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          <AuthProvider>
-            <Toaster />
-            {children}
-          </AuthProvider>
+          <InfoProvider>
+            <AuthProvider>
+              <Toaster />
+              {children}
+            </AuthProvider>
+          </InfoProvider>
         </ThemeProvider>
       </body>
     </html>

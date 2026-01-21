@@ -19,6 +19,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useAuth } from '@/context/AuthContext';
+import { useInfo } from '@/context/InfoContext';
 
 export const Sidebar = ({
   activeSection,
@@ -34,6 +35,7 @@ export const Sidebar = ({
   onToggleCollapse: () => void;
 }) => {
   const { isLoggedIn, logout } = useAuth();
+  const { info } = useInfo();
 
   const handleLogout = () => {
     logout();
@@ -114,23 +116,29 @@ export const Sidebar = ({
         <div className={cn("shrink-0 mt-4", isCollapsed && !isMobile ? "hidden" : "")}>
            <Separator className="my-3" />
           <div className="flex justify-center items-center gap-4">
-            <a
-              href="https://github.com/Fahad4654"
-              target="_blank"
-              aria-label="GitHub"
-              className="text-foreground/80 hover:text-foreground transition-colors"
-            >
-              <GithubIcon />
-            </a>
-            <a
-              href="https://www.linkedin.com/in/fahad-kabir-6559211a8"
-              target="_blank"
-              aria-label="LinkedIn"
-              className="text-muted-foreground hover:text-primary transition-colors"
-            >
-              <LinkedinIcon />
-            </a>
-            <Separator orientation='vertical' className="h-5" />
+            {info && (
+              <>
+                <a
+                  href={info.github_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="GitHub"
+                  className="text-foreground/80 hover:text-foreground transition-colors"
+                >
+                  <GithubIcon />
+                </a>
+                <a
+                  href={info.linkedin_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  <LinkedinIcon />
+                </a>
+                <Separator orientation='vertical' className="h-5" />
+              </>
+            )}
             <ThemeToggle />
             {authButton}
           </div>

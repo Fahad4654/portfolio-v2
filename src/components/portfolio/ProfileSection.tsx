@@ -6,11 +6,11 @@ import { Mail, MapPin, Phone, Download, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import profilePic from "@/assets/pp.jpeg";
 import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
 import { EditProfileDialog } from "./EditProfileDialog";
+import { useInfo } from "@/context/InfoContext";
 
 type Profile = {
   id: number;
@@ -26,9 +26,10 @@ type Profile = {
 export const ProfileSection = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loadingProfile, setLoadingProfile] = useState(true);
   const { isLoggedIn } = useAuth();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const { info, loading: loadingInfo } = useInfo();
 
   useEffect(() => {
     const userAgent =
@@ -42,7 +43,7 @@ export const ProfileSection = () => {
   }, []);
 
   const fetchProfile = useCallback(async () => {
-    setLoading(true);
+    setLoadingProfile(true);
     const { data, error } = await supabase
         .from('profile')
         .select('*')
@@ -54,19 +55,20 @@ export const ProfileSection = () => {
     } else {
         setProfile(data);
     }
-    setLoading(false);
+    setLoadingProfile(false);
   }, []);
 
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);
 
+  const loading = loadingProfile || loadingInfo;
 
-  const mailHref = isMobile && profile
-    ? `mailto:${profile.email}`
-    : `https://mail.google.com/mail/?view=cm&fs=1&to=${profile?.email}`;
+  const mailHref = isMobile && info
+    ? `mailto:${info.email}`
+    : `https://mail.google.com/mail/?view=cm&fs=1&to=${info?.email}`;
 
-  if (loading || !profile) {
+  if (loading || !profile || !info) {
       return (
         <section id="profile">
             <div className="md:hidden mb-10 text-center">
@@ -106,13 +108,13 @@ export const ProfileSection = () => {
         <Avatar
           className={"mx-auto w-24 h-24 mb-4 border-4 border-primary/20 shadow-lg"}
         >
-          <AvatarImage src={profilePic.src} alt="Profile Picture" />
-          <AvatarFallback>FK</AvatarFallback>
+          <AvatarImage src={info.profile_pic_url} alt="Profile Picture" />
+          <AvatarFallback>{info.name.substring(0, 2).toUpperCase()}</AvatarFallback>
         </Avatar>
         <h1 className="text-2xl font-bold text-foreground font-headline">
-          Fahad Kabir
+          {info.name}
         </h1>
-        <p className="text-sm text-primary">DevOps Engineer</p>
+        <p className="text-sm text-primary">{info.profession}</p>
       </div>
 
       <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary text-center">
@@ -152,7 +154,7 @@ export const ProfileSection = () => {
                 rel="noopener noreferrer"
                 className="hover:underline hover:text-primary transition-colors"
               >
-                {profile.email}
+                {info.email}
               </a>
             </div>
           </div>
