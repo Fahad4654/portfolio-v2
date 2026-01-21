@@ -1,9 +1,10 @@
 
 "use client";
 
+import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { PanelLeftClose, PanelRightClose } from "lucide-react";
+import { PanelLeftClose, PanelRightClose, Edit } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   Tooltip,
@@ -13,6 +14,9 @@ import {
 } from "@/components/ui/tooltip";
 import { useInfo } from "@/context/InfoContext";
 import { Skeleton } from "../ui/skeleton";
+import { useAuth } from '@/context/AuthContext';
+import { EditInfoDialog } from './EditInfoDialog';
+
 
 export const Header = ({
   isCollapsed,
@@ -22,6 +26,8 @@ export const Header = ({
   onToggleCollapse: () => void;
 }) => {
   const { info, loading } = useInfo();
+  const { isLoggedIn } = useAuth();
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   if (loading || !info) {
     return (
@@ -38,7 +44,7 @@ export const Header = ({
   }
 
   const avatar = (
-    <Avatar
+     <Avatar
       className={cn(
         "mx-auto border-4 border-primary/20 shadow-lg transition-all duration-300",
         isCollapsed ? "w-12 h-12" : "w-24 h-24 mb-3"
@@ -49,67 +55,99 @@ export const Header = ({
     </Avatar>
   );
 
-  return (
-    <div className={cn("shrink-0", isCollapsed ? "px-2" : "text-center")}>
-      <div
+  const avatarAndEditButton = (
+    <div className="relative group mx-auto w-24 h-24 mb-3">
+       <Avatar
         className={cn(
-          "flex items-center justify-center relative",
-          isCollapsed ? "flex-col gap-2" : "flex-col"
+          "mx-auto border-4 border-primary/20 shadow-lg transition-all duration-300 w-full h-full"
         )}
       >
-        <div className={cn("relative", isCollapsed ? "" : "w-full")}>
-          {isCollapsed ? (
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger asChild>{avatar}</TooltipTrigger>
-                <TooltipContent side="right" sideOffset={5}>
-                  <p className="text-base text-foreground">{info.name}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          ) : (
-            avatar
-          )}
+        <AvatarImage src={info.profile_pic_url} alt="Profile Picture" />
+        <AvatarFallback>{info.name.substring(0,2).toUpperCase()}</AvatarFallback>
+      </Avatar>
+      {isLoggedIn && !isCollapsed && (
+        <Button
+          variant="outline"
+          size="icon"
+          className="absolute bottom-0 right-0 z-10 h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+          onClick={() => setIsEditDialogOpen(true)}
+        >
+          <Edit className="h-4 w-4" />
+        </Button>
+      )}
+    </div>
+  );
 
-          {!isCollapsed && (
+
+  return (
+    <>
+      <div className={cn("shrink-0", isCollapsed ? "px-2" : "text-center")}>
+        <div
+          className={cn(
+            "flex items-center justify-center relative",
+            isCollapsed ? "flex-col gap-2" : "flex-col"
+          )}
+        >
+          <div className={cn("relative", isCollapsed ? "" : "w-full")}>
+            {isCollapsed ? (
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>{avatar}</TooltipTrigger>
+                  <TooltipContent side="right" sideOffset={5}>
+                    <p className="text-base text-foreground">{info.name}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : (
+              avatarAndEditButton
+            )}
+
+            {!isCollapsed && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  "absolute top-0 right-0 z-20 h-8 w-8 rounded-full border shadow-sm",
+                  "hidden md:flex items-center justify-center bg-background hover:bg-accent",
+                  "translate-x-1/4 -translate-y-1/4" // This centers the button on the top-right edge
+                )}
+                onClick={onToggleCollapse}
+              >
+                <PanelLeftClose />
+              </Button>
+            )}
+          </div>
+
+          {isCollapsed && (
             <Button
               variant="ghost"
               size="icon"
-              className={cn(
-                "absolute top-0 right-0 z-20 h-8 w-8 rounded-full border shadow-sm",
-                "hidden md:flex items-center justify-center bg-background hover:bg-accent",
-                "translate-x-1/4 -translate-y-1/4" // This centers the button on the top-right edge
-              )}
+              className="rounded-full z-20"
               onClick={onToggleCollapse}
             >
-              <PanelLeftClose />
+              <PanelRightClose />
             </Button>
           )}
         </div>
 
-        {isCollapsed && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-full z-20"
-            onClick={onToggleCollapse}
-          >
-            <PanelRightClose />
-          </Button>
-        )}
+        <div
+          className={cn(
+            "transition-opacity duration-300 mt-3",
+            isCollapsed ? "opacity-0 h-0 overflow-hidden" : "opacity-100"
+          )}
+        >
+          <h1 className="text-2xl font-bold text-foreground font-headline">
+            {info.name}
+          </h1>
+          <p className="text-sm text-primary">{info.profession}</p>
+        </div>
       </div>
-
-      <div
-        className={cn(
-          "transition-opacity duration-300 mt-3",
-          isCollapsed ? "opacity-0 h-0 overflow-hidden" : "opacity-100"
-        )}
-      >
-        <h1 className="text-2xl font-bold text-foreground font-headline">
-          {info.name}
-        </h1>
-        <p className="text-sm text-primary">{info.profession}</p>
-      </div>
-    </div>
+      {isLoggedIn && (
+        <EditInfoDialog 
+          isOpen={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+        />
+      )}
+    </>
   );
 };

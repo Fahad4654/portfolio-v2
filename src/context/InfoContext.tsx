@@ -18,6 +18,7 @@ type Info = {
 interface InfoContextType {
   info: Info | null;
   loading: boolean;
+  fetchInfo: () => void;
 }
 
 const InfoContext = createContext<InfoContextType | undefined>(undefined);
@@ -27,7 +28,6 @@ export const InfoProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchInfo = useCallback(async () => {
-    setLoading(true);
     const { data, error } = await supabase
       .from('info')
       .select('*')
@@ -47,7 +47,7 @@ export const InfoProvider = ({ children }: { children: ReactNode }) => {
   }, [fetchInfo]);
 
   return (
-    <InfoContext.Provider value={{ info, loading }}>
+    <InfoContext.Provider value={{ info, loading, fetchInfo }}>
       {children}
     </InfoContext.Provider>
   );
