@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, ChangeEvent } from 'react';
+import { useState, useEffect, ChangeEvent, useRef } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import {
@@ -82,12 +82,19 @@ export const EditInfoDialog = ({
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [isSavingInfo, setIsSavingInfo] = useState(false);
   const [isSavingPicture, setIsSavingPicture] = useState(false);
+  const isOpenRef = useRef(isOpen);
 
   useEffect(() => {
-    setFormData(info);
-    setImagePreviewUrl(null);
-    setNewImageFile(null);
-  }, [info, isOpen]);
+    // If the dialog is transitioning from closed to open, sync the form with `info`.
+    // This prevents wiping user edits if `info` refetches while the dialog is open.
+    if (isOpen && !isOpenRef.current) {
+      setFormData(info);
+      setImagePreviewUrl(null);
+      setNewImageFile(null);
+    }
+    // Update the ref to the current state for the next render.
+    isOpenRef.current = isOpen;
+  }, [isOpen, info]);
 
   if (!formData) return null;
 
