@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from "react";
@@ -47,16 +48,11 @@ const Page = () => {
   const contentAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const navigationEntries = performance.getEntriesByType("navigation");
-    if (navigationEntries.length > 0 && (navigationEntries[0] as PerformanceNavigationTiming).type === 'back_forward') {
+    const timer = setTimeout(() => {
       setLoading(false);
-    } else {
-      const timer = setTimeout(() => {
-        setLoading(false);
-      }, 5000);
+    }, 2000);
 
-      return () => clearTimeout(timer);
-    }
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {

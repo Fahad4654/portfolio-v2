@@ -18,7 +18,7 @@ export default function LoadingScreen() {
 
   useEffect(() => {
     const timeouts: NodeJS.Timeout[] = [];
-    let delay = 200;
+    let delay = 150;
     
     bootLines.forEach((line, index) => {
       const timeout = setTimeout(() => {
