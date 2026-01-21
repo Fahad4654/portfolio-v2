@@ -1,11 +1,7 @@
-
 "use client";
 
 import React from "react";
-import {
-  Menu,
-  Send,
-} from "lucide-react";
+import { Menu, Send } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -24,11 +20,23 @@ import { ExperienceSection } from "@/components/portfolio/ExperienceSection";
 import { ProjectsSection } from "@/components/portfolio/ProjectsSection";
 import { EducationSection } from "@/components/portfolio/EducationSection";
 import { ContactSection } from "@/components/portfolio/ContactSection";
-import { User, Shapes, GraduationCap, BriefcaseBusiness, FileText } from "lucide-react";
+import {
+  User,
+  Shapes,
+  GraduationCap,
+  BriefcaseBusiness,
+  FileText,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DigitalRain } from "@/components/portfolio/DigitalRain";
 
-export type Section = "profile" | "skills" | "experience" | "portfolio" | "education" | "contact";
+export type Section =
+  | "profile"
+  | "skills"
+  | "experience"
+  | "portfolio"
+  | "education"
+  | "contact";
 
 export const links: { id: Section; icon: React.ElementType; text: string }[] = [
   { id: "profile", icon: User, text: "Personal Info" },
@@ -38,7 +46,6 @@ export const links: { id: Section; icon: React.ElementType; text: string }[] = [
   { id: "portfolio", icon: FileText, text: "Projects" },
   { id: "contact", icon: Send, text: "Contact Me" },
 ];
-
 
 const Page = () => {
   const [loading, setLoading] = useState(true);
@@ -70,13 +77,15 @@ const Page = () => {
     <div className="relative min-h-screen w-full overflow-x-hidden">
       {loading && <LoadingScreen />}
       <DigitalRain />
-      
+
       {!loading && (
         <>
-          <div className={cn(
-            "hidden md:block fixed top-0 left-0 h-full transition-all duration-300 ease-in-out z-[60]",
-            isCollapsed ? "w-20" : "w-72"
-          )}>
+          <div
+            className={cn(
+              "hidden md:block fixed top-0 left-0 h-full transition-all duration-300 ease-in-out z-[60]",
+              isCollapsed ? "w-20" : "w-72",
+            )}
+          >
             <Sidebar
               activeSection={activeSection}
               onLinkClick={handleLinkClick}
@@ -97,30 +106,31 @@ const Page = () => {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-80 p-0 border-r-0 z-[60]">
-                <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
+                {/* Add a Title for Accessibility (even if hidden) */}
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+
+                <div className="h-full">
                   <Sidebar
                     activeSection={activeSection}
                     onLinkClick={handleLinkClick}
                     isMobile
                     onToggleCollapse={() => {}}
                   />
+                </div>
               </SheetContent>
             </Sheet>
           </div>
 
-          <main 
+          <main
             ref={contentAreaRef}
             className={cn(
-            "relative flex-1 h-screen transition-all duration-300 ease-in-out z-10",
-            "bg-background/40 backdrop-blur-[1px]",
-            "overflow-y-auto",
-            isCollapsed ? "md:ml-20" : "md:ml-72"
-            )}>
-            
-            <div
-              key={activeSection}
-              className="flex-1 animate-slide-in"
-            >
+              "relative flex-1 h-screen transition-all duration-300 ease-in-out z-10",
+              "bg-background/40 backdrop-blur-[1px]",
+              "overflow-y-auto",
+              isCollapsed ? "md:ml-20" : "md:ml-72",
+            )}
+          >
+            <div key={activeSection} className="flex-1 animate-slide-in">
               <div className="container mx-auto px-6 py-12 md:px-12 md:py-16">
                 {activeSection === "profile" && <ProfileSection />}
                 {activeSection === "skills" && <SkillsSection />}

@@ -1,7 +1,13 @@
 
 import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { randomUUID } from 'crypto';
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+
+// This is an object export, which is why "use server" would break it
+export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey)
 
 export async function POST(request: Request) {
   // Proactive check for environment variables
