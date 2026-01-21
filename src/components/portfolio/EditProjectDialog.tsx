@@ -88,28 +88,20 @@ export const EditProjectDialog = ({
         let imageUrl = formData.image;
 
         if (newImageFile) {
-            const file = newImageFile;
-            const fileName = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
-            const { error: uploadError } = await supabase.storage
-                .from('project-images')
-                .upload(fileName, file, {
-                    cacheControl: '3600',
-                    upsert: false,
-                    contentType: file.type,
-                });
+            const uploadFormData = new FormData();
+            uploadFormData.append('file', newImageFile);
 
-            if (uploadError) {
-                throw new Error(`Image upload failed: ${uploadError.message}`);
+            const response = await fetch('/api/upload-image', {
+                method: 'POST',
+                body: uploadFormData,
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || 'Image upload failed. Check server logs.');
             }
-
-            const { data: urlData } = supabase.storage
-                .from('project-images')
-                .getPublicUrl(fileName);
-
-            if (!urlData.publicUrl) {
-                throw new Error('Could not get public URL for uploaded image.');
-            }
-            imageUrl = urlData.publicUrl;
+            imageUrl = result.imageUrl;
         }
 
         const updatedProject = {
