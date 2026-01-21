@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, ChangeEvent } from 'react';
@@ -15,7 +14,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/supabaseClient';
 import { Skeleton } from '../ui/skeleton';
 import { useInfo } from '@/context/InfoContext';
 
@@ -76,13 +74,14 @@ export const EditInfoDialog = ({
     try {
         let imageUrl = formData.profile_pic_url;
 
+        // 1. Handle image upload first if there is a new image
         if (newImageFile) {
-            const body = new FormData();
-            body.append('file', newImageFile);
+            const imageFormData = new FormData();
+            imageFormData.append('file', newImageFile);
 
             const response = await fetch('/api/upload-profile-pic', {
                 method: 'POST',
-                body,
+                body: imageFormData,
             });
 
             const result = await response.json();
@@ -94,7 +93,9 @@ export const EditInfoDialog = ({
             imageUrl = result.imageUrl;
         }
 
-        const updatedInfo = {
+        // 2. Prepare the data payload for the info update API
+        const updatePayload = {
+            id: info.id,
             name: formData.name,
             profession: formData.profession,
             email: formData.email,
@@ -105,21 +106,27 @@ export const EditInfoDialog = ({
             profile_pic_url: imageUrl,
         };
 
-        const { error } = await supabase
-            .from('info')
-            .update(updatedInfo)
-            .eq('id', info.id);
+        // 3. Call the new API route to update the info
+        const updateResponse = await fetch('/api/update-info', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatePayload),
+        });
 
-        if (error) {
-            throw new Error(`Database update failed: ${error.message}`);
+        const updateResult = await updateResponse.json();
+
+        if (!updateResponse.ok) {
+            throw new Error(updateResult.message || 'Failed to update information.');
         }
 
         toast({
             title: 'Info Updated',
             description: 'Your information has been successfully updated.',
         });
-        fetchInfo();
-        onOpenChange(false);
+        fetchInfo(); // Refetch data for context
+        onOpenChange(false); // Close dialog
 
     } catch (error: any) {
         console.error('Error updating info:', error);
