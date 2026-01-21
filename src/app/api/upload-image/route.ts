@@ -4,6 +4,13 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { randomUUID } from 'crypto';
 
 export async function POST(request: Request) {
+  // Proactive check for environment variables
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    return NextResponse.json({ 
+      message: 'Image upload failed due to server misconfiguration. Please ensure SUPABASE_SERVICE_ROLE_KEY and NEXT_PUBLIC_SUPABASE_URL are correctly set in your .env file and that the server has been restarted.'
+    }, { status: 500 });
+  }
+
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
@@ -25,11 +32,9 @@ export async function POST(request: Request) {
 
     if (uploadError) {
       console.error('Supabase upload error:', uploadError.message);
-      
-      // If any upload error occurs, it's highly likely due to an authentication issue
-      // with the service role key. Return a helpful, specific error message.
+      // This is the most likely cause of an upload error
       return NextResponse.json({ 
-        message: 'Image upload failed. This is likely due to an authentication error on the server. Please ensure the `SUPABASE_SERVICE_ROLE_KEY` is correctly set in your .env file and that the server has been restarted.'
+        message: 'Image upload failed due to a server authentication error. Please ensure SUPABASE_SERVICE_ROLE_KEY and NEXT_PUBLIC_SUPABASE_URL are correctly set in your .env file and that the server has been restarted.'
       }, { status: 500 });
     }
 
