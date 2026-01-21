@@ -80,7 +80,8 @@ export const EditInfoDialog = ({
   const [formData, setFormData] = useState<Partial<Info> | null>(info);
   const [newImageFile, setNewImageFile] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSavingInfo, setIsSavingInfo] = useState(false);
+  const [isSavingPicture, setIsSavingPicture] = useState(false);
 
   useEffect(() => {
     setFormData(info);
@@ -102,21 +103,44 @@ export const EditInfoDialog = ({
     const { id, value } = e.target;
     setFormData((prev) => prev ? ({ ...prev, [id]: value }) : null);
   };
+  
+  const handleImageSave = async () => {
+    if (!newImageFile || !info) {
+        toast({
+            variant: 'destructive',
+            title: 'No Image Selected',
+            description: 'Please select a new profile picture to upload.',
+        });
+        return;
+    }
+    setIsSavingPicture(true);
+    try {
+        const imageUrl = await uploadProfilePicture(newImageFile);
+        await updateInfo({ id: info.id, profile_pic_url: imageUrl });
+        toast({
+            title: 'Profile Picture Updated',
+            description: 'Your new profile picture has been saved.',
+        });
+        setNewImageFile(null);
+        fetchInfo();
+    } catch (error: any) {
+        console.error('Error uploading/saving profile picture:', error);
+        toast({
+            variant: 'destructive',
+            title: 'Upload Failed',
+            description: error.message || 'Could not save the new profile picture.',
+        });
+    } finally {
+        setIsSavingPicture(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData || !info) return;
-    setIsSaving(true);
+    setIsSavingInfo(true);
 
     try {
-        let imageUrl = formData.profile_pic_url;
-
-        // 1. Handle image upload if a new one is selected
-        if (newImageFile) {
-            imageUrl = await uploadProfilePicture(newImageFile);
-        }
-
-        // 2. Prepare the data payload for the info update
         const updatePayload = {
             id: info.id,
             name: formData.name,
@@ -126,18 +150,16 @@ export const EditInfoDialog = ({
             instagram_url: formData.instagram_url,
             linkedin_url: formData.linkedin_url,
             github_url: formData.github_url,
-            profile_pic_url: imageUrl,
         };
 
-        // 3. Update the info in the database
         await updateInfo(updatePayload);
 
         toast({
             title: 'Info Updated',
             description: 'Your information has been successfully updated.',
         });
-        fetchInfo(); // Refetch data for context
-        onOpenChange(false); // Close dialog
+        fetchInfo();
+        onOpenChange(false);
 
     } catch (error: any) {
         console.error('Error updating info:', error);
@@ -147,9 +169,11 @@ export const EditInfoDialog = ({
             description: error.message || 'Could not save your changes. Please try again.',
         });
     } finally {
-        setIsSaving(false);
+        setIsSavingInfo(false);
     }
   };
+
+  const isSaving = isSavingInfo || isSavingPicture;
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -176,49 +200,54 @@ export const EditInfoDialog = ({
                         </div>
                     )}
                 </div>
-                <Input id="image-upload" type="file" onChange={handleFileChange} accept="image/*" />
+                <Input id="image-upload" type="file" onChange={handleFileChange} accept="image/*" disabled={isSaving} />
             </div>
 
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">Name</Label>
-              <Input id="name" value={formData.name || ''} onChange={handleChange} className="col-span-3"/>
+              <Input id="name" value={formData.name || ''} onChange={handleChange} className="col-span-3" disabled={isSaving}/>
             </div>
 
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="profession" className="text-right">Profession</Label>
-              <Input id="profession" value={formData.profession || ''} onChange={handleChange} className="col-span-3"/>
+              <Input id="profession" value={formData.profession || ''} onChange={handleChange} className="col-span-3" disabled={isSaving}/>
             </div>
 
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="email" className="text-right">Email</Label>
-              <Input id="email" type="email" value={formData.email || ''} onChange={handleChange} className="col-span-3"/>
+              <Input id="email" type="email" value={formData.email || ''} onChange={handleChange} className="col-span-3" disabled={isSaving}/>
             </div>
             
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="github_url" className="text-right">GitHub URL</Label>
-              <Input id="github_url" value={formData.github_url || ''} onChange={handleChange} className="col-span-3"/>
+              <Input id="github_url" value={formData.github_url || ''} onChange={handleChange} className="col-span-3" disabled={isSaving}/>
             </div>
 
              <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="linkedin_url" className="text-right">LinkedIn URL</Label>
-              <Input id="linkedin_url" value={formData.linkedin_url || ''} onChange={handleChange} className="col-span-3"/>
+              <Input id="linkedin_url" value={formData.linkedin_url || ''} onChange={handleChange} className="col-span-3" disabled={isSaving}/>
             </div>
 
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="facebook_url" className="text-right">Facebook URL</Label>
-              <Input id="facebook_url" value={formData.facebook_url || ''} onChange={handleChange} className="col-span-3"/>
+              <Input id="facebook_url" value={formData.facebook_url || ''} onChange={handleChange} className="col-span-3" disabled={isSaving}/>
             </div>
 
              <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="instagram_url" className="text-right">Instagram URL</Label>
-              <Input id="instagram_url" value={formData.instagram_url || ''} onChange={handleChange} className="col-span-3"/>
+              <Input id="instagram_url" value={formData.instagram_url || ''} onChange={handleChange} className="col-span-3" disabled={isSaving}/>
             </div>
 
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSaving}>Cancel</Button>
+             {newImageFile && (
+                <Button type="button" variant="secondary" onClick={handleImageSave} disabled={isSaving}>
+                    {isSavingPicture ? 'Saving Picture...' : 'Save Picture'}
+                </Button>
+            )}
             <Button type="submit" disabled={isSaving}>
-              {isSaving ? 'Saving...' : 'Save Changes'}
+              {isSavingInfo ? 'Saving Info...' : 'Save Info'}
             </Button>
           </DialogFooter>
         </form>

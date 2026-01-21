@@ -80,7 +80,8 @@ export const EditProjectDialog = ({
   const [tagsText, setTagsText] = useState('');
   const [newImageFile, setNewImageFile] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSavingInfo, setIsSavingInfo] = useState(false);
+  const [isSavingImage, setIsSavingImage] = useState(false);
 
   useEffect(() => {
     setFormData(project);
@@ -110,21 +111,44 @@ export const EditProjectDialog = ({
         setFormData((prev) => prev ? ({ ...prev, [id]: value }) : null);
     }
   };
+  
+  const handleImageSave = async () => {
+    if (!newImageFile || !formData) {
+        toast({
+            variant: 'destructive',
+            title: 'No Image Selected',
+            description: 'Please select a new project image to upload.',
+        });
+        return;
+    }
+    setIsSavingImage(true);
+    try {
+        const imageUrl = await uploadProjectImage(newImageFile);
+        await updateProject(formData.id, { image: imageUrl });
+        toast({
+            title: 'Project Image Updated',
+            description: 'Your new project image has been saved.',
+        });
+        setNewImageFile(null);
+        onProjectUpdate();
+    } catch (error: any) {
+        console.error('Error saving project image:', error);
+        toast({
+            variant: 'destructive',
+            title: 'Image Save Failed',
+            description: error.message || 'Could not save the new project image.',
+        });
+    } finally {
+        setIsSavingImage(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData) return;
-    setIsSaving(true);
+    setIsSavingInfo(true);
 
     try {
-        let imageUrl = formData.image;
-
-        // 1. Upload image if a new one is selected
-        if (newImageFile) {
-            imageUrl = await uploadProjectImage(newImageFile);
-        }
-
-        // 2. Prepare project data payload
         const updatedProjectData = {
             title: formData.title,
             description: formData.description,
@@ -132,10 +156,8 @@ export const EditProjectDialog = ({
             status_text: formData.status_text,
             hint: formData.hint,
             tags: tagsText.split(',').map(tag => tag.trim()).filter(tag => tag),
-            image: imageUrl,
         };
 
-        // 3. Update the project in the database via the API route
         await updateProject(formData.id, updatedProjectData);
 
         toast({
@@ -153,9 +175,11 @@ export const EditProjectDialog = ({
             description: error.message || 'Could not save your changes. Please try again.',
         });
     } finally {
-        setIsSaving(false);
+        setIsSavingInfo(false);
     }
   };
+  
+  const isSaving = isSavingInfo || isSavingImage;
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -182,7 +206,7 @@ export const EditProjectDialog = ({
                         </div>
                     )}
                 </div>
-                <Input id="image-upload" type="file" onChange={handleFileChange} accept="image/*" />
+                <Input id="image-upload" type="file" onChange={handleFileChange} accept="image/*" disabled={isSaving} />
             </div>
 
             <div className="grid grid-cols-4 items-center gap-4">
@@ -194,6 +218,7 @@ export const EditProjectDialog = ({
                 value={formData.title}
                 onChange={handleChange}
                 className="col-span-3"
+                disabled={isSaving}
               />
             </div>
             
@@ -206,6 +231,7 @@ export const EditProjectDialog = ({
                 value={formData.description}
                 onChange={handleChange}
                 className="col-span-3 min-h-[100px]"
+                disabled={isSaving}
               />
             </div>
 
@@ -219,6 +245,7 @@ export const EditProjectDialog = ({
                 onChange={handleChange}
                 className="col-span-3"
                 placeholder='Comma-separated, e.g., React, Node.js'
+                disabled={isSaving}
               />
             </div>
 
@@ -232,6 +259,7 @@ export const EditProjectDialog = ({
                 onChange={handleChange}
                 className="col-span-3"
                 placeholder='e.g., business app'
+                disabled={isSaving}
               />
             </div>
 
@@ -244,6 +272,7 @@ export const EditProjectDialog = ({
                 value={formData.link || ''}
                 onChange={handleChange}
                 className="col-span-3"
+                disabled={isSaving}
               />
             </div>
 
@@ -257,14 +286,20 @@ export const EditProjectDialog = ({
                 onChange={handleChange}
                 className="col-span-3"
                 placeholder='e.g., View Live Site'
+                disabled={isSaving}
               />
             </div>
 
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSaving}>Cancel</Button>
+            {newImageFile && (
+                <Button type="button" variant="secondary" onClick={handleImageSave} disabled={isSaving}>
+                    {isSavingImage ? 'Saving Image...' : 'Save Image'}
+                </Button>
+            )}
             <Button type="submit" disabled={isSaving}>
-              {isSaving ? 'Saving...' : 'Save Changes'}
+              {isSavingInfo ? 'Saving Info...' : 'Save Info'}
             </Button>
           </DialogFooter>
         </form>
