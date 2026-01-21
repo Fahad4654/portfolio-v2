@@ -22,9 +22,13 @@ export async function POST(request: Request) {
     const fileExtension = file.name.split('.').pop();
     const fileName = `${randomUUID()}.${fileExtension}`;
     
+    // Convert the file to a buffer to ensure compatibility in a Node.js environment
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
     const { error: uploadError } = await supabaseAdmin.storage
       .from('project-images')
-      .upload(fileName, file, {
+      .upload(fileName, buffer, {
         cacheControl: '3600',
         upsert: false,
         contentType: file.type,
