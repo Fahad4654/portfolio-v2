@@ -37,6 +37,35 @@ interface EditProjectDialogProps {
   onProjectUpdate: () => void;
 }
 
+// Helper function to upload project image
+const uploadProjectImage = async (file: File): Promise<string> => {
+  const body = new FormData();
+  body.append('file', file);
+
+  const response = await fetch('/api/upload-image', {
+    method: 'POST',
+    body,
+  });
+
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.message || 'Image upload failed.');
+  }
+  return result.imageUrl;
+}
+
+// Helper function to update project data
+const updateProject = async (id: number, data: any) => {
+  const { error } = await supabase
+    .from('projects')
+    .update(data)
+    .eq('id', id);
+
+  if (error) {
+    throw new Error(`Database update failed: ${error.message}`);
+  }
+}
+
 export const EditProjectDialog = ({
   project,
   isOpen,
@@ -57,7 +86,7 @@ export const EditProjectDialog = ({
       setImagePreviewUrl(null);
       setNewImageFile(null);
     }
-  }, [project]);
+  }, [project, isOpen]);
 
   if (!formData) return null;
 
@@ -87,25 +116,13 @@ export const EditProjectDialog = ({
     try {
         let imageUrl = formData.image;
 
+        // 1. Upload image if a new one is selected
         if (newImageFile) {
-            const body = new FormData();
-            body.append('file', newImageFile);
-
-            const response = await fetch('/api/upload-image', {
-                method: 'POST',
-                body,
-            });
-
-            const result = await response.json();
-
-            if (!response.ok) {
-                throw new Error(result.message || 'Image upload failed.');
-            }
-            
-            imageUrl = result.imageUrl;
+            imageUrl = await uploadProjectImage(newImageFile);
         }
 
-        const updatedProject = {
+        // 2. Prepare project data payload
+        const updatedProjectData = {
             title: formData.title,
             description: formData.description,
             link: formData.link,
@@ -115,14 +132,8 @@ export const EditProjectDialog = ({
             image: imageUrl,
         };
 
-        const { error } = await supabase
-            .from('projects')
-            .update(updatedProject)
-            .eq('id', formData.id);
-
-        if (error) {
-            throw new Error(`Database update failed: ${error.message}`);
-        }
+        // 3. Update the project in the database
+        await updateProject(formData.id, updatedProjectData);
 
         toast({
             title: 'Project Updated',

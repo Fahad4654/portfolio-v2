@@ -34,6 +34,43 @@ interface EditInfoDialogProps {
   onOpenChange: (isOpen: boolean) => void;
 }
 
+// Helper function to upload image
+const uploadProfilePicture = async (file: File): Promise<string> => {
+  const imageFormData = new FormData();
+  imageFormData.append('file', file);
+
+  const response = await fetch('/api/upload-profile-pic', {
+    method: 'POST',
+    body: imageFormData,
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message || 'Image upload failed.');
+  }
+
+  return result.imageUrl;
+};
+
+// Helper function to update info
+const updateInfo = async (payload: any) => {
+  const updateResponse = await fetch('/api/update-info', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const updateResult = await updateResponse.json();
+
+  if (!updateResponse.ok) {
+    throw new Error(updateResult.message || 'Failed to update information.');
+  }
+};
+
+
 export const EditInfoDialog = ({
   isOpen,
   onOpenChange,
@@ -74,26 +111,12 @@ export const EditInfoDialog = ({
     try {
         let imageUrl = formData.profile_pic_url;
 
-        // 1. Handle image upload first if there is a new image
+        // 1. Handle image upload if a new one is selected
         if (newImageFile) {
-            const imageFormData = new FormData();
-            imageFormData.append('file', newImageFile);
-
-            const response = await fetch('/api/upload-profile-pic', {
-                method: 'POST',
-                body: imageFormData,
-            });
-
-            const result = await response.json();
-
-            if (!response.ok) {
-                throw new Error(result.message || 'Image upload failed.');
-            }
-            
-            imageUrl = result.imageUrl;
+            imageUrl = await uploadProfilePicture(newImageFile);
         }
 
-        // 2. Prepare the data payload for the info update API
+        // 2. Prepare the data payload for the info update
         const updatePayload = {
             id: info.id,
             name: formData.name,
@@ -106,20 +129,8 @@ export const EditInfoDialog = ({
             profile_pic_url: imageUrl,
         };
 
-        // 3. Call the new API route to update the info
-        const updateResponse = await fetch('/api/update-info', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(updatePayload),
-        });
-
-        const updateResult = await updateResponse.json();
-
-        if (!updateResponse.ok) {
-            throw new Error(updateResult.message || 'Failed to update information.');
-        }
+        // 3. Update the info in the database
+        await updateInfo(updatePayload);
 
         toast({
             title: 'Info Updated',
