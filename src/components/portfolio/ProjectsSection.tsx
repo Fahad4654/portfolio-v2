@@ -2,7 +2,7 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowRight, Edit } from "lucide-react";
+import { ArrowRight, Edit, PlusCircle, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +18,9 @@ import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
 import { EditProjectDialog } from "./EditProjectDialog";
+import { AddProjectDialog } from "./AddProjectDialog";
+import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
+import { useToast } from "@/hooks/use-toast";
 
 type Project = {
     id: number;
@@ -28,14 +31,19 @@ type Project = {
     link: string | null;
     tags: string[];
     status_text: string;
+    display_order: number;
 };
 
 export const ProjectsSection = () => {
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
     const { isLoggedIn } = useAuth();
+    const { toast } = useToast();
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+    const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+    const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
 
     const fetchProjects = useCallback(async () => {
         setLoading(true);
@@ -60,6 +68,60 @@ export const ProjectsSection = () => {
         setSelectedProject(project);
         setIsEditDialogOpen(true);
     };
+
+    const handleDeleteClick = (project: Project) => {
+        setProjectToDelete(project);
+        setIsDeleteDialogOpen(true);
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!projectToDelete) return;
+        try {
+            const { error: deleteError } = await supabase
+                .from('projects')
+                .delete()
+                .eq('id', projectToDelete.id);
+            if (deleteError) throw deleteError;
+
+            // Note: This does not delete the image from Supabase storage to avoid accidental permanent loss.
+            // You may want to add a more complex "soft delete" or manual cleanup process later.
+
+            const { data: remaining, error: fetchError } = await supabase
+                .from('projects')
+                .select('id, display_order')
+                .order('display_order', { ascending: true });
+            
+            if (fetchError) throw fetchError;
+
+            if (remaining) {
+                const updatePromises = remaining.map((p, index) => {
+                    const expectedOrder = index + 1;
+                    if (p.display_order !== expectedOrder) {
+                        return supabase.from('projects').update({ display_order: expectedOrder }).eq('id', p.id);
+                    }
+                    return null;
+                }).filter(p => p);
+                await Promise.all(updatePromises);
+            }
+
+            toast({
+                title: 'Project Deleted',
+                description: `The project "${projectToDelete.title}" has been deleted.`,
+            });
+
+        } catch (error: any) {
+            console.error('Error deleting project:', error);
+            toast({
+                variant: 'destructive',
+                title: 'Delete Failed',
+                description: 'Could not delete the project. Please try again.',
+            });
+        } finally {
+            fetchProjects();
+            setProjectToDelete(null);
+        }
+    };
+
 
     if (loading) {
         return (
@@ -95,9 +157,19 @@ export const ProjectsSection = () => {
 
     return (
         <section id="portfolio">
-            <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary text-center">
-            My Projects
-            </h2>
+            <div className="mb-10">
+                <h2 className="text-4xl md:text-5xl font-bold font-headline text-primary text-center">
+                My Projects
+                </h2>
+                 {isLoggedIn && (
+                    <div className="flex justify-end -mt-8">
+                        <Button variant="outline" size="sm" onClick={() => setIsAddDialogOpen(true)}>
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Add Project
+                        </Button>
+                    </div>
+                )}
+            </div>
             <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">
             {projects.map((project) => (
                 <Card
@@ -152,9 +224,14 @@ export const ProjectsSection = () => {
                         )}
                         </Button>
                         {isLoggedIn && (
-                            <Button variant="outline" size="icon" onClick={() => handleEditClick(project)}>
-                                <Edit className="h-4 w-4" />
-                            </Button>
+                            <div className="flex gap-2">
+                                <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handleEditClick(project)}>
+                                    <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button variant="destructive" size="icon" className="h-8 w-8" onClick={() => handleDeleteClick(project)}>
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
+                            </div>
                         )}
                     </div>
                 </CardFooter>
@@ -167,6 +244,23 @@ export const ProjectsSection = () => {
                     isOpen={isEditDialogOpen}
                     onOpenChange={setIsEditDialogOpen}
                     onProjectUpdate={fetchProjects}
+                />
+            )}
+             {isLoggedIn && (
+              <AddProjectDialog
+                isOpen={isAddDialogOpen}
+                onOpenChange={setIsAddDialogOpen}
+                onProjectAdded={fetchProjects}
+                projects={projects}
+              />
+            )}
+            {isLoggedIn && projectToDelete && (
+                <DeleteConfirmationDialog
+                    isOpen={isDeleteDialogOpen}
+                    onOpenChange={setIsDeleteDialogOpen}
+                    onConfirm={handleDeleteConfirm}
+                    title={`Delete "${projectToDelete.title}"?`}
+                    description="This will permanently delete this project entry from the database. The uploaded image will not be deleted. This action cannot be undone."
                 />
             )}
         </section>

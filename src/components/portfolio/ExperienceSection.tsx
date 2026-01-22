@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Briefcase, ChevronDown, Edit } from "lucide-react";
+import { Briefcase, ChevronDown, Edit, PlusCircle, Trash2 } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -16,6 +16,9 @@ import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
 import { EditExperienceDialog } from "./EditExperienceDialog";
+import { AddExperienceDialog } from "./AddExperienceDialog";
+import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
+import { useToast } from "@/hooks/use-toast";
 
 type Experience = {
     id: number;
@@ -24,6 +27,7 @@ type Experience = {
     company_link: string | null;
     period: string;
     description: string[];
+    display_order: number;
 };
 
 export const ExperienceSection = () => {
@@ -31,8 +35,12 @@ export const ExperienceSection = () => {
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [loading, setLoading] = useState(true);
   const { isLoggedIn } = useAuth();
+  const { toast } = useToast();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null);
+  const [experienceToDelete, setExperienceToDelete] = useState<Experience | null>(null);
 
 
   const fetchExperiences = useCallback(async () => {
@@ -45,7 +53,7 @@ export const ExperienceSection = () => {
     if (error) {
         console.error("Error fetching experiences:", error);
     } else {
-        setExperiences(data);
+        setExperiences(data as Experience[]);
     }
     setLoading(false);
   }, []);
@@ -61,6 +69,56 @@ export const ExperienceSection = () => {
   const handleEditClick = (exp: Experience) => {
     setSelectedExperience(exp);
     setIsEditDialogOpen(true);
+  };
+
+  const handleDeleteClick = (exp: Experience) => {
+    setExperienceToDelete(exp);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!experienceToDelete) return;
+    try {
+        const { error: deleteError } = await supabase
+            .from('experiences')
+            .delete()
+            .eq('id', experienceToDelete.id);
+        if (deleteError) throw deleteError;
+
+        const { data: remaining, error: fetchError } = await supabase
+            .from('experiences')
+            .select('id, display_order')
+            .order('display_order', { ascending: true });
+        
+        if (fetchError) throw fetchError;
+
+        if (remaining) {
+            const updatePromises = remaining.map((exp, index) => {
+                const expectedOrder = index + 1;
+                if (exp.display_order !== expectedOrder) {
+                    return supabase.from('experiences').update({ display_order: expectedOrder }).eq('id', exp.id);
+                }
+                return null;
+            }).filter(p => p);
+            await Promise.all(updatePromises);
+        }
+
+        toast({
+            title: 'Experience Entry Deleted',
+            description: `The entry "${experienceToDelete.title}" has been deleted.`,
+        });
+
+    } catch (error: any) {
+        console.error('Error deleting experience entry:', error);
+        toast({
+            variant: 'destructive',
+            title: 'Delete Failed',
+            description: 'Could not delete the experience entry. Please try again.',
+        });
+    } finally {
+        fetchExperiences();
+        setExperienceToDelete(null);
+    }
   };
 
   if (loading) {
@@ -94,12 +152,22 @@ export const ExperienceSection = () => {
 
   return (
     <section id="experience">
-      <h2 className="text-4xl md:text-5xl font-bold mb-12 font-headline text-primary text-center">
-        Work Experience
-      </h2>
+      <div className="mb-12">
+        <h2 className="text-4xl md:text-5xl font-bold font-headline text-primary text-center">
+          Work Experience
+        </h2>
+        {isLoggedIn && (
+            <div className="flex justify-end -mt-8">
+                <Button variant="outline" size="sm" onClick={() => setIsAddDialogOpen(true)}>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Add Entry
+                </Button>
+            </div>
+        )}
+      </div>
       <div className="grid grid-cols-1 gap-8">
         {experiences.map((exp, index) => (
-          <Card key={exp.id} className="bg-card hover:border-primary/50 transition-colors">
+          <Card key={exp.id} className="bg-card hover:border-primary/50 transition-colors group">
             <CardHeader>
               <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
@@ -119,9 +187,14 @@ export const ExperienceSection = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     {isLoggedIn && (
-                        <Button variant="outline" size="icon" className="shrink-0" onClick={() => handleEditClick(exp)}>
+                      <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="outline" size="icon" className="shrink-0 h-8 w-8" onClick={() => handleEditClick(exp)}>
                             <Edit className="h-4 w-4" />
                         </Button>
+                         <Button variant="destructive" size="icon" className="shrink-0 h-8 w-8" onClick={() => handleDeleteClick(exp)}>
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     )}
                     <Briefcase className="h-8 w-8 text-primary shrink-0" />
                   </div>
@@ -151,6 +224,23 @@ export const ExperienceSection = () => {
           isOpen={isEditDialogOpen}
           onOpenChange={setIsEditDialogOpen}
           onExperienceUpdate={fetchExperiences}
+        />
+      )}
+      {isLoggedIn && (
+        <AddExperienceDialog
+            isOpen={isAddDialogOpen}
+            onOpenChange={setIsAddDialogOpen}
+            onExperienceAdded={fetchExperiences}
+            experiences={experiences}
+        />
+      )}
+      {isLoggedIn && experienceToDelete && (
+        <DeleteConfirmationDialog
+            isOpen={isDeleteDialogOpen}
+            onOpenChange={setIsDeleteDialogOpen}
+            onConfirm={handleDeleteConfirm}
+            title={`Delete "${experienceToDelete.title}"?`}
+            description="This will permanently delete this work experience entry. This action cannot be undone."
         />
       )}
     </section>
