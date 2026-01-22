@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { GraduationCap, Edit, PlusCircle } from "lucide-react";
+import { GraduationCap, Edit, PlusCircle, Trash2 } from "lucide-react";
 import {
     Card,
     CardDescription,
@@ -14,6 +14,8 @@ import { useAuth } from "@/context/AuthContext";
 import { Button } from "../ui/button";
 import { EditEducationDialog } from "./EditEducationDialog";
 import { AddEducationDialog } from "./AddEducationDialog";
+import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
+import { useToast } from "@/hooks/use-toast";
 
 type Education = {
     id: number;
@@ -28,9 +30,12 @@ export const EducationSection = () => {
     const [education, setEducation] = useState<Education[]>([]);
     const [loading, setLoading] = useState(true);
     const { isLoggedIn } = useAuth();
+    const { toast } = useToast();
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [selectedEducation, setSelectedEducation] = useState<Education | null>(null);
+    const [educationToDelete, setEducationToDelete] = useState<Education | null>(null);
 
     const fetchEducation = useCallback(async () => {
         setLoading(true);
@@ -55,6 +60,57 @@ export const EducationSection = () => {
         setSelectedEducation(edu);
         setIsEditDialogOpen(true);
     };
+
+    const handleDeleteClick = (edu: Education) => {
+        setEducationToDelete(edu);
+        setIsDeleteDialogOpen(true);
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!educationToDelete) return;
+        try {
+            const { error: deleteError } = await supabase
+                .from('education')
+                .delete()
+                .eq('id', educationToDelete.id);
+            if (deleteError) throw deleteError;
+
+            const { data: remaining, error: fetchError } = await supabase
+                .from('education')
+                .select('id, display_order')
+                .order('display_order', { ascending: true });
+            
+            if (fetchError) throw fetchError;
+
+            if (remaining) {
+                const updatePromises = remaining.map((edu, index) => {
+                    const expectedOrder = index + 1;
+                    if (edu.display_order !== expectedOrder) {
+                        return supabase.from('education').update({ display_order: expectedOrder }).eq('id', edu.id);
+                    }
+                    return null;
+                }).filter(p => p);
+                await Promise.all(updatePromises);
+            }
+
+            toast({
+                title: 'Education Entry Deleted',
+                description: `The entry "${educationToDelete.degree}" has been deleted.`,
+            });
+
+        } catch (error: any) {
+            console.error('Error deleting education entry:', error);
+            toast({
+                variant: 'destructive',
+                title: 'Delete Failed',
+                description: 'Could not delete the education entry. Please try again.',
+            });
+        } finally {
+            fetchEducation();
+            setEducationToDelete(null);
+        }
+    };
+
 
     if (loading) {
         return (
@@ -93,12 +149,17 @@ export const EducationSection = () => {
             {education.map((edu) => (
                 <Card
                 key={edu.id}
-                className="relative flex flex-col items-center text-center p-8 hover:border-primary/50 transition-colors bg-card"
+                className="relative group flex flex-col items-center text-center p-8 hover:border-primary/50 transition-colors bg-card"
                 >
                 {isLoggedIn && (
-                    <Button variant="outline" size="icon" className="absolute top-4 right-4" onClick={() => handleEditClick(edu)}>
-                        <Edit className="h-4 w-4" />
-                    </Button>
+                     <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handleEditClick(edu)}>
+                            <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button variant="destructive" size="icon" className="h-8 w-8" onClick={() => handleDeleteClick(edu)}>
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
+                    </div>
                 )}
                 <GraduationCap className="h-12 w-12 mb-4 text-primary" />
                 <CardTitle className="text-xl mb-1 font-headline">
@@ -134,6 +195,15 @@ export const EducationSection = () => {
                 onEducationAdded={fetchEducation}
                 educations={education}
               />
+            )}
+            {isLoggedIn && educationToDelete && (
+                <DeleteConfirmationDialog
+                    isOpen={isDeleteDialogOpen}
+                    onOpenChange={setIsDeleteDialogOpen}
+                    onConfirm={handleDeleteConfirm}
+                    title={`Delete "${educationToDelete.degree}"?`}
+                    description="This will permanently delete this education entry. This action cannot be undone."
+                />
             )}
         </section>
     )
