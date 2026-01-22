@@ -99,12 +99,6 @@ const LoginPage = () => {
                 {loading ? 'Signing In...' : 'Sign In'}
               </Button>
             </form>
-            <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{' '}
-              <Link href="#" className="underline">
-                Sign up
-              </Link>
-            </div>
             <div className="mt-4 flex justify-center">
               <Button variant="outline" asChild>
                 <Link href="/">
