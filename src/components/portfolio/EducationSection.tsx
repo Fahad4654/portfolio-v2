@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { GraduationCap, Edit } from "lucide-react";
+import { GraduationCap, Edit, PlusCircle } from "lucide-react";
 import {
     Card,
     CardDescription,
@@ -13,6 +13,7 @@ import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "../ui/button";
 import { EditEducationDialog } from "./EditEducationDialog";
+import { AddEducationDialog } from "./AddEducationDialog";
 
 type Education = {
     id: number;
@@ -20,6 +21,7 @@ type Education = {
     institution: string;
     link: string | null;
     period: string;
+    display_order: number;
 };
 
 export const EducationSection = () => {
@@ -27,6 +29,7 @@ export const EducationSection = () => {
     const [loading, setLoading] = useState(true);
     const { isLoggedIn } = useAuth();
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+    const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
     const [selectedEducation, setSelectedEducation] = useState<Education | null>(null);
 
     const fetchEducation = useCallback(async () => {
@@ -75,9 +78,17 @@ export const EducationSection = () => {
 
     return (
         <section id="education">
-            <h2 className="text-4xl md:text-5xl font-bold mb-12 font-headline text-primary text-center">
-            Education
-            </h2>
+            <div className="flex justify-center items-center mb-12">
+                <h2 className="text-4xl md:text-5xl font-bold font-headline text-primary text-center">
+                    Education
+                </h2>
+                {isLoggedIn && (
+                    <Button variant="outline" size="sm" className="ml-4" onClick={() => setIsAddDialogOpen(true)}>
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Add Entry
+                    </Button>
+                )}
+            </div>
             <div className="grid md:grid-cols-2 gap-8">
             {education.map((edu) => (
                 <Card
@@ -114,6 +125,14 @@ export const EducationSection = () => {
                 isOpen={isEditDialogOpen}
                 onOpenChange={setIsEditDialogOpen}
                 onEducationUpdate={fetchEducation}
+              />
+            )}
+            {isLoggedIn && (
+              <AddEducationDialog
+                isOpen={isAddDialogOpen}
+                onOpenChange={setIsAddDialogOpen}
+                onEducationAdded={fetchEducation}
+                educations={education}
               />
             )}
         </section>
