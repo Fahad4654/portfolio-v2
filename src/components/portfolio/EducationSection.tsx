@@ -134,15 +134,17 @@ export const EducationSection = () => {
 
     return (
         <section id="education">
-            <div className="flex justify-center items-center mb-12">
+            <div className="mb-12">
                 <h2 className="text-4xl md:text-5xl font-bold font-headline text-primary text-center">
                     Education
                 </h2>
                 {isLoggedIn && (
-                    <Button variant="outline" size="sm" className="ml-4" onClick={() => setIsAddDialogOpen(true)}>
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Add Entry
-                    </Button>
+                    <div className="flex justify-end -mt-8">
+                        <Button variant="outline" size="sm" onClick={() => setIsAddDialogOpen(true)}>
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Add Entry
+                        </Button>
+                    </div>
                 )}
             </div>
             <div className="grid md:grid-cols-2 gap-8">
