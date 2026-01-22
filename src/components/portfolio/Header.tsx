@@ -69,7 +69,7 @@ export const Header = ({
         <Button
           variant="outline"
           size="icon"
-          className="absolute bottom-0 right-0 z-10 h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+          className="absolute bottom-0 right-0 z-10 h-8 w-8 rounded-full"
           onClick={() => setIsEditDialogOpen(true)}
         >
           <Edit className="h-4 w-4" />
