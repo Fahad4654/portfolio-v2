@@ -1,8 +1,7 @@
+"use client";
 
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
-import project1 from "@/assets/business.png";
-import project2 from "@/assets/edmate.png";
+import { ArrowRight, Edit, PlusCircle, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,106 +12,276 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useEffect, useState, useCallback } from "react";
+import { supabase } from "@/lib/supabaseClient";
+import { Skeleton } from "../ui/skeleton";
+import { useAuth } from "@/context/AuthContext";
+import { EditProjectDialog } from "./EditProjectDialog";
+import { AddProjectDialog } from "./AddProjectDialog";
+import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
+import { useToast } from "@/hooks/use-toast";
 
-const projects = [
-    {
-      title: "Neighbor Nexus",
-      description: "Architected the deployment environment using Docker Compose and wrote custom Bash scripts for database automation on a Linux VM. Developed the full-stack system using ExpressJs, TypeScript, PostgreSQL, and React.",
-      image: "https://placehold.co/600x400/1a0514/4fd1c5?text=Neighbor+Nexus",
-      hint: "community help",
-      tags: ["Docker", "Bash", "Linux", "ExpressJs", "TypeScript", "PostgreSQL", "React", "Sequelize", "Redis"],
-    },
-    {
-      title: "E-commerce App (Business Facility App)",
-      description:
-        "Developed a chatting and notification system using Remix, React, and Firebase.",
-      image: project1,
-      hint: "business directory",
-      link: "https://allinonebusiness.co.uk/",
-      tags: ["Remix", "React", "Firebase", "Chat"],
-    },
-    {
-      title: "Edmate (E-learning Web App)",
-      description:
-        "Built front-end components using React and TypeScript for an e-learning platform.",
-      image: project2,
-      hint: "education technology",
-      // link: "#",
-      tags: ["React", "TypeScript", "E-learning"],
-    },
-    {
-      title: "Pre-registration App (Student Course Enrollment)",
-      description:
-        "Created a full-stack system for student course enrollment using PHP, JavaScript, and HTML.",
-      image: "https://placehold.co/600x400.png",
-      hint: "university portal",
-      link: "#",
-      tags: ["PHP", "JavaScript", "HTML", "Full-stack"],
-    },
-  ];
+type Project = {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+  hint: string;
+  link: string | null;
+  tags: string[];
+  status_text: string;
+  display_order: number;
+};
 
 export const ProjectsSection = () => {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { isLoggedIn } = useAuth();
+  const { toast } = useToast();
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
+
+  const fetchProjects = useCallback(async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("projects")
+      .select("*")
+      .order("display_order", { ascending: true });
+
+    if (error) {
+      console.error("Error fetching projects:", error);
+    } else {
+      setProjects(data as Project[]);
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
+
+  const handleEditClick = (project: Project) => {
+    setSelectedProject(project);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleDeleteClick = (project: Project) => {
+    setProjectToDelete(project);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!projectToDelete) return;
+    try {
+      const { error: deleteError } = await supabase
+        .from("projects")
+        .delete()
+        .eq("id", projectToDelete.id);
+      if (deleteError) throw deleteError;
+
+      // Note: This does not delete the image from Supabase storage to avoid accidental permanent loss.
+      // You may want to add a more complex "soft delete" or manual cleanup process later.
+
+      const { data: remaining, error: fetchError } = await supabase
+        .from("projects")
+        .select("id, display_order")
+        .order("display_order", { ascending: true });
+
+      if (fetchError) throw fetchError;
+
+      if (remaining) {
+        const updatePromises = remaining
+          .map((p, index) => {
+            const expectedOrder = index + 1;
+            if (p.display_order !== expectedOrder) {
+              return supabase
+                .from("projects")
+                .update({ display_order: expectedOrder })
+                .eq("id", p.id);
+            }
+            return null;
+          })
+          .filter((p) => p);
+        await Promise.all(updatePromises);
+      }
+
+      toast({
+        title: "Project Deleted",
+        description: `The project "${projectToDelete.title}" has been deleted.`,
+      });
+    } catch (error: any) {
+      console.error("Error deleting project:", error);
+      toast({
+        variant: "destructive",
+        title: "Delete Failed",
+        description: "Could not delete the project. Please try again.",
+      });
+    } finally {
+      fetchProjects();
+      setProjectToDelete(null);
+    }
+  };
+
+  if (loading) {
     return (
-        <section id="portfolio">
-            <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary text-center">
-            My Projects
-            </h2>
-            <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">
-            {projects.map((project, index) => (
-                <Card
-                key={index}
-                className="flex flex-col overflow-hidden transition-all duration-300 ease-in-out hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1 bg-card"
+      <section id="portfolio">
+        <h2 className="text-4xl md:text-5xl font-bold mb-10 font-headline text-primary text-center">
+          My Projects
+        </h2>
+        <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">
+          {[...Array(4)].map((_, index) => (
+            <Card key={index} className="flex flex-col overflow-hidden bg-card">
+              <CardHeader className="p-0">
+                <Skeleton className="w-full h-56" />
+              </CardHeader>
+              <CardContent className="p-6 flex-1 flex flex-col">
+                <Skeleton className="h-7 w-3/4 mb-4" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full mt-2" />
+              </CardContent>
+              <CardFooter className="p-6 pt-0 flex flex-col items-start gap-4">
+                <div className="flex flex-wrap gap-2">
+                  <Skeleton className="h-6 w-16 rounded-full" />
+                  <Skeleton className="h-6 w-20 rounded-full" />
+                  <Skeleton className="h-6 w-24 rounded-full" />
+                </div>
+                <Skeleton className="h-6 w-32" />
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section id="portfolio">
+      <div className="mb-10">
+        <h2 className="text-4xl md:text-5xl font-bold font-headline text-primary text-center">
+          My Projects
+        </h2>
+      </div>
+      <div className="mb-8">
+        {" "}
+        {isLoggedIn && (
+          <div className="flex justify-end">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsAddDialogOpen(true)}
+            >
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Add Project
+            </Button>
+          </div>
+        )}
+      </div>
+      <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">
+        {projects.map((project) => (
+          <Card
+            key={project.id}
+            className="flex flex-col overflow-hidden transition-all duration-300 ease-in-out hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1 bg-card"
+          >
+            <CardHeader className="p-0">
+              <Image
+                src={project.image}
+                alt={project.title}
+                width={600}
+                height={400}
+                className="w-full h-56 object-cover"
+                data-ai-hint={project.hint}
+              />
+            </CardHeader>
+            <CardContent className="p-6 flex-1 flex flex-col">
+              <CardTitle className="mb-2 font-headline text-2xl">
+                {project.title}
+              </CardTitle>
+              <CardDescription className="flex-1">
+                {project.description}
+              </CardDescription>
+            </CardContent>
+            <CardFooter className="p-6 pt-0 flex flex-col items-start gap-4">
+              <div className="flex flex-wrap gap-2">
+                {project.tags.map((tag) => (
+                  <Badge key={tag} variant="secondary">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+              <div className="w-full flex items-center justify-between">
+                <Button
+                  variant="link"
+                  className="p-0 h-auto text-primary"
+                  asChild
                 >
-                <CardHeader className="p-0">
-                    <Image
-                    src={project.image}
-                    alt={project.title}
-                    width={600}
-                    height={400}
-                    className="w-full h-56 object-cover"
-                    data-ai-hint={project.hint}
-                    />
-                </CardHeader>
-                <CardContent className="p-6 flex-1 flex flex-col">
-                    <CardTitle className="mb-2 font-headline text-2xl">
-                    {project.title}
-                    </CardTitle>
-                    <CardDescription className="flex-1">
-                    {project.description}
-                    </CardDescription>
-                </CardContent>
-                <CardFooter className="p-6 pt-0 flex flex-col items-start gap-4">
-                    <div className="flex flex-wrap gap-2">
-                    {project.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary">
-                        {tag}
-                        </Badge>
-                    ))}
-                    </div>
-                    <Button
-                    variant="link"
-                    className="p-0 h-auto text-primary"
-                    asChild
+                  {project.link ? (
+                    <a
+                      href={project.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
-                    {project.link ? (
-                        <a
-                        href={project.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        >
-                        View Project{" "}
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                        </a>
-                    ) : (
-                        <a href="#" className="cursor-not-allowed">
-                          {project.title.includes("Edmate") ? "Not permitted to show" : "Ongoing"}
-                        </a>
-                    )}
+                      {project.status_text}{" "}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </a>
+                  ) : (
+                    <span className="cursor-not-allowed text-muted-foreground">
+                      {project.status_text}
+                    </span>
+                  )}
+                </Button>
+                {isLoggedIn && (
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => handleEditClick(project)}
+                    >
+                      <Edit className="h-4 w-4" />
                     </Button>
-                </CardFooter>
-                </Card>
-            ))}
-            </div>
-        </section>
-    )
-}
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => handleDeleteClick(project)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+      {isLoggedIn && (
+        <EditProjectDialog
+          project={selectedProject}
+          isOpen={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+          onProjectUpdate={fetchProjects}
+        />
+      )}
+      {isLoggedIn && (
+        <AddProjectDialog
+          isOpen={isAddDialogOpen}
+          onOpenChange={setIsAddDialogOpen}
+          onProjectAdded={fetchProjects}
+          projects={projects}
+        />
+      )}
+      {isLoggedIn && projectToDelete && (
+        <DeleteConfirmationDialog
+          isOpen={isDeleteDialogOpen}
+          onOpenChange={setIsDeleteDialogOpen}
+          onConfirm={handleDeleteConfirm}
+          title={`Delete "${projectToDelete.title}"?`}
+          description="This will permanently delete this project entry from the database. The uploaded image will not be deleted. This action cannot be undone."
+        />
+      )}
+    </section>
+  );
+};

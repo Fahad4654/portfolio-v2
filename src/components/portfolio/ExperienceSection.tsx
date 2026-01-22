@@ -1,8 +1,7 @@
-
 "use client";
 
-import { useState } from "react";
-import { Briefcase, ChevronDown } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Briefcase, ChevronDown, Edit, PlusCircle, Trash2 } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -12,64 +11,224 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/lib/supabaseClient";
+import { Skeleton } from "../ui/skeleton";
+import { useAuth } from "@/context/AuthContext";
+import { EditExperienceDialog } from "./EditExperienceDialog";
+import { AddExperienceDialog } from "./AddExperienceDialog";
+import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
+import { useToast } from "@/hooks/use-toast";
 
-const experiences = [
-    {
-      title: "DevOps Engineer",
-      company: "mPower Social Enterprises Ltd.",
-      companyLink: "https://mpower-social.com/",
-      period: "Sept 2023 – Present",
-      description: [
-        "Full-Stack Application Support utilizing deep development knowledge to debug and optimize complex Node.js and React application code, reducing critical production bugs by 15%.",
-        "Managed the performance and reliability of production databases (PostgreSQL/MySQL), including implementing automated backup and recovery strategies to ensure data integrity.",
-        "Designed, implemented, and maintained Jenkins-based CI/CD pipelines, resulting in a 30% reduction in deployment lead time across four critical applications.",
-        "Automated infrastructure configuration and application deployments using Ansible playbooks, standardizing environment setup and minimizing manual configuration errors.",
-        "Integrated SonarQube scanning into the build process to enforce code quality standards and enable early detection of performance bottlenecks and security vulnerabilities.",
-        "Monitored and maintained Linux-based production servers to ensure system reliability and peak performance during high-traffic events.",
-        "Conducted root cause analysis and debugging for CI/CD failures and production incidents by reviewing centralized logs and monitoring systems (e.g., Elasticsearch).",
-      ],
-    },
-    {
-      title: "Software Engineer Intern",
-      company: "mPower Social Enterprises Ltd.",
-      companyLink: "https://mpower-social.com/",
-      period: "Feb 2023 – May 2023",
-      description: [
-        "Developed and delivered new front-end features for core web applications using React and TypeScript.",
-        "Assisted senior engineers in system design, API integration, and troubleshooting application issues across development environments.",
-      ],
-    },
-  ];
+type Experience = {
+  id: number;
+  title: string;
+  company: string;
+  company_link: string | null;
+  period: string;
+  description: string[];
+  display_order: number;
+};
 
 export const ExperienceSection = () => {
   const [expanded, setExpanded] = useState<number | null>(null);
+  const [experiences, setExperiences] = useState<Experience[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { isLoggedIn } = useAuth();
+  const { toast } = useToast();
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedExperience, setSelectedExperience] =
+    useState<Experience | null>(null);
+  const [experienceToDelete, setExperienceToDelete] =
+    useState<Experience | null>(null);
+
+  const fetchExperiences = useCallback(async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("experiences")
+      .select("*")
+      .order("display_order", { ascending: true });
+
+    if (error) {
+      console.error("Error fetching experiences:", error);
+    } else {
+      setExperiences(data as Experience[]);
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchExperiences();
+  }, [fetchExperiences]);
 
   const toggleExpand = (index: number) => {
     setExpanded(expanded === index ? null : index);
   };
 
+  const handleEditClick = (exp: Experience) => {
+    setSelectedExperience(exp);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleDeleteClick = (exp: Experience) => {
+    setExperienceToDelete(exp);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!experienceToDelete) return;
+    try {
+      const { error: deleteError } = await supabase
+        .from("experiences")
+        .delete()
+        .eq("id", experienceToDelete.id);
+      if (deleteError) throw deleteError;
+
+      const { data: remaining, error: fetchError } = await supabase
+        .from("experiences")
+        .select("id, display_order")
+        .order("display_order", { ascending: true });
+
+      if (fetchError) throw fetchError;
+
+      if (remaining) {
+        const updatePromises = remaining
+          .map((exp, index) => {
+            const expectedOrder = index + 1;
+            if (exp.display_order !== expectedOrder) {
+              return supabase
+                .from("experiences")
+                .update({ display_order: expectedOrder })
+                .eq("id", exp.id);
+            }
+            return null;
+          })
+          .filter((p) => p);
+        await Promise.all(updatePromises);
+      }
+
+      toast({
+        title: "Experience Entry Deleted",
+        description: `The entry "${experienceToDelete.title}" has been deleted.`,
+      });
+    } catch (error: any) {
+      console.error("Error deleting experience entry:", error);
+      toast({
+        variant: "destructive",
+        title: "Delete Failed",
+        description: "Could not delete the experience entry. Please try again.",
+      });
+    } finally {
+      fetchExperiences();
+      setExperienceToDelete(null);
+    }
+  };
+
+  if (loading) {
+    return (
+      <section id="experience">
+        <h2 className="text-4xl md:text-5xl font-bold mb-12 font-headline text-primary text-center">
+          Work Experience
+        </h2>
+        <div className="grid grid-cols-1 gap-8">
+          {[...Array(2)].map((_, index) => (
+            <Card key={index} className="bg-card">
+              <CardHeader>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-4 w-1/4" />
+                  </div>
+                  <Skeleton className="h-8 w-8" />
+                </div>
+              </CardHeader>
+              <div className="p-6 pt-0">
+                <Skeleton className="h-6 w-24" />
+              </div>
+            </Card>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="experience">
-      <h2 className="text-4xl md:text-5xl font-bold mb-12 font-headline text-primary text-center">
-        Work Experience
-      </h2>
+      <div className="mb-12">
+        <h2 className="text-4xl md:text-5xl font-bold font-headline text-primary text-center">
+          Work Experience
+        </h2>
+      </div>
+      <div className="mb-8">
+        {" "}
+        {isLoggedIn && (
+          <div className="flex justify-end">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsAddDialogOpen(true)}
+            >
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Add Entry
+            </Button>
+          </div>
+        )}
+      </div>
       <div className="grid grid-cols-1 gap-8">
         {experiences.map((exp, index) => (
-          <Card key={index} className="bg-card hover:border-primary/50 transition-colors">
+          <Card
+            key={exp.id}
+            className="bg-card hover:border-primary/50 transition-colors group"
+          >
             <CardHeader>
               <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                      <CardTitle className="text-xl font-bold font-headline">
-                          {exp.title}
-                      </CardTitle>
-                      <CardDescription>
-                          <a href={exp.companyLink} target="_blank" rel="noopener noreferrer" className="hover:underline text-primary">
-                              {exp.company}
-                          </a>
-                          <span className="block text-sm text-muted-foreground mt-1">{exp.period}</span>
-                      </CardDescription>
-                  </div>
+                <div className="flex-1">
+                  <CardTitle className="text-xl font-bold font-headline">
+                    {exp.title}
+                  </CardTitle>
+                  <CardDescription>
+                    {exp.company_link ? (
+                      <a
+                        href={exp.company_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline text-primary"
+                      >
+                        {exp.company}
+                      </a>
+                    ) : (
+                      exp.company
+                    )}
+                    <span className="block text-sm text-muted-foreground mt-1">
+                      {exp.period}
+                    </span>
+                  </CardDescription>
+                </div>
+                <div className="flex items-center gap-2">
+                  {isLoggedIn && (
+                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="shrink-0 h-8 w-8"
+                        onClick={() => handleEditClick(exp)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        className="shrink-0 h-8 w-8"
+                        onClick={() => handleDeleteClick(exp)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
                   <Briefcase className="h-8 w-8 text-primary shrink-0" />
+                </div>
               </div>
             </CardHeader>
             {expanded === index && (
@@ -82,14 +241,48 @@ export const ExperienceSection = () => {
               </CardContent>
             )}
             <div className="p-6 pt-0">
-               <Button variant="link" onClick={() => toggleExpand(index)} className="p-0 h-auto text-primary">
+              <Button
+                variant="link"
+                onClick={() => toggleExpand(index)}
+                className="p-0 h-auto text-primary"
+              >
                 {expanded === index ? "Show less" : "Show more"}
-                <ChevronDown className={cn("ml-2 h-4 w-4 transition-transform", expanded === index && "rotate-180")} />
+                <ChevronDown
+                  className={cn(
+                    "ml-2 h-4 w-4 transition-transform",
+                    expanded === index && "rotate-180",
+                  )}
+                />
               </Button>
             </div>
           </Card>
         ))}
       </div>
+      {isLoggedIn && (
+        <EditExperienceDialog
+          experience={selectedExperience}
+          isOpen={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+          onExperienceUpdate={fetchExperiences}
+        />
+      )}
+      {isLoggedIn && (
+        <AddExperienceDialog
+          isOpen={isAddDialogOpen}
+          onOpenChange={setIsAddDialogOpen}
+          onExperienceAdded={fetchExperiences}
+          experiences={experiences}
+        />
+      )}
+      {isLoggedIn && experienceToDelete && (
+        <DeleteConfirmationDialog
+          isOpen={isDeleteDialogOpen}
+          onOpenChange={setIsDeleteDialogOpen}
+          onConfirm={handleDeleteConfirm}
+          title={`Delete "${experienceToDelete.title}"?`}
+          description="This will permanently delete this work experience entry. This action cannot be undone."
+        />
+      )}
     </section>
-  )
-}
+  );
+};

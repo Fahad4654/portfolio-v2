@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { Send, Instagram, Facebook } from "lucide-react";
 import { Separator } from "../ui/separator";
+import { useInfo } from "@/context/InfoContext";
 
 const isValidEmail = (email: string) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -18,6 +19,7 @@ const isValidEmail = (email: string) => {
 
 export const ContactSection = () => {
   const { toast } = useToast();
+  const { info } = useInfo();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -53,14 +55,15 @@ export const ContactSection = () => {
         setEmail("");
         setMessage("");
       } else {
-        throw new Error('Failed to send message');
+        const data = await response.json();
+        throw new Error(data.message || 'Failed to send message');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "Could not send your message. Please try again later.",
+        description: error.message || "Could not send your message. Please try again later.",
       });
     } finally {
       setIsSubmitting(false);
@@ -177,26 +180,30 @@ export const ContactSection = () => {
               Connect on Social Media
             </h3>
             <div className="flex justify-center items-center gap-6">
-              <a
-                href="https://www.facebook.com/kaife.kabir"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Facebook"
-                className="text-muted-foreground hover:text-primary transition-colors flex flex-col items-center gap-2"
-              >
-                <FacebookIcon />
-                <span>Facebook</span>
-              </a>
-              <a
-                href="https://www.instagram.com/kaife_kabir"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="text-muted-foreground hover:text-primary transition-colors flex flex-col items-center gap-2"
-              >
-                <InstagramIcon />
-                <span>Instagram</span>
-              </a>
+              {info && (
+                <>
+                  <a
+                    href={info.facebook_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Facebook"
+                    className="text-muted-foreground hover:text-primary transition-colors flex flex-col items-center gap-2"
+                  >
+                    <FacebookIcon />
+                    <span>Facebook</span>
+                  </a>
+                  <a
+                    href={info.instagram_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Instagram"
+                    className="text-muted-foreground hover:text-primary transition-colors flex flex-col items-center gap-2"
+                  >
+                    <InstagramIcon />
+                    <span>Instagram</span>
+                  </a>
+                </>
+              )}
             </div>
           </div>
         </CardContent>

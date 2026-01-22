@@ -17,15 +17,23 @@ export default function LoadingScreen() {
   const [showTyping, setShowTyping] = useState(false);
 
   useEffect(() => {
-    let delay = 200;
+    const timeouts: NodeJS.Timeout[] = [];
+    let delay = 150;
+    
     bootLines.forEach((line, index) => {
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         setLines(prev => [...prev, line]);
         if (index === bootLines.length - 1) {
-           setTimeout(() => setShowTyping(true), 150);
+           const typingTimeout = setTimeout(() => setShowTyping(true), 150);
+           timeouts.push(typingTimeout);
         }
       }, (index + 1) * delay);
+      timeouts.push(timeout);
     });
+
+    return () => {
+      timeouts.forEach(clearTimeout);
+    };
   }, []);
 
   const renderLine = (line: string) => {

@@ -1,11 +1,7 @@
-
 "use client";
 
 import React from "react";
-import {
-  Menu,
-  Send,
-} from "lucide-react";
+import { Menu, Send } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -24,11 +20,23 @@ import { ExperienceSection } from "@/components/portfolio/ExperienceSection";
 import { ProjectsSection } from "@/components/portfolio/ProjectsSection";
 import { EducationSection } from "@/components/portfolio/EducationSection";
 import { ContactSection } from "@/components/portfolio/ContactSection";
-import { User, Shapes, GraduationCap, BriefcaseBusiness, FileText } from "lucide-react";
+import {
+  User,
+  Shapes,
+  GraduationCap,
+  BriefcaseBusiness,
+  FileText,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DigitalRain } from "@/components/portfolio/DigitalRain";
 
-export type Section = "profile" | "skills" | "experience" | "portfolio" | "education" | "contact";
+export type Section =
+  | "profile"
+  | "skills"
+  | "experience"
+  | "portfolio"
+  | "education"
+  | "contact";
 
 export const links: { id: Section; icon: React.ElementType; text: string }[] = [
   { id: "profile", icon: User, text: "Personal Info" },
@@ -38,7 +46,6 @@ export const links: { id: Section; icon: React.ElementType; text: string }[] = [
   { id: "portfolio", icon: FileText, text: "Projects" },
   { id: "contact", icon: Send, text: "Contact Me" },
 ];
-
 
 const Page = () => {
   const [loading, setLoading] = useState(true);
@@ -50,7 +57,7 @@ const Page = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 5000);
+    }, 3800);
 
     return () => clearTimeout(timer);
   }, []);
@@ -66,81 +73,85 @@ const Page = () => {
     setIsSheetOpen(false);
   };
 
-  if (loading) {
-    return <LoadingScreen />;
-  }
-
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden">
+      {loading && <LoadingScreen />}
       <DigitalRain />
-      
-      <div className={cn(
-        "hidden md:block fixed top-0 left-0 h-full transition-all duration-300 ease-in-out z-30",
-        isCollapsed ? "w-20" : "w-72"
-      )}>
-        <Sidebar
-          activeSection={activeSection}
-          onLinkClick={handleLinkClick}
-          isCollapsed={isCollapsed}
-          onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
-        />
-      </div>
 
-      <div className="md:hidden fixed bottom-6 right-6 z-50">
-        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-          <SheetTrigger asChild>
-            <Button
-              variant="default"
-              size="icon"
-              className="rounded-full h-16 w-16 shadow-2xl shadow-primary/50"
-            >
-              <Menu className="h-7 w-7" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-80 p-0 border-r-0 z-[60]">
-            <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
-              <Sidebar
-                activeSection={activeSection}
-                onLinkClick={handleLinkClick}
-                isMobile
-                onToggleCollapse={() => {}}
-              />
-          </SheetContent>
-        </Sheet>
-      </div>
-
-      <main 
-        ref={contentAreaRef}
-        className={cn(
-        "relative flex-1 h-screen transition-all duration-300 ease-in-out z-10",
-        "bg-background/40 backdrop-blur-[1px]",
-        "overflow-y-auto",
-        isCollapsed ? "md:ml-20" : "md:ml-72"
-        )}>
-        
-        <div
-          key={activeSection}
-          className="flex-1 animate-slide-in"
-        >
-          <div className="container mx-auto px-6 py-12 md:px-12 md:py-16">
-            {activeSection === "profile" && <ProfileSection />}
-            {activeSection === "skills" && <SkillsSection />}
-            {activeSection === "experience" && <ExperienceSection />}
-            {activeSection === "portfolio" && <ProjectsSection />}
-            {activeSection === "education" && <EducationSection />}
-            {activeSection === "contact" && <ContactSection />}
-
-            <footer className="py-8 border-t border-border/20 mt-24 md:mt-32">
-              <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-                <p>
-                  &copy; {new Date().getFullYear()} Fahad Kabir. All rights
-                  reserved.
-                </p>
-              </div>
-            </footer>
+      {!loading && (
+        <>
+          <div
+            className={cn(
+              "hidden md:block fixed top-0 left-0 h-full transition-all duration-300 ease-in-out z-[60]",
+              isCollapsed ? "w-20" : "w-72",
+            )}
+          >
+            <Sidebar
+              activeSection={activeSection}
+              onLinkClick={handleLinkClick}
+              isCollapsed={isCollapsed}
+              onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
+            />
           </div>
-        </div>
-      </main>
+
+          <div className="md:hidden fixed bottom-6 right-6 z-[60]">
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="default"
+                  size="icon"
+                  className="rounded-full h-16 w-16 shadow-2xl shadow-primary/50"
+                >
+                  <Menu className="h-7 w-7" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-80 p-0 border-r-0 z-[60]">
+                {/* Add a Title for Accessibility (even if hidden) */}
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+
+                <div className="h-full">
+                  <Sidebar
+                    activeSection={activeSection}
+                    onLinkClick={handleLinkClick}
+                    isMobile
+                    onToggleCollapse={() => {}}
+                  />
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+
+          <main
+            ref={contentAreaRef}
+            className={cn(
+              "relative flex-1 h-screen transition-all duration-300 ease-in-out z-10",
+              "bg-background/40 backdrop-blur-[1px]",
+              "overflow-y-auto",
+              isCollapsed ? "md:ml-20" : "md:ml-72",
+            )}
+          >
+            <div key={activeSection} className="flex-1 animate-slide-in">
+              <div className="container mx-auto px-6 py-12 md:px-12 md:py-16">
+                {activeSection === "profile" && <ProfileSection />}
+                {activeSection === "skills" && <SkillsSection />}
+                {activeSection === "experience" && <ExperienceSection />}
+                {activeSection === "portfolio" && <ProjectsSection />}
+                {activeSection === "education" && <EducationSection />}
+                {activeSection === "contact" && <ContactSection />}
+
+                <footer className="py-8 border-t border-border/20 mt-24 md:mt-32">
+                  <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+                    <p>
+                      &copy; {new Date().getFullYear()} Fahad Kabir. All rights
+                      reserved.
+                    </p>
+                  </div>
+                </footer>
+              </div>
+            </div>
+          </main>
+        </>
+      )}
     </div>
   );
 };

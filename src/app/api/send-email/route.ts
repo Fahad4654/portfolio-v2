@@ -1,7 +1,15 @@
+
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
 export async function POST(request: Request) {
+  // Proactive check for environment variables
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    return NextResponse.json({ 
+        message: 'Email service is not configured. Please ensure EMAIL_USER and EMAIL_PASS are set in your .env file and that the server has been restarted.'
+    }, { status: 500 });
+  }
+    
   try {
     const { name, email, message } = await request.json();
 
@@ -51,6 +59,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: 'Email sent successfully' }, { status: 200 });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ message: 'Failed to send email' }, { status: 500 });
+    return NextResponse.json({ message: 'Failed to send email. This could be due to incorrect EMAIL_USER or EMAIL_PASS credentials in your .env file.' }, { status: 500 });
   }
 }

@@ -2,6 +2,7 @@
 "use client";
 
 import React from 'react';
+import Link from 'next/link';
 import { NavLinks } from './NavLinks';
 import { Section } from '@/app/page';
 import { Header } from './Header';
@@ -9,6 +10,16 @@ import { cn } from '@/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
 import { ThemeToggle } from '../theme-toggle';
+import { Button } from '../ui/button';
+import { LogIn, LogOut } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useAuth } from '@/context/AuthContext';
+import { useInfo } from '@/context/InfoContext';
 
 export const Sidebar = ({
   activeSection,
@@ -23,6 +34,13 @@ export const Sidebar = ({
   isCollapsed?: boolean;
   onToggleCollapse: () => void;
 }) => {
+  const { isLoggedIn, logout } = useAuth();
+  const { info } = useInfo();
+
+  const handleLogout = () => {
+    logout();
+  };
+
   const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -49,6 +67,39 @@ export const Sidebar = ({
     </svg>
   );
 
+  const authButton = (
+    isLoggedIn ? (
+      <TooltipProvider delayDuration={0}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" size="icon" onClick={handleLogout}>
+              <LogOut className="h-[1.2rem] w-[1.2rem]" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side={isCollapsed && !isMobile ? "right" : "top"} sideOffset={5}>
+            <p>Click to logout</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ) : (
+      <TooltipProvider delayDuration={0}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button asChild variant="ghost" size="icon">
+              <Link href="/login" aria-label="Login">
+                <LogIn className="h-[1.2rem] w-[1.2rem]" />
+              </Link>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side={isCollapsed && !isMobile ? "right" : "top"} sideOffset={5}>
+            <p>Click to login</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    )
+  );
+
+
   const content = (
       <div className={cn("relative flex flex-col h-full p-4 bg-card", isCollapsed && !isMobile && "p-2 pt-4")}>
         
@@ -65,24 +116,31 @@ export const Sidebar = ({
         <div className={cn("shrink-0 mt-4", isCollapsed && !isMobile ? "hidden" : "")}>
            <Separator className="my-3" />
           <div className="flex justify-center items-center gap-4">
-            <a
-              href="https://github.com/Fahad4654"
-              target="_blank"
-              aria-label="GitHub"
-              className="text-foreground/80 hover:text-foreground transition-colors"
-            >
-              <GithubIcon />
-            </a>
-            <a
-              href="https://www.linkedin.com/in/fahad-kabir-6559211a8"
-              target="_blank"
-              aria-label="LinkedIn"
-              className="text-muted-foreground hover:text-primary transition-colors"
-            >
-              <LinkedinIcon />
-            </a>
-            <Separator orientation='vertical' className="h-5" />
+            {info && (
+              <>
+                <a
+                  href={info.github_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="GitHub"
+                  className="text-foreground/80 hover:text-foreground transition-colors"
+                >
+                  <GithubIcon />
+                </a>
+                <a
+                  href={info.linkedin_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  <LinkedinIcon />
+                </a>
+                <Separator orientation='vertical' className="h-5" />
+              </>
+            )}
             <ThemeToggle />
+            {authButton}
           </div>
         </div>
 
@@ -90,6 +148,7 @@ export const Sidebar = ({
           <div className="mt-4 flex flex-col items-center gap-2">
             <Separator />
             <ThemeToggle />
+            {authButton}
           </div>
         )}
     </div>
