@@ -1,18 +1,11 @@
 
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-
-// This is an object export, which is why "use server" would break it
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey)
+import { getDb } from '@/lib/db';
 
 export async function POST(request: Request) {
-  // Proactive check for environment variables
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  if (!process.env.DATABASE_URL) {
     return NextResponse.json({ 
-      message: 'Server is not configured for database updates. Please ensure SUPABASE_SERVICE_ROLE_KEY and NEXT_PUBLIC_SUPABASE_URL are correctly set in your .env file and that the server has been restarted.'
+      message: 'Server is not configured for database updates. Please ensure DATABASE_URL is set in your .env file and that the server has been restarted.'
     }, { status: 500 });
   }
 
@@ -24,17 +17,36 @@ export async function POST(request: Request) {
         return NextResponse.json({ message: 'Info ID is required for an update.' }, { status: 400 });
     }
 
-    const { error } = await supabaseAdmin
-      .from('info')
-      .update(updateData)
-      .eq('id', id);
+    const sql = getDb();
 
-    if (error) {
-      console.error('Supabase update error:', error.message);
-      return NextResponse.json({ 
-        message: `Database update failed. Supabase error: ${error.message}`
-      }, { status: 500 });
+    // Fetch current info to merge
+    const current = await sql`SELECT * FROM info WHERE id = ${id}`;
+    if (current.length === 0) {
+      return NextResponse.json({ message: 'Info not found.' }, { status: 404 });
     }
+    const c = current[0];
+
+    const name = updateData.name !== undefined ? updateData.name : c.name;
+    const profile_pic_url = updateData.profile_pic_url !== undefined ? updateData.profile_pic_url : c.profile_pic_url;
+    const facebook_url = updateData.facebook_url !== undefined ? updateData.facebook_url : c.facebook_url;
+    const instagram_url = updateData.instagram_url !== undefined ? updateData.instagram_url : c.instagram_url;
+    const linkedin_url = updateData.linkedin_url !== undefined ? updateData.linkedin_url : c.linkedin_url;
+    const github_url = updateData.github_url !== undefined ? updateData.github_url : c.github_url;
+    const profession = updateData.profession !== undefined ? updateData.profession : c.profession;
+    const email = updateData.email !== undefined ? updateData.email : c.email;
+
+    await sql`
+      UPDATE info
+      SET name = ${name},
+          profile_pic_url = ${profile_pic_url},
+          facebook_url = ${facebook_url},
+          instagram_url = ${instagram_url},
+          linkedin_url = ${linkedin_url},
+          github_url = ${github_url},
+          profession = ${profession},
+          email = ${email}
+      WHERE id = ${id}
+    `;
 
     return NextResponse.json({ message: 'Information updated successfully.' }, { status: 200 });
 

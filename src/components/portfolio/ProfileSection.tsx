@@ -6,7 +6,6 @@ import { Mail, MapPin, Phone, Download, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
 import { EditProfileDialog } from "./EditProfileDialog";
@@ -44,16 +43,18 @@ export const ProfileSection = () => {
 
   const fetchProfile = useCallback(async () => {
     setLoadingProfile(true);
-    const { data, error } = await supabase
-        .from('profile')
-        .select('*')
-        .single();
-
-    if (error) {
-        console.error("Error fetching profile:", error);
+    try {
+      const res = await fetch('/api/profile');
+      if (!res.ok) {
+        console.error("Error fetching profile:", res.statusText);
         setProfile(null);
-    } else {
+      } else {
+        const data = await res.json();
         setProfile(data);
+      }
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      setProfile(null);
     }
     setLoadingProfile(false);
   }, []);

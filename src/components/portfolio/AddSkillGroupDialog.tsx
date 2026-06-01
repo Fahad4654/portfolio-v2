@@ -13,7 +13,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/supabaseClient';
 import { SkillGroup } from './SkillsSection';
 
 interface AddSkillGroupDialogProps {
@@ -53,42 +52,20 @@ export const AddSkillGroupDialog = ({
 
     try {
       const newOrder = displayOrder ? parseInt(displayOrder, 10) : null;
+      const payload = {
+        title,
+        display_order: (newOrder && !isNaN(newOrder) && newOrder > 0) ? newOrder : null,
+      };
 
-      // If no order is given, simply add to the end
-      if (newOrder === null || isNaN(newOrder) || newOrder <= 0) {
-        const maxDisplayOrder = skillGroups.length > 0 ? Math.max(...skillGroups.map(g => g.display_order)) : 0;
-        const { error } = await supabase.from('skill_groups').insert({
-          title: title,
-          display_order: maxDisplayOrder + 1,
-        });
-        if (error) throw error;
-      } else {
-        // If an order is given, we must re-sequence everything to ensure consistency
-        const currentGroups = [...skillGroups].sort((a,b) => a.display_order - b.display_order);
+      const res = await fetch('/api/skill-groups', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
-        // Insert the new group with a temporary high order to avoid conflicts
-        const { data: newGroup, error: insertError } = await supabase
-            .from('skill_groups')
-            .insert({ title: title, display_order: 9999 })
-            .select('id')
-            .single();
-
-        if (insertError || !newGroup) throw insertError || new Error("Group insertion failed to return new group.");
-
-        // Create the final, correctly-ordered list in memory
-        const insertionIndex = Math.min(Math.max(0, newOrder - 1), currentGroups.length);
-        const finalOrderedGroups = [
-          ...currentGroups.slice(0, insertionIndex),
-          { id: newGroup.id, title, display_order: 0, skills: [] }, // Placeholder for new group
-          ...currentGroups.slice(insertionIndex)
-        ];
-
-        // Create update promises to re-sequence all groups in the database
-        const updatePromises = finalOrderedGroups.map((group, index) => {
-          const expectedOrder = index + 1;
-          return supabase.from('skill_groups').update({ display_order: expectedOrder }).eq('id', group.id);
-        });
-        await Promise.all(updatePromises);
+      if (!res.ok) {
+        const result = await res.json();
+        throw new Error(result.message || 'Failed to add group');
       }
 
       toast({
@@ -96,7 +73,7 @@ export const AddSkillGroupDialog = ({
         description: `The group "${title}" has been created.`,
       });
       resetForm();
-      onGroupAdded(); // This will refetch and re-render
+      onGroupAdded();
       onOpenChange(false);
 
     } catch (error: any) {
@@ -106,7 +83,6 @@ export const AddSkillGroupDialog = ({
             title: 'Add Failed',
             description: 'Could not add the new skill group. Please try again.',
         });
-        // Important: refetch to revert inconsistent state
         onGroupAdded();
     } finally {
         setIsSaving(false);
@@ -137,6 +113,7 @@ export const AddSkillGroupDialog = ({
                 onChange={(e) => setTitle(e.target.value)}
                 className="col-span-3"
                 placeholder="e.g., Cloud & Infrastructure"
+                required
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">

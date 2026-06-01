@@ -13,7 +13,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/supabaseClient';
 
 type Education = {
   id: number;
@@ -56,32 +55,39 @@ export const EditEducationDialog = ({
     if (!formData) return;
     setIsSaving(true);
 
-    const { error } = await supabase
-      .from('education')
-      .update({
-        degree: formData.degree,
-        institution: formData.institution,
-        link: formData.link,
-        period: formData.period,
-      })
-      .eq('id', formData.id);
-
-    setIsSaving(false);
-
-    if (error) {
-      console.error('Error updating education:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Update Failed',
-        description: 'Could not save your changes. Please try again.',
+    try {
+      const res = await fetch('/api/education', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: formData.id,
+          degree: formData.degree,
+          institution: formData.institution,
+          link: formData.link,
+          period: formData.period,
+        }),
       });
-    } else {
+
+      if (!res.ok) {
+        const result = await res.json();
+        throw new Error(result.message || 'Update failed');
+      }
+
       toast({
         title: 'Education Updated',
         description: 'Your education information has been saved.',
       });
       onEducationUpdate();
       onOpenChange(false);
+    } catch (error: any) {
+      console.error('Error updating education:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Update Failed',
+        description: 'Could not save your changes. Please try again.',
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -105,6 +111,7 @@ export const EditEducationDialog = ({
                 value={formData.degree}
                 onChange={handleChange}
                 className="col-span-3"
+                required
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
@@ -116,6 +123,7 @@ export const EditEducationDialog = ({
                 value={formData.institution}
                 onChange={handleChange}
                 className="col-span-3"
+                required
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
@@ -138,6 +146,7 @@ export const EditEducationDialog = ({
                 value={formData.period}
                 onChange={handleChange}
                 className="col-span-3"
+                required
               />
             </div>
           </div>

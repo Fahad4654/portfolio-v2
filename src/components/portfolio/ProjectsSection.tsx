@@ -13,7 +13,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useEffect, useState, useCallback } from "react";
-import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
 import { EditProjectDialog } from "./EditProjectDialog";
@@ -46,15 +45,16 @@ export const ProjectsSection = () => {
 
   const fetchProjects = useCallback(async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("projects")
-      .select("*")
-      .order("display_order", { ascending: true });
-
-    if (error) {
+    try {
+      const res = await fetch('/api/projects');
+      if (!res.ok) {
+        console.error("Error fetching projects:", res.statusText);
+      } else {
+        const data = await res.json();
+        setProjects(data as Project[]);
+      }
+    } catch (error) {
       console.error("Error fetching projects:", error);
-    } else {
-      setProjects(data as Project[]);
     }
     setLoading(false);
   }, []);
@@ -76,36 +76,10 @@ export const ProjectsSection = () => {
   const handleDeleteConfirm = async () => {
     if (!projectToDelete) return;
     try {
-      const { error: deleteError } = await supabase
-        .from("projects")
-        .delete()
-        .eq("id", projectToDelete.id);
-      if (deleteError) throw deleteError;
-
-      // Note: This does not delete the image from Supabase storage to avoid accidental permanent loss.
-      // You may want to add a more complex "soft delete" or manual cleanup process later.
-
-      const { data: remaining, error: fetchError } = await supabase
-        .from("projects")
-        .select("id, display_order")
-        .order("display_order", { ascending: true });
-
-      if (fetchError) throw fetchError;
-
-      if (remaining) {
-        const updatePromises = remaining
-          .map((p, index) => {
-            const expectedOrder = index + 1;
-            if (p.display_order !== expectedOrder) {
-              return supabase
-                .from("projects")
-                .update({ display_order: expectedOrder })
-                .eq("id", p.id);
-            }
-            return null;
-          })
-          .filter((p) => p);
-        await Promise.all(updatePromises);
+      const res = await fetch(`/api/projects?id=${projectToDelete.id}`, { method: 'DELETE' });
+      if (!res.ok) {
+        const result = await res.json();
+        throw new Error(result.message || 'Delete failed');
       }
 
       toast({

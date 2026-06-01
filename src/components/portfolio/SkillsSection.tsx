@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
@@ -7,7 +6,6 @@ import {
   Card,
   CardContent,
 } from "@/components/ui/card";
-import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "../ui/button";
@@ -45,17 +43,18 @@ export const SkillsSection = () => {
 
     const fetchSkills = useCallback(async () => {
         setLoading(true);
-        const { data, error } = await supabase
-            .from('skill_groups')
-            .select('*, skills ( id, name, display_order )')
-            .order('display_order', { ascending: true })
-            .order('display_order', { foreignTable: 'skills', ascending: true });
-
-        if (error) {
+        try {
+            const res = await fetch('/api/skills');
+            if (!res.ok) {
+                console.error("Error fetching skills:", res.statusText);
+                setSkillGroups([]);
+            } else {
+                const data = await res.json();
+                setSkillGroups(data as SkillGroup[]);
+            }
+        } catch (error) {
             console.error("Error fetching skills:", error);
             setSkillGroups([]);
-        } else {
-            setSkillGroups(data as SkillGroup[]);
         }
         setLoading(false);
     }, []);
@@ -78,38 +77,12 @@ export const SkillsSection = () => {
         if (!groupToDelete) return;
 
         try {
-            // 1. Delete associated skills first
-            const { error: skillsError } = await supabase
-                .from('skills')
-                .delete()
-                .eq('group_id', groupToDelete.id);
-            if (skillsError) throw skillsError;
-
-            // 2. Delete the group itself
-            const { error: groupError } = await supabase
-                .from('skill_groups')
-                .delete()
-                .eq('id', groupToDelete.id);
-            if (groupError) throw groupError;
-            
-            // 3. Re-sequence all remaining groups to ensure consistency
-            const { data: remainingGroups, error: fetchError } = await supabase
-                .from('skill_groups')
-                .select('id, display_order')
-                .order('display_order', { ascending: true });
-
-            if (fetchError) throw fetchError;
-            
-            if (remainingGroups) {
-                const updatePromises = remainingGroups.map((group, index) => {
-                    const expectedOrder = index + 1;
-                    if (group.display_order !== expectedOrder) {
-                        return supabase.from('skill_groups').update({ display_order: expectedOrder }).eq('id', group.id);
-                    }
-                    return null;
-                }).filter(p => p); // Filter out nulls
-                
-                await Promise.all(updatePromises);
+            const res = await fetch(`/api/skill-groups?id=${groupToDelete.id}`, {
+                method: 'DELETE',
+            });
+            if (!res.ok) {
+                const result = await res.json();
+                throw new Error(result.message || 'Delete failed');
             }
             
             toast({
@@ -144,33 +117,13 @@ export const SkillsSection = () => {
                 throw new Error("Could not find the skill's group.");
             }
     
-            // 1. Delete the skill
-            const { error: deleteError } = await supabase
-                .from('skills')
-                .delete()
-                .eq('id', skillToDelete.id);
-            
-            if (deleteError) throw deleteError;
-    
-            // 2. Re-sequence all remaining skills in the group to ensure consistency
-            const { data: remainingSkills, error: fetchError } = await supabase
-                .from('skills')
-                .select('id, display_order')
-                .eq('group_id', skillGroupId)
-                .order('display_order', { ascending: true });
-
-            if (fetchError) throw fetchError;
-            if (!remainingSkills) return;
-
-            const updatePromises = remainingSkills.map((skill, index) => {
-                const expectedOrder = index + 1;
-                 if (skill.display_order !== expectedOrder) {
-                    return supabase.from('skills').update({ display_order: expectedOrder }).eq('id', skill.id);
-                }
-                return null;
-            }).filter(p => p); // Filter out nulls
-    
-            await Promise.all(updatePromises);
+            const res = await fetch(`/api/skills?id=${skillToDelete.id}&group_id=${skillGroupId}`, {
+                method: 'DELETE',
+            });
+            if (!res.ok) {
+                const result = await res.json();
+                throw new Error(result.message || 'Delete failed');
+            }
     
             toast({
                 title: 'Skill Deleted',

@@ -20,7 +20,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/supabaseClient';
 import { SkillGroup } from './SkillsSection';
 
 interface AddSkillDialogProps {
@@ -71,50 +70,21 @@ export const AddSkillDialog = ({
 
     try {
         const newOrder = displayOrder ? parseInt(displayOrder, 10) : null;
-        const selectedGroup = skillGroups.find(g => g.id === groupId);
+        const payload = {
+            name,
+            group_id: groupId,
+            display_order: (newOrder && !isNaN(newOrder) && newOrder > 0) ? newOrder : null,
+        };
 
-        if (!selectedGroup) {
-            toast({ variant: 'destructive', title: 'Error', description: 'Selected group not found.' });
-            setIsSaving(false);
-            return;
-        }
+        const res = await fetch('/api/skills', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        });
 
-        // If no order is given, add to the end.
-        if (newOrder === null || isNaN(newOrder) || newOrder <= 0) {
-            const maxDisplayOrder = selectedGroup.skills.length > 0 ? Math.max(...selectedGroup.skills.map(s => s.display_order)) : 0;
-            const { error } = await supabase.from('skills').insert({
-                name: name,
-                group_id: groupId,
-                display_order: maxDisplayOrder + 1,
-            });
-            if (error) throw error;
-        } else {
-            // If an order is given, we must re-sequence the entire group to ensure consistency.
-            const currentSkills = [...selectedGroup.skills].sort((a, b) => a.display_order - b.display_order);
-
-            // Insert new skill with a temporary high order to avoid conflicts
-            const { data: newSkill, error: insertError } = await supabase
-                .from('skills')
-                .insert({ name: name, group_id: groupId, display_order: 9999 })
-                .select('id')
-                .single();
-
-            if (insertError || !newSkill) throw insertError || new Error("Skill insertion failed to return new skill.");
-
-            // Create the final, correctly-ordered list of skills in memory
-            const insertionIndex = Math.min(Math.max(0, newOrder - 1), currentSkills.length);
-            const finalOrderedSkills = [
-                ...currentSkills.slice(0, insertionIndex),
-                { id: newSkill.id, name, display_order: 0 }, // Placeholder for the new skill
-                ...currentSkills.slice(insertionIndex),
-            ];
-
-            // Create update promises to re-sequence the entire group in the database
-            const updatePromises = finalOrderedSkills.map((skill, index) => {
-                const expectedOrder = index + 1;
-                return supabase.from('skills').update({ display_order: expectedOrder }).eq('id', skill.id);
-            });
-            await Promise.all(updatePromises);
+        if (!res.ok) {
+            const result = await res.json();
+            throw new Error(result.message || 'Failed to add skill');
         }
 
         toast({
@@ -122,7 +92,7 @@ export const AddSkillDialog = ({
             description: `The skill "${name}" has been added.`,
         });
         resetForm();
-        onSkillAdded(); // Refetch
+        onSkillAdded();
         onOpenChange(false);
 
     } catch (error: any) {
@@ -132,7 +102,6 @@ export const AddSkillDialog = ({
             title: 'Add Failed',
             description: 'Could not add the new skill. Please try again.',
         });
-        // Re-fetch to revert any inconsistent state
         onSkillAdded();
     } finally {
         setIsSaving(false);
@@ -163,6 +132,7 @@ export const AddSkillDialog = ({
                 onChange={(e) => setName(e.target.value)}
                 className="col-span-3"
                 placeholder="e.g., React"
+                required
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">

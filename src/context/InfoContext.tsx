@@ -1,7 +1,6 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import { supabase } from '@/lib/supabaseClient';
 
 type Info = {
   id: string;
@@ -28,16 +27,18 @@ export const InfoProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchInfo = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('info')
-      .select('*')
-      .single();
-
-    if (error) {
+    try {
+      const res = await fetch('/api/info');
+      if (!res.ok) {
+        console.error("Error fetching info:", res.statusText);
+        setInfo(null);
+      } else {
+        const data = await res.json();
+        setInfo(data);
+      }
+    } catch (error) {
       console.error("Error fetching info:", error);
       setInfo(null);
-    } else {
-      setInfo(data);
     }
     setLoading(false);
   }, []);

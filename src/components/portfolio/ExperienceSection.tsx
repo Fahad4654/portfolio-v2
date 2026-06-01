@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
 import { EditExperienceDialog } from "./EditExperienceDialog";
@@ -45,15 +44,16 @@ export const ExperienceSection = () => {
 
   const fetchExperiences = useCallback(async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("experiences")
-      .select("*")
-      .order("display_order", { ascending: true });
-
-    if (error) {
+    try {
+      const res = await fetch('/api/experiences');
+      if (!res.ok) {
+        console.error("Error fetching experiences:", res.statusText);
+      } else {
+        const data = await res.json();
+        setExperiences(data as Experience[]);
+      }
+    } catch (error) {
       console.error("Error fetching experiences:", error);
-    } else {
-      setExperiences(data as Experience[]);
     }
     setLoading(false);
   }, []);
@@ -79,33 +79,12 @@ export const ExperienceSection = () => {
   const handleDeleteConfirm = async () => {
     if (!experienceToDelete) return;
     try {
-      const { error: deleteError } = await supabase
-        .from("experiences")
-        .delete()
-        .eq("id", experienceToDelete.id);
-      if (deleteError) throw deleteError;
-
-      const { data: remaining, error: fetchError } = await supabase
-        .from("experiences")
-        .select("id, display_order")
-        .order("display_order", { ascending: true });
-
-      if (fetchError) throw fetchError;
-
-      if (remaining) {
-        const updatePromises = remaining
-          .map((exp, index) => {
-            const expectedOrder = index + 1;
-            if (exp.display_order !== expectedOrder) {
-              return supabase
-                .from("experiences")
-                .update({ display_order: expectedOrder })
-                .eq("id", exp.id);
-            }
-            return null;
-          })
-          .filter((p) => p);
-        await Promise.all(updatePromises);
+      const res = await fetch(`/api/experiences?id=${experienceToDelete.id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) {
+        const result = await res.json();
+        throw new Error(result.message || 'Delete failed');
       }
 
       toast({

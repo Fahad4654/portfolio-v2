@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -14,7 +13,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/supabaseClient';
 
 type Education = {
     id: number;
@@ -73,43 +71,18 @@ export const AddEducationDialog = ({
           institution,
           link: link || null,
           period,
+          display_order: (newOrder && !isNaN(newOrder) && newOrder > 0) ? newOrder : null,
       };
 
-      // If no order is given, simply add to the end
-      if (newOrder === null || isNaN(newOrder) || newOrder <= 0) {
-        const maxDisplayOrder = educations.length > 0 ? Math.max(...educations.map(e => e.display_order)) : 0;
-        const { error } = await supabase.from('education').insert({
-          ...newEducationData,
-          display_order: maxDisplayOrder + 1,
-        });
-        if (error) throw error;
-      } else {
-        // If an order is given, re-sequence everything
-        const currentEducations = [...educations].sort((a,b) => a.display_order - b.display_order);
+      const res = await fetch('/api/education', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newEducationData),
+      });
 
-        // Insert the new entry with a temporary high order
-        const { data: newEntry, error: insertError } = await supabase
-            .from('education')
-            .insert({ ...newEducationData, display_order: 9999 })
-            .select('id')
-            .single();
-
-        if (insertError || !newEntry) throw insertError || new Error("Education entry insertion failed.");
-
-        // Create the final, correctly-ordered list in memory
-        const insertionIndex = Math.min(Math.max(0, newOrder - 1), currentEducations.length);
-        const finalOrderedEducations = [
-          ...currentEducations.slice(0, insertionIndex),
-          { id: newEntry.id, ...newEducationData, display_order: 0 } as Education, // Placeholder
-          ...currentEducations.slice(insertionIndex)
-        ];
-
-        // Create update promises to re-sequence all entries
-        const updatePromises = finalOrderedEducations.map((edu, index) => {
-          const expectedOrder = index + 1;
-          return supabase.from('education').update({ display_order: expectedOrder }).eq('id', edu.id);
-        });
-        await Promise.all(updatePromises);
+      if (!res.ok) {
+        const result = await res.json();
+        throw new Error(result.message || 'Failed to add education entry.');
       }
 
       toast({
@@ -125,7 +98,7 @@ export const AddEducationDialog = ({
         toast({
             variant: 'destructive',
             title: 'Add Failed',
-            description: 'Could not add the new education entry. Please try again.',
+            description: error.message || 'Could not add the new education entry. Please try again.',
         });
         onEducationAdded();
     } finally {
@@ -149,11 +122,11 @@ export const AddEducationDialog = ({
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="degree" className="text-right">Degree</Label>
-              <Input id="degree" value={degree} onChange={(e) => setDegree(e.target.value)} className="col-span-3" placeholder="e.g., B.Sc. in CSE"/>
+              <Input id="degree" value={degree} onChange={(e) => setDegree(e.target.value)} className="col-span-3" placeholder="e.g., B.Sc. in CSE" required/>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="institution" className="text-right">Institution</Label>
-              <Input id="institution" value={institution} onChange={(e) => setInstitution(e.target.value)} className="col-span-3" placeholder="e.g., University of Example"/>
+              <Input id="institution" value={institution} onChange={(e) => setInstitution(e.target.value)} className="col-span-3" placeholder="e.g., University of Example" required/>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="link" className="text-right">Link</Label>
@@ -161,7 +134,7 @@ export const AddEducationDialog = ({
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="period" className="text-right">Period</Label>
-              <Input id="period" value={period} onChange={(e) => setPeriod(e.target.value)} className="col-span-3" placeholder="e.g., 2018 - 2022"/>
+              <Input id="period" value={period} onChange={(e) => setPeriod(e.target.value)} className="col-span-3" placeholder="e.g., 2018 - 2022" required/>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="display_order" className="text-right">Order</Label>
