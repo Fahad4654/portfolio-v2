@@ -1,18 +1,11 @@
 
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-
-// This is an object export, which is why "use server" would break it
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey)
+import { getDb } from '@/lib/db';
 
 export async function POST(request: Request) {
-  // Proactive check for environment variables
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  if (!process.env.DATABASE_URL) {
     return NextResponse.json({ 
-      message: 'Server is not configured for database updates. Please ensure SUPABASE_SERVICE_ROLE_KEY and NEXT_PUBLIC_SUPABASE_URL are correctly set in your .env file and that the server has been restarted.'
+      message: 'Server is not configured for database updates. Please ensure DATABASE_URL is set in your .env file and that the server has been restarted.'
     }, { status: 500 });
   }
 
@@ -24,17 +17,36 @@ export async function POST(request: Request) {
         return NextResponse.json({ message: 'Project ID is required for an update.' }, { status: 400 });
     }
 
-    const { error } = await supabaseAdmin
-      .from('projects')
-      .update(updateData)
-      .eq('id', id);
+    const sql = getDb();
 
-    if (error) {
-      console.error('Supabase project update error:', error.message);
-      return NextResponse.json({ 
-        message: `Database update failed. Supabase error: ${error.message}`
-      }, { status: 500 });
+    // Fetch current project to merge
+    const current = await sql`SELECT * FROM projects WHERE id = ${id}`;
+    if (current.length === 0) {
+      return NextResponse.json({ message: 'Project not found.' }, { status: 404 });
     }
+    const p = current[0];
+
+    const title = updateData.title !== undefined ? updateData.title : p.title;
+    const description = updateData.description !== undefined ? updateData.description : p.description;
+    const image = updateData.image !== undefined ? updateData.image : p.image;
+    const hint = updateData.hint !== undefined ? updateData.hint : p.hint;
+    const link = updateData.link !== undefined ? updateData.link : p.link;
+    const tags = updateData.tags !== undefined ? JSON.stringify(updateData.tags) : JSON.stringify(p.tags);
+    const status_text = updateData.status_text !== undefined ? updateData.status_text : p.status_text;
+    const display_order = updateData.display_order !== undefined ? updateData.display_order : p.display_order;
+
+    await sql`
+      UPDATE projects
+      SET title = ${title},
+          description = ${description},
+          image = ${image},
+          hint = ${hint},
+          link = ${link},
+          tags = ${tags},
+          status_text = ${status_text},
+          display_order = ${display_order}
+      WHERE id = ${id}
+    `;
 
     return NextResponse.json({ message: 'Project updated successfully.' }, { status: 200 });
 

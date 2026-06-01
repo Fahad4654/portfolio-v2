@@ -14,7 +14,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/supabaseClient';
 
 type Experience = {
   id: number;
@@ -71,33 +70,40 @@ export const EditExperienceDialog = ({
       description: descriptionText.split('\n').filter(line => line.trim() !== ''),
     };
 
-    const { error } = await supabase
-      .from('experiences')
-      .update({
-        title: updatedExperience.title,
-        company: updatedExperience.company,
-        company_link: updatedExperience.company_link,
-        period: updatedExperience.period,
-        description: updatedExperience.description,
-      })
-      .eq('id', updatedExperience.id);
-
-    setIsSaving(false);
-
-    if (error) {
-      console.error('Error updating experience:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Update Failed',
-        description: 'Could not save your changes. Please try again.',
+    try {
+      const res = await fetch('/api/experiences', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: updatedExperience.id,
+          title: updatedExperience.title,
+          company: updatedExperience.company,
+          company_link: updatedExperience.company_link,
+          period: updatedExperience.period,
+          description: updatedExperience.description,
+        }),
       });
-    } else {
+
+      if (!res.ok) {
+        const result = await res.json();
+        throw new Error(result.message || 'Update failed');
+      }
+
       toast({
         title: 'Experience Updated',
         description: 'Your work experience has been saved.',
       });
       onExperienceUpdate();
       onOpenChange(false);
+    } catch (error: any) {
+      console.error('Error updating experience:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Update Failed',
+        description: 'Could not save your changes. Please try again.',
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -121,6 +127,7 @@ export const EditExperienceDialog = ({
                 value={formData.title}
                 onChange={handleChange}
                 className="col-span-3"
+                required
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
@@ -132,6 +139,7 @@ export const EditExperienceDialog = ({
                 value={formData.company}
                 onChange={handleChange}
                 className="col-span-3"
+                required
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
@@ -154,6 +162,7 @@ export const EditExperienceDialog = ({
                 value={formData.period}
                 onChange={handleChange}
                 className="col-span-3"
+                required
               />
             </div>
             <div className="grid grid-cols-4 items-start gap-4">

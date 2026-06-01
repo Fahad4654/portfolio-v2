@@ -15,7 +15,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/supabaseClient';
 
 type Project = {
     id: number;
@@ -123,38 +122,18 @@ export const AddProjectDialog = ({
           tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag),
           hint,
           image: imageUrl,
+          display_order: (newOrder && !isNaN(newOrder) && newOrder > 0) ? newOrder : null,
       };
 
-      if (newOrder === null || isNaN(newOrder) || newOrder <= 0) {
-        const maxDisplayOrder = projects.length > 0 ? Math.max(...projects.map(p => p.display_order)) : 0;
-        const { error } = await supabase.from('projects').insert({
-          ...newProjectData,
-          display_order: maxDisplayOrder + 1,
-        });
-        if (error) throw error;
-      } else {
-        const currentProjects = [...projects].sort((a,b) => a.display_order - b.display_order);
+      const res = await fetch('/api/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newProjectData),
+      });
 
-        const { data: newEntry, error: insertError } = await supabase
-            .from('projects')
-            .insert({ ...newProjectData, display_order: 9999 })
-            .select('id')
-            .single();
-
-        if (insertError || !newEntry) throw insertError || new Error("Project entry insertion failed.");
-
-        const insertionIndex = Math.min(Math.max(0, newOrder - 1), currentProjects.length);
-        const finalOrderedProjects = [
-          ...currentProjects.slice(0, insertionIndex),
-          { id: newEntry.id, ...newProjectData, display_order: 0 } as Project,
-          ...currentProjects.slice(insertionIndex)
-        ];
-
-        const updatePromises = finalOrderedProjects.map((proj, index) => {
-          const expectedOrder = index + 1;
-          return supabase.from('projects').update({ display_order: expectedOrder }).eq('id', proj.id);
-        });
-        await Promise.all(updatePromises);
+      if (!res.ok) {
+        const result = await res.json();
+        throw new Error(result.message || 'Failed to add project.');
       }
 
       toast({

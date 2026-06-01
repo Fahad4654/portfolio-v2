@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { GraduationCap, Edit, PlusCircle, Trash2 } from "lucide-react";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-import { supabase } from "@/lib/supabaseClient";
 import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "../ui/button";
@@ -38,15 +37,16 @@ export const EducationSection = () => {
 
   const fetchEducation = useCallback(async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("education")
-      .select("*")
-      .order("display_order", { ascending: true });
-
-    if (error) {
+    try {
+      const res = await fetch('/api/education');
+      if (!res.ok) {
+        console.error("Error fetching education:", res.statusText);
+      } else {
+        const data = await res.json();
+        setEducation(data);
+      }
+    } catch (error) {
       console.error("Error fetching education:", error);
-    } else {
-      setEducation(data);
     }
     setLoading(false);
   }, []);
@@ -68,33 +68,12 @@ export const EducationSection = () => {
   const handleDeleteConfirm = async () => {
     if (!educationToDelete) return;
     try {
-      const { error: deleteError } = await supabase
-        .from("education")
-        .delete()
-        .eq("id", educationToDelete.id);
-      if (deleteError) throw deleteError;
-
-      const { data: remaining, error: fetchError } = await supabase
-        .from("education")
-        .select("id, display_order")
-        .order("display_order", { ascending: true });
-
-      if (fetchError) throw fetchError;
-
-      if (remaining) {
-        const updatePromises = remaining
-          .map((edu, index) => {
-            const expectedOrder = index + 1;
-            if (edu.display_order !== expectedOrder) {
-              return supabase
-                .from("education")
-                .update({ display_order: expectedOrder })
-                .eq("id", edu.id);
-            }
-            return null;
-          })
-          .filter((p) => p);
-        await Promise.all(updatePromises);
+      const res = await fetch(`/api/education?id=${educationToDelete.id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) {
+        const result = await res.json();
+        throw new Error(result.message || 'Delete failed');
       }
 
       toast({

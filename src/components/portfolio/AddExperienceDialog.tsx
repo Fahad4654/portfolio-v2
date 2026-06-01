@@ -14,7 +14,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/supabaseClient';
 
 type Experience = {
     id: number;
@@ -77,38 +76,18 @@ export const AddExperienceDialog = ({
           company_link: companyLink || null,
           period,
           description: description.split('\n').filter(line => line.trim() !== ''),
+          display_order: (newOrder && !isNaN(newOrder) && newOrder > 0) ? newOrder : null,
       };
 
-      if (newOrder === null || isNaN(newOrder) || newOrder <= 0) {
-        const maxDisplayOrder = experiences.length > 0 ? Math.max(...experiences.map(e => e.display_order)) : 0;
-        const { error } = await supabase.from('experiences').insert({
-          ...newExperienceData,
-          display_order: maxDisplayOrder + 1,
-        });
-        if (error) throw error;
-      } else {
-        const currentExperiences = [...experiences].sort((a,b) => a.display_order - b.display_order);
+      const res = await fetch('/api/experiences', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newExperienceData),
+      });
 
-        const { data: newEntry, error: insertError } = await supabase
-            .from('experiences')
-            .insert({ ...newExperienceData, display_order: 9999 })
-            .select('id')
-            .single();
-
-        if (insertError || !newEntry) throw insertError || new Error("Experience entry insertion failed.");
-
-        const insertionIndex = Math.min(Math.max(0, newOrder - 1), currentExperiences.length);
-        const finalOrderedExperiences = [
-          ...currentExperiences.slice(0, insertionIndex),
-          { id: newEntry.id, ...newExperienceData, display_order: 0 } as Experience,
-          ...currentExperiences.slice(insertionIndex)
-        ];
-
-        const updatePromises = finalOrderedExperiences.map((exp, index) => {
-          const expectedOrder = index + 1;
-          return supabase.from('experiences').update({ display_order: expectedOrder }).eq('id', exp.id);
-        });
-        await Promise.all(updatePromises);
+      if (!res.ok) {
+        const result = await res.json();
+        throw new Error(result.message || 'Failed to add experience entry.');
       }
 
       toast({
@@ -148,11 +127,11 @@ export const AddExperienceDialog = ({
           <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto pr-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="title" className="text-right">Title</Label>
-              <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} className="col-span-3" placeholder="e.g., DevOps Engineer"/>
+              <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} className="col-span-3" placeholder="e.g., DevOps Engineer" required/>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="company" className="text-right">Company</Label>
-              <Input id="company" value={company} onChange={(e) => setCompany(e.target.value)} className="col-span-3" placeholder="e.g., Awesome Inc."/>
+              <Input id="company" value={company} onChange={(e) => setCompany(e.target.value)} className="col-span-3" placeholder="e.g., Awesome Inc." required/>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="companyLink" className="text-right">Company Link</Label>
@@ -160,7 +139,7 @@ export const AddExperienceDialog = ({
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="period" className="text-right">Period</Label>
-              <Input id="period" value={period} onChange={(e) => setPeriod(e.target.value)} className="col-span-3" placeholder="e.g., Jan 2023 - Present"/>
+              <Input id="period" value={period} onChange={(e) => setPeriod(e.target.value)} className="col-span-3" placeholder="e.g., Jan 2023 - Present" required/>
             </div>
             <div className="grid grid-cols-4 items-start gap-4">
               <Label htmlFor="description" className="text-right pt-2">Description</Label>

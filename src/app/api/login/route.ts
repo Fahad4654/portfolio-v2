@@ -1,13 +1,12 @@
 
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabaseClient';
+import { getDb } from '@/lib/db';
 import bcrypt from 'bcrypt';
 
 export async function POST(request: Request) {
-  // Proactive check for environment variables
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  if (!process.env.DATABASE_URL) {
     return NextResponse.json({ 
-        message: 'Supabase credentials are not configured. Please ensure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set in your .env file and that the server has been restarted.'
+        message: 'Database is not configured. Please ensure DATABASE_URL is set in your .env file and that the server has been restarted.'
     }, { status: 500 });
   }
     
@@ -18,31 +17,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: 'Email and password are required' }, { status: 400 });
     }
 
-    const { data: user, error } = await supabase
-      .from('users')
-      .select('password')
-      .eq('email', email)
-      .single();
+    const sql = getDb();
+    const users = await sql`SELECT password FROM users WHERE email = ${email} LIMIT 1`;
 
-    if (error) {
-      console.error('Supabase query error:', error);
-      // Check for common .env configuration errors.
-      if (error.message.toLowerCase().includes('failed to fetch') || error.message.includes('jwt')) {
-          return NextResponse.json({ 
-              message: `Supabase connection error: ${error.message}. This is likely due to incorrect or missing Supabase credentials. Please ensure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set correctly in your .env file and that the server has been restarted.`
-          }, { status: 500 });
-      }
-      return NextResponse.json({ message: `Database query failed: ${error.message}` }, { status: 500 });
-    }
-
-    if (!user) {
-      // Guide the user on the two most common reasons for this: RLS or wrong email.
+    if (users.length === 0) {
       return NextResponse.json({ 
-          message: 'Invalid credentials. The user was not found. This can be due to an incorrect email, or a missing Row Level Security (RLS) policy on your `users` table in Supabase.'
+          message: 'Invalid credentials. The user was not found.'
       }, { status: 401 });
     }
 
-    const passwordIsValid = await bcrypt.compare(password, user.password);
+    const passwordIsValid = await bcrypt.compare(password, users[0].password);
 
     if (!passwordIsValid) {
       return NextResponse.json({ message: 'Invalid credentials. The password is incorrect.' }, { status: 401 });

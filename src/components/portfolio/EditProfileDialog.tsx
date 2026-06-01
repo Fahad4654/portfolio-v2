@@ -14,7 +14,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/supabaseClient';
 
 type Profile = {
   id: number;
@@ -57,35 +56,42 @@ export const EditProfileDialog = ({
     e.preventDefault();
     setIsSaving(true);
 
-    const { error } = await supabase
-      .from('profile')
-      .update({
-        headline: formData.headline,
-        bio1: formData.bio1,
-        bio2: formData.bio2,
-        location: formData.location,
-        phone: formData.phone,
-        email: formData.email,
-        resume_url: formData.resume_url,
-      })
-      .eq('id', profile.id);
-
-    setIsSaving(false);
-
-    if (error) {
-      console.error('Error updating profile:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Update Failed',
-        description: 'Could not save your changes. Please try again.',
+    try {
+      const res = await fetch('/api/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: profile.id,
+          headline: formData.headline,
+          bio1: formData.bio1,
+          bio2: formData.bio2,
+          location: formData.location,
+          phone: formData.phone,
+          email: formData.email,
+          resume_url: formData.resume_url,
+        }),
       });
-    } else {
+
+      if (!res.ok) {
+        const result = await res.json();
+        throw new Error(result.message || 'Update failed');
+      }
+
       toast({
         title: 'Profile Updated',
         description: 'Your personal information has been saved.',
       });
       onProfileUpdate();
       onOpenChange(false);
+    } catch (error: any) {
+      console.error('Error updating profile:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Update Failed',
+        description: 'Could not save your changes. Please try again.',
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
