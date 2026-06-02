@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const sql = getDb();
     const rows = await sql`SELECT * FROM projects ORDER BY display_order ASC`;
-    return NextResponse.json(rows, { status: 200 });
+    return NextResponse.json(rows, { status: 200, headers: { 'Cache-Control': 'no-store, must-revalidate' } });
   } catch (err: any) {
     console.error('GET /api/projects error:', err);
     return NextResponse.json({ message: `Database error: ${err.message}` }, { status: 500 });

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const sql = getDb();
@@ -15,7 +17,7 @@ export async function GET() {
       skills: skills.filter((s: any) => s.group_id === group.id),
     }));
 
-    return NextResponse.json(result, { status: 200 });
+    return NextResponse.json(result, { status: 200, headers: { 'Cache-Control': 'no-store, must-revalidate' } });
   } catch (err: any) {
     console.error('GET /api/skills error:', err);
     return NextResponse.json({ message: `Database error: ${err.message}` }, { status: 500 });

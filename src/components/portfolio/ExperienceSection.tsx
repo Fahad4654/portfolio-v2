@@ -45,7 +45,7 @@ export const ExperienceSection = () => {
   const fetchExperiences = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/experiences');
+      const res = await fetch('/api/experiences', { cache: 'no-store' });
       if (!res.ok) {
         console.error("Error fetching experiences:", res.statusText);
       } else {

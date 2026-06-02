@@ -28,7 +28,7 @@ export const InfoProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchInfo = useCallback(async () => {
     try {
-      const res = await fetch('/api/info');
+      const res = await fetch('/api/info', { cache: 'no-store' });
       if (!res.ok) {
         console.error("Error fetching info:", res.statusText);
         setInfo(null);
