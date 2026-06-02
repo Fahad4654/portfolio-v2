@@ -1,5 +1,5 @@
 
-import { links, Section } from "@/app/page";
+import { links, Section } from "@/types/portfolio";
 import { cn } from "@/lib/utils";
 import {
   Tooltip,

@@ -5,6 +5,7 @@ import { Inter, Playfair_Display } from 'next/font/google'
 import { ThemeProvider } from '@/components/theme-provider';
 import { AuthProvider } from '@/context/AuthContext';
 import { InfoProvider } from '@/context/InfoContext';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
   title: 'Fahad Kabir | DevOps Engineer',
@@ -39,6 +40,7 @@ export default function RootLayout({
             <AuthProvider>
               <Toaster />
               {children}
+              <SpeedInsights />
             </AuthProvider>
           </InfoProvider>
         </ThemeProvider>
