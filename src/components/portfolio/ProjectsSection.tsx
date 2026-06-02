@@ -46,7 +46,7 @@ export const ProjectsSection = () => {
   const fetchProjects = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/projects', { cache: 'no-store' });
+      const res = await fetch(`/api/projects?_t=${Date.now()}`, { cache: 'no-store' });
       if (!res.ok) {
         console.error("Error fetching projects:", res.statusText);
       } else {

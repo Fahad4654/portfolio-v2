@@ -44,7 +44,7 @@ export const SkillsSection = () => {
     const fetchSkills = useCallback(async () => {
         setLoading(true);
         try {
-            const res = await fetch('/api/skills', { cache: 'no-store' });
+            const res = await fetch(`/api/skills?_t=${Date.now()}`, { cache: 'no-store' });
             if (!res.ok) {
                 console.error("Error fetching skills:", res.statusText);
                 setSkillGroups([]);
