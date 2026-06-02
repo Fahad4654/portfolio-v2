@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Menu, Send } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -20,32 +20,11 @@ import { ExperienceSection } from "@/components/portfolio/ExperienceSection";
 import { ProjectsSection } from "@/components/portfolio/ProjectsSection";
 import { EducationSection } from "@/components/portfolio/EducationSection";
 import { ContactSection } from "@/components/portfolio/ContactSection";
-import {
-  User,
-  Shapes,
-  GraduationCap,
-  BriefcaseBusiness,
-  FileText,
-} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DigitalRain } from "@/components/portfolio/DigitalRain";
+import { Section } from "@/types/portfolio";
 
-export type Section =
-  | "profile"
-  | "skills"
-  | "experience"
-  | "portfolio"
-  | "education"
-  | "contact";
 
-export const links: { id: Section; icon: React.ElementType; text: string }[] = [
-  { id: "profile", icon: User, text: "Personal Info" },
-  { id: "skills", icon: Shapes, text: "Technical Skills" },
-  { id: "education", icon: GraduationCap, text: "Education" },
-  { id: "experience", icon: BriefcaseBusiness, text: "Work Experience" },
-  { id: "portfolio", icon: FileText, text: "Projects" },
-  { id: "contact", icon: Send, text: "Contact Me" },
-];
 
 const Page = () => {
   const [loading, setLoading] = useState(true);

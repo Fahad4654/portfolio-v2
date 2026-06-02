@@ -4,7 +4,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { NavLinks } from './NavLinks';
-import { Section } from '@/app/page';
+import { Section } from '@/types/portfolio';
 import { Header } from './Header';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
