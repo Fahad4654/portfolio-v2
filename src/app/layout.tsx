@@ -6,6 +6,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { AuthProvider } from '@/context/AuthContext';
 import { InfoProvider } from '@/context/InfoContext';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/react';
 
 export const metadata: Metadata = {
   title: 'Fahad Kabir | DevOps Engineer',
@@ -41,6 +42,7 @@ export default function RootLayout({
               <Toaster />
               {children}
               <SpeedInsights />
+              <Analytics />
             </AuthProvider>
           </InfoProvider>
         </ThemeProvider>
