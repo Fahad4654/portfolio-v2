@@ -35,8 +35,6 @@ export async function POST(request: Request) {
     const profession = updateData.profession !== undefined ? updateData.profession : c.profession;
     const email = updateData.email !== undefined ? updateData.email : c.email;
 
-    console.log(linkedin_url)
-
     await sql`
       UPDATE info
       SET name = ${name},
