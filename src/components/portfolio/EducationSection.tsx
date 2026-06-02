@@ -38,7 +38,7 @@ export const EducationSection = () => {
   const fetchEducation = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/education', { cache: 'no-store' });
+      const res = await fetch(`/api/education?_t=${Date.now()}`, { cache: 'no-store' });
       if (!res.ok) {
         console.error("Error fetching education:", res.statusText);
       } else {

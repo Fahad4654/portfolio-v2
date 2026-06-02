@@ -17,7 +17,7 @@ export async function GET() {
       skills: skills.filter((s: any) => s.group_id === group.id),
     }));
 
-    return NextResponse.json(result, { status: 200, headers: { 'Cache-Control': 'no-store, must-revalidate' } });
+    return NextResponse.json(result, { status: 200, headers: { 'Cache-Control': 'public, s-maxage=0, must-revalidate', 'Vercel-CDN-Cache-Control': 'no-cache' } });
   } catch (err: any) {
     console.error('GET /api/skills error:', err);
     return NextResponse.json({ message: `Database error: ${err.message}` }, { status: 500 });

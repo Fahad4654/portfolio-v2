@@ -7,7 +7,7 @@ export async function GET() {
   try {
     const sql = getDb();
     const rows = await sql`SELECT * FROM projects ORDER BY display_order ASC`;
-    return NextResponse.json(rows, { status: 200, headers: { 'Cache-Control': 'no-store, must-revalidate' } });
+    return NextResponse.json(rows, { status: 200, headers: { 'Cache-Control': 'public, s-maxage=0, must-revalidate', 'Vercel-CDN-Cache-Control': 'no-cache' } });
   } catch (err: any) {
     console.error('GET /api/projects error:', err);
     return NextResponse.json({ message: `Database error: ${err.message}` }, { status: 500 });

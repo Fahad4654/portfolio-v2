@@ -12,7 +12,7 @@ export async function GET() {
       return NextResponse.json({ message: 'No profile found.' }, { status: 404 });
     }
 
-    return NextResponse.json(rows[0], { status: 200, headers: { 'Cache-Control': 'no-store, must-revalidate' } });
+    return NextResponse.json(rows[0], { status: 200, headers: { 'Cache-Control': 'public, s-maxage=0, must-revalidate', 'Vercel-CDN-Cache-Control': 'no-cache' } });
   } catch (err: any) {
     console.error('GET /api/profile error:', err);
     return NextResponse.json(
