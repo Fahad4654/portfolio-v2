@@ -1,17 +1,18 @@
 
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { NavLinks } from './NavLinks';
 import { Section } from '@/types/portfolio';
 import { Header } from './Header';
+import { EditInfoDialog } from './EditInfoDialog';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
 import { ThemeToggle } from '../theme-toggle';
 import { Button } from '../ui/button';
-import { LogIn, LogOut } from 'lucide-react';
+import { Edit, LogIn, LogOut } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -36,6 +37,7 @@ export const Sidebar = ({
 }) => {
   const { isLoggedIn, logout } = useAuth();
   const { info } = useInfo();
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -140,9 +142,27 @@ export const Sidebar = ({
               </>
             )}
             <ThemeToggle />
+            {isLoggedIn && (
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" onClick={() => setIsEditDialogOpen(true)}>
+                      <Edit className="h-[1.2rem] w-[1.2rem]" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" sideOffset={5}>
+                    <p>Edit Info</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
             {authButton}
           </div>
         </div>
+        <EditInfoDialog
+          isOpen={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+        />
 
         {isCollapsed && !isMobile && (
           <div className="mt-4 flex flex-col items-center gap-2">

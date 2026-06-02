@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const sql = getDb();
@@ -10,7 +12,10 @@ export async function GET() {
       return NextResponse.json({ message: 'No info found.' }, { status: 404 });
     }
 
-    return NextResponse.json(rows[0], { status: 200 });
+    return NextResponse.json(rows[0], {
+      status: 200,
+      headers: { 'Cache-Control': 'no-store, must-revalidate' },
+    });
   } catch (err: any) {
     console.error('GET /api/info error:', err);
     return NextResponse.json(

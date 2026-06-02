@@ -44,7 +44,7 @@ export const ProfileSection = () => {
   const fetchProfile = useCallback(async () => {
     setLoadingProfile(true);
     try {
-      const res = await fetch('/api/profile');
+      const res = await fetch('/api/profile', { cache: 'no-store' });
       if (!res.ok) {
         console.error("Error fetching profile:", res.statusText);
         setProfile(null);
